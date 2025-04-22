@@ -18,7 +18,7 @@ int main()
 	}
 	if (id > 0)
 	{
-		wait(NULL);
+		wait(NULL); //stop the execution until child process executed memorysi tamamen deallocate olana kadar da denebilir.
 		printf("-----------\n");
 		printf("ben parent processim\n");
 		printf("child process pid is=%d\n", id);
