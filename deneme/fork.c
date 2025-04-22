@@ -3,6 +3,45 @@
 
 
 /*
+
+
+----------------------
+
+Harika bir soru! Cevap kesinlikle evet, fork() sistem çağrısı çağrılmadan önceki program durumu da child (çocuk) programa dahil edilir (kopyalanır).
+
+Düşünmeniz gereken şey şu: fork() anlık bir "fotokopi çekme" işlemi gibidir.
+
+Fotokopi Anı: fork() sistem çağrısı yapıldığı anda, işletim sistemi çekirdeği, çağrıyı yapan ebeveyn (parent) sürecin o anki tam durumunu (process image) alır.
+
+Kopyalananlar: Bu "tam durum" şunları içerir:
+
+Bellek Alanı:
+
+Kod Segmenti: Programın makine kodları. (Bu genellikle paylaşılır, kopyalanmaz çünkü değişmez).
+
+Veri Segmenti: Global ve statik değişkenlerin o anki değerleri. fork()'tan önce bu değişkenlere atanmış olan tüm değerler çocukta da aynıdır.
+
+Yığın (Stack) Segmenti: O ana kadar çağrılmış fonksiyonlar, bu fonksiyonların yerel (local) değişkenleri ve bu değişkenlerin fork() anındaki değerleri. fork()'tan önce tanımlanmış ve değer atanmış tüm yerel değişkenler çocukta da aynı değere sahiptir.
+
+Heap Segmenti: malloc() gibi fonksiyonlarla dinamik olarak ayrılmış bellek bölgeleri ve içerikleri.
+
+CPU Kayıtçıları (Registers): Program sayacı (PC - hangi komutun çalıştırılacağını gösterir), yığın işaretçisi (SP), çerçeve işaretçisi (FP/BP) ve diğer genel amaçlı kayıtçıların fork() anındaki değerleri. Çocuk işlem, ebeveynin kaldığı yerden devam edebilmek için aynı program sayacı değeriyle başlar (tek istisna dönüş değeri için kullanılan eax gibi kayıtçılardır).
+
+Açık Dosya Tanımlayıcıları (File Descriptors): Ebeveynin fork() anında açık tuttuğu tüm dosyalar, soketler vb. çocukta da açıktır ve aynı dosya tablosu girişini (file table entry) işaret ederler. Bu, dosya konum işaretçisinin (file offset) paylaşılması anlamına gelir.
+
+Diğer Özellikler: Çalışma dizini, sinyal ayarları, ortam değişkenleri vb.
+
+Sonuç: Çocuk süreç, fork() çağrısının yapıldığı andaki ebeveyn sürecin tam bir kopyası olarak hayata başlar. Sanki zaman o noktada ikiye ayrılmış gibidir. Her iki süreç de fork() çağrısının hemen sonrasındaki komuttan çalışmaya devam eder, ancak artık bağımsızdırlar (CoW ile bellek ayrımı gerektiğinde yapılır).
+
+Yani, fork()'tan önceki kodun çalışmasıyla oluşan tüm durum (değişken değerleri, açık dosyalar, programın konumu vb.) çocuğa miras kalır. Çocuk sadece fork()'tan sonraki kodla başlamaz, fork() anındaki tüm geçmişiyle birlikte başlar. Tek fark, fork()'un kendisinin dönüş değeridir.
+
+
+----------------------
+
+
+
+
+
 Peki, değerli öğrencilerim, fork() konusunu en baştan alıp, tüm detaylarıyla ve kafanızda hiçbir soru işareti kalmayacak şekilde toparlayalım. Bu, işletim sistemlerinin en zarif ve güçlü mekanizmalarından biridir.
 
 (Tahtaya "fork(): Süreç Doğumu" yazar)
