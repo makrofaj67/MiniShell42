@@ -8,7 +8,7 @@ int main()
 
 	int id = fork();
 
-	if (id == 0)
+ 	if (id == 0)
 	{
 		printf("++++++++++++++++++++++\n");
 		printf("ben child processim\n");
@@ -16,6 +16,7 @@ int main()
 		printf("parent process pid is=%d\n", getppid());
 		printf("++++++++++++++++++++++\n");
 	}
+
 	if (id > 0)
 	{
 		wait(NULL); //stop the execution until child process executed memorysi tamamen deallocate olana kadar da denebilir.
@@ -25,4 +26,6 @@ int main()
 		printf("parent process pid is=%d\n", getpid());
 		printf("-----------\n");
 	}
+
+	
 }

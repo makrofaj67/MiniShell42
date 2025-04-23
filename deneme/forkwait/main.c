@@ -18,7 +18,6 @@ char *find_command_in_path(const char *cmd) {
     if (!path_copy) return NULL;
 
     char *dir = strtok(path_copy, ":"); // ':' ayıracı ile dizinleri böl
-
     while (dir != NULL) {
         // Dizin yolu + '/' + komut adı için yeterli yer ayır
         size_t fullpath_len = strlen(dir) + 1 + strlen(cmd) + 1;
@@ -30,8 +29,6 @@ char *find_command_in_path(const char *cmd) {
 
         sprintf(full_path, "%s/%s", dir, cmd);
 
-        // Dosyanın var olup olmadığını ve çalıştırılabilir olup olmadığını kontrol et
-        // access(full_path, X_OK) fonksiyonu daha iyidir
         if (access(full_path, X_OK) == 0) { // Çalıştırılabilirse
             free(path_copy);
             return full_path; // Tam yolu döndür
@@ -95,6 +92,7 @@ int main(int argc, char **argv, char **env) // env argümanı artık kullanılı
         // command_path: find_command_in_path ile bulunan tam yol
         // argv + 1: Yeni programa geçirilecek argüman dizisi (argv[1] sonrası)
         // env: main fonksiyonuna gelen ortam değişkenleri dizisi
+		printf("ben child processim\n");
         execve(command_path, argv + 1, env);
 
         // Eğer buraya geldiysek, execve başarısız olmuştur.
@@ -107,7 +105,6 @@ int main(int argc, char **argv, char **env) // env argümanı artık kullanılı
         // waitpid(pid, &status, 0); -> Belirli bir pid'deki çocuğu bekle
         // wait(NULL); -> Herhangi bir çocuğu bekle (NULL durumuyla ilgilenme)
         wait(NULL); // Basitlik için herhangi bir çocuğu bekle
-
         // command_path sadece çocuk execve içinde kullanıldığı için parent'ta free edilebilir
         // veya execve sonrası free edilmesi (child'da) önemlidir.
         // Parent'ta free etmek için buraya taşıyabilirsiniz: free(command_path);
@@ -116,6 +113,7 @@ int main(int argc, char **argv, char **env) // env argümanı artık kullanılı
 
         // Ebeveyn normal akışına devam eder
     }
+
 
     // find_command_in_path tarafından ayrılan bellek parent'ta da serbest bırakılmalı
     // (execve başarılı olursa child bu satıra gelmez, başarısız olursa child kendi free eder)
