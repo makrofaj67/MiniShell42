@@ -1,0 +1,7 @@
+open, close, read, write,
+
+malloc, free, perror, strerror, 
+
+access, dup, dup2,
+execve, exit, fork, pipe,
+unlink, wait, waitpid
