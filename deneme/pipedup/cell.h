@@ -1,12 +1,8 @@
-#ifndef CELL_H
-# define CELL_H
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include <syscall.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
-
-
-# endif
-
