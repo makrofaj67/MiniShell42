@@ -5,9 +5,9 @@
 
 int main(int argc, char **argv, char **env)
 {
-	int fdtodup;
+	int fdtout;
 
-	fdtodup = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	fdtout = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	//creat kullanıldığında izin flaglarının yazılması gereklidir.
 	
 	char *args[] = {
@@ -16,7 +16,9 @@ int main(int argc, char **argv, char **env)
 		NULL
 	};
 
-	dup2(fdtodup, STDOUT_FILENO);
+	close(STDOUT_FILENO);
+	//stdout_fileno indexindeki pointer artık herhangi bir fteyi işaret etmez
+	dup2(fdtout, STDOUT_FILENO);
 	/*
 	 * 
 	 * burada stdout_fileno bir file descriptordur, integerdir. file descriptor

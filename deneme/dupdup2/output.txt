@@ -1,8 +1,9 @@
-total 24
-drwxr-xr-x 1 luka luka    80 Nis 25 13:57 .
+total 28
+drwxr-xr-x 1 luka luka   110 Nis 25 14:35 .
 drwxr-xr-x 1 luka luka   112 Nis 25 13:34 ..
--rwxr-xr-x 1 luka luka 15584 Nis 25 13:57 a.out
+-rwxr-xr-x 1 luka luka 15632 Nis 25 14:35 a.out
 -rw-r--r-- 1 luka luka   163 Nis 25 13:34 cell.h
--rwxrwxrwx 1 luka luka     0 Nis 25 13:57 output.txt
--rw-r--r-- 1 luka luka   397 Nis 25 13:57 redirection.c
+-rwxrwxrwx 1 luka luka     0 Nis 25 14:35 output.txt
+-rw-r--r-- 1 luka luka    20 Nis 25 14:28 redirection<.c
+-rw-r--r-- 1 luka luka  1166 Nis 25 14:34 redirection>.c
 -rw-r--r-- 1 luka luka     0 Nis 25 13:51 saasda
