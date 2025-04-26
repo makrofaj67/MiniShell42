@@ -23,3 +23,16 @@
 	 - unset
 	 - env
 	 
+------------------------------------
+
+**Öğrenilmesi Gerekenler**
+
+ - [ ] Readlines ile kullanıcıdan sürekli komut beklemek.
+ - [ ] add_history / burada bence builtin history komutu implemente edersek daha hoş olur,
+add_history ayrıca linkedlistli bir history olmalı, history komutu girince geçmişteki komutları görebilmeliyiz.
+ - [ ] sigaction ile sinyal handllelama
+ - [ ] tek tırnak, çift tırnak, gibi şeylerin bash üstünde tam olarak nasıl çalıştığını anlamak lazım
+ - [ ] redirection ve pipe olayını tam olarak kavramak --> pipexi bitirince anlamış oluyoruz.
+ - [ ] redirection ve pipeların birden çok olduğu komutlar için lexer/parser gerekiyor. yani her komutu bu şekilde
+düşünüp bir işleyici oluşturmak gerekiyor.
+ - [ ] $ işareti ve env handllelama
