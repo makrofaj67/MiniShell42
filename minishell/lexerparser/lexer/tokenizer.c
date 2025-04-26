@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 18:23:31 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 18:44:41 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/26 19:02:31 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	skip_spaces(char *command, int *i)
 		(*i)++;
 }
 
-static int	handle_quotes(char *command, int start, int *has_error)
+static int	handle_quotes(char *command, int start)
 {
 	int	i;
 	int	quote;
@@ -35,18 +35,21 @@ static int	handle_quotes(char *command, int start, int *has_error)
 		i++;
 	if (command[i] == quote)
 		return (i + 1);
-	*has_error = 1;
 	return (-1);
 }
 
-static int	get_token_end(char *command, int start, int *has_error)
+static int	get_token_end(char *command, int start)
 {
 	int	i;
 
-	*has_error = 0;
 	i = start;
 	if (command[i] == '"' || command[i] == '\'')
-		return (handle_quotes(command, i, has_error));
+	{
+		i = handle_quotes(command, i);
+		if (i == -1)
+			return (-1);
+		return (i);
+	}
 	if (is_special_char(command[i]))
 	{
 		if ((command[i] == '<' && command[i + 1] == '<') || 
@@ -87,26 +90,7 @@ static char	*get_token_value(char *cmd, int start, int end)
 	return (extract_token(cmd, start, end));
 }
 
-static int	count_tokens(char *command)
-{
-	int	i;
-	int	count;
-	int	has_error;
 
-	i = 0;
-	count = 0;
-	while (command[i])
-	{
-		skip_spaces(command, &i);
-		if (!command[i])
-			break ;
-		count++;
-		i = get_token_end(command, i, &has_error);
-		if (has_error)
-			return (-1);
-	}
-	return (count);
-}
 
 char	**init_tokens_array(int size)
 {
@@ -117,21 +101,6 @@ char	**init_tokens_array(int size)
 		return (NULL);
 	tokens[size] = NULL;
 	return (tokens);
-}
-
-void	free_tokens_array(char **tokens)
-{
-	int	i;
-
-	if (!tokens)
-		return ;
-	i = 0;
-	while (tokens[i])
-	{
-		free(tokens[i]);
-		i++;
-	}
-	free(tokens);
 }
 
 t_token_type	determine_token_type(char *token)
@@ -161,68 +130,6 @@ t_token_node	*token_to_node(char *token)
 	return (create_token_node(type, value));
 }
 
-
-static int	setup_tokens(char *command, int *error, char ***tokens)
-{
-	int	token_count;
-
-	*error = 0;
-	token_count = count_tokens(command);
-	if (token_count == -1)
-	{
-		*error = 1;
-		return (-1);
-	}
-	*tokens = init_tokens_array(token_count);
-	if (!(*tokens))
-		return (-1);
-	return (token_count);
-}
-
-static int	process_token(char *command, int *pos, char **tokens, int i)
-{
-	int	start;
-	int	end;
-	int	has_error;
-
-	skip_spaces(command, pos);
-	start = *pos;
-	end = get_token_end(command, start, &has_error);
-	if (has_error)
-		return (-1);
-	tokens[i] = get_token_value(command, start, end);
-	if (!tokens[i])
-		return (-1);
-	*pos = end;
-	return (0);
-}
-
-t_token_list	*create_error_token_list(void)
-{
-	t_token_list	*list;
-	t_token_node	*node;
-	char			*value;
-
-	list = init_token_list();
-	if (!list)
-		return (NULL);
-	value = strdup("Unclosed quote error");
-	if (!value)
-	{
-		free_token_list(list);
-		return (NULL);
-	}
-	node = create_token_node(ERROR, value);
-	if (!node)
-	{
-		free(value);
-		free_token_list(list);
-		return (NULL);
-	}
-	add_token(node, list);
-	return (list);
-}
-
 t_token_list	*create_token_list_from_array(char **tokens)
 {
 	t_token_list	*list;
@@ -247,7 +154,79 @@ t_token_list	*create_token_list_from_array(char **tokens)
 	return (list);
 }
 
-char	**extract_tokens(char *command, int *error)
+void	free_tokens_array(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i])
+	{
+		free(tokens[i]);
+		i++;
+	}
+	free(tokens);
+}
+
+static int	process_token(char *command, int *pos, char **tokens, int i)
+{
+	int	start;
+	int	end;
+
+	skip_spaces(command, pos);
+	start = *pos;
+	end = get_token_end(command, start);
+	if (end == -1)
+		return (-1);
+	tokens[i] = get_token_value(command, start, end);
+	if (!tokens[i])
+		return (-1);
+	*pos = end;
+	return (0);
+}
+
+
+
+
+
+
+static int	count_tokens(char *command)
+{
+	int	i;
+	int	count;
+	int	end;
+
+	i = 0;
+	count = 0;
+	while (command[i])
+	{
+		skip_spaces(command, &i);
+		if (!command[i])
+			break ;
+		end = get_token_end(command, i);
+		if (end == -1)
+			return (-1);
+		count++;
+		i = end;
+	}
+	return (count);
+}
+
+static int	setup_tokens(char *command, char ***tokens)
+{
+	int	token_count;
+
+	token_count = count_tokens(command);
+	if (token_count == -1)
+		return (-1);
+	*tokens = init_tokens_array(token_count);
+	if (!(*tokens))
+		return (-1);
+	return (token_count);
+}
+
+char	**extract_tokens(char *command)
 {
 	char	**tokens;
 	int		token_count;
@@ -255,7 +234,7 @@ char	**extract_tokens(char *command, int *error)
 	int		pos;
 	int		result;
 
-	token_count = setup_tokens(command, error, &tokens);
+	token_count = setup_tokens(command, &tokens);
 	if (token_count == -1 || !tokens)
 		return (NULL);
 	i = 0;
@@ -265,7 +244,6 @@ char	**extract_tokens(char *command, int *error)
 		result = process_token(command, &pos, tokens, i);
 		if (result == -1)
 		{
-			*error = 1;
 			free_tokens_array(tokens);
 			return (NULL);
 		}

@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 18:05:06 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 18:39:34 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/26 18:58:09 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,12 @@ void	print_tokens(t_token_list *list)
 		current = current->next;
 	}
 }
-
 t_token_list	*tokenize_command(char *command)
 {
 	char			**tokens;
 	t_token_list	*token_list;
-	int				error;
 
-	tokens = extract_tokens(command, &error);
-	if (error)
-		return (create_error_token_list());
+	tokens = extract_tokens(command);
 	if (!tokens)
 		return (NULL);
 	token_list = create_token_list_from_array(tokens);

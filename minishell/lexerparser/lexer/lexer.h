@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 18:23:28 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 18:39:30 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/26 18:58:58 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,7 @@ void			add_token(t_token_node *node, t_token_list *list);
 const char		*token_type_to_string(t_token_type type);
 
 /* tokenizer.c */
-char			**extract_tokens(char *command, int *error);
-t_token_list	*create_error_token_list(void);
+char			**extract_tokens(char *command);
 t_token_list	*create_token_list_from_array(char **tokens);
 void			free_tokens_array(char **tokens);
 t_token_node	*token_to_node(char *token);
