@@ -42,7 +42,10 @@ int	get_token_end(char *command, int start)
 	{
 		i = handle_quotes(command, i);
 		if (i == -1)
+		{
+			printf("quote error");
 			return (-1);
+		}
 		return (i);
 	}
 	if (command[i] == '|' || command[i] == '<' || command[i] == '>')

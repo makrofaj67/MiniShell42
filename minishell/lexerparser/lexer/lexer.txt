@@ -1,0 +1,543 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   extract_tokens.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/26 18:23:31 by rakman            #+#    #+#             */
+/*   Updated: 2023/04/26 19:16:25 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "lexer.h"
+
+/*
+ * Command string'indeki token sayısını sayar
+ */
+static int	count_tokens(char *command)
+{
+	int	i;
+	int	count;
+	int	end;
+
+	i = 0;
+	count = 0;
+	while (command[i])
+	{
+		while (command[i] && isspace(command[i]))
+			i++;
+		if (!command[i])
+			break ;
+		end = get_token_end(command, i);
+		if (end == -1)
+			return (-1);
+		count++;
+		i = end;
+	}
+	return (count);
+}
+
+/*
+ * Token array'i için bellek ayırır
+ */
+char	**init_tokens_array(int size)
+{
+	char	**tokens;
+
+	tokens = (char **)malloc(sizeof(char *) * (size + 1));
+	if (!tokens)
+		return (NULL);
+	tokens[size] = NULL;
+	return (tokens);
+}
+
+/*
+ * Tek bir token'ı işler ve array'e ekler
+ */
+static int	process_token(char *command, int *pos, char **tokens, int i)
+{
+	int	start;
+	int	end;
+
+	while (command[*pos] && isspace(command[*pos]))
+		(*pos)++;
+	start = *pos;
+	end = get_token_end(command, start);
+	if (end == -1)
+		return (-1);
+	tokens[i] = get_token_value(command, start, end);
+	if (!tokens[i])
+		return (-1);
+	*pos = end;
+	return (0);
+}
+
+/*
+ * Token array'ini temizler
+ */
+void	free_tokens_array(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i])
+	{
+		free(tokens[i]);
+		i++;
+	}
+	free(tokens);
+}
+
+/*
+ * Command string'inden token array'i çıkarır
+ */
+char	**extract_tokens(char *command)
+{
+	char	**tokens;
+	int		token_count;
+	int		i;
+	int		pos;
+	int		result;
+
+	token_count = count_tokens(command);
+	if (token_count == -1)
+		return (NULL);
+	tokens = init_tokens_array(token_count);
+	if (!tokens)
+		return (NULL);
+	i = 0;
+	pos = 0;
+	while (i < token_count)
+	{
+		result = process_token(command, &pos, tokens, i);
+		if (result == -1)
+		{
+			free_tokens_array(tokens);
+			return (NULL);
+		}
+		i++;
+	}
+	return (tokens);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/26 18:23:28 by rakman            #+#    #+#             */
+/*   Updated: 2023/04/26 19:17:20 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef LEXER_H
+# define LEXER_H
+# include <signal.h>
+# include <string.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <ctype.h>
+
+typedef enum e_token_type
+{
+	WORD,
+	PIPE,
+	REDIR_IN,
+	REDIR_OUT,
+	APPEND,
+	HEREDOC,
+	ERROR
+}	t_token_type;
+
+typedef struct s_token_node
+{
+	t_token_type		type;
+	char				*value;
+	struct s_token_node	*next;
+	struct s_token_node	*prev;
+}	t_token_node;
+
+typedef struct s_token_list
+{
+	int				size;
+	t_token_node	*head;
+	t_token_node	*tail;
+}	t_token_list;
+
+/* linked_list_operations.c */
+t_token_list	*init_token_list(void);
+t_token_node	*create_token_node(t_token_type type, char *value);
+void			add_token(t_token_node *node, t_token_list *list);
+void			free_token_list(t_token_list *list);
+const char		*token_type_to_string(t_token_type type);
+
+/* token_conversions.c */
+t_token_type	determine_token_type(char *token);
+t_token_node	*token_to_node(char *token);
+t_token_list	*create_token_list_from_array(char **tokens);
+
+/* extract_tokens.c */
+char			**extract_tokens(char *command);
+char			**init_tokens_array(int size);
+void			free_tokens_array(char **tokens);
+
+/* token_utils.c */
+int				handle_quotes(char *command, int start);
+int				get_token_end(char *command, int start);
+char			*extract_token(char *command, int start, int end);
+char			*get_token_value(char *cmd, int start, int end);
+
+/* main.c */
+void			print_tokens(t_token_list *list);
+t_token_list	*tokenize_command(char *command);
+
+#endif
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   linked_list_operations.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/26 18:23:28 by rakman            #+#    #+#             */
+/*   Updated: 2023/04/26 18:39:31 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "lexer.h"
+
+/*
+ * Token listesi başlatma
+ */
+t_token_list	*init_token_list(void)
+{
+	t_token_list	*list;
+
+	list = (t_token_list *)malloc(sizeof(t_token_list));
+	if (list == NULL)
+		return (NULL);
+	list->head = NULL;
+	list->tail = NULL;
+	list->size = 0;
+	return (list);
+}
+
+/*
+ * Yeni token düğümü oluşturma
+ */
+t_token_node	*create_token_node(t_token_type type, char *value)
+{
+	t_token_node	*node;
+
+	node = (t_token_node *)malloc(sizeof(t_token_node));
+	if (node == NULL)
+		return (NULL);
+	node->type = type;
+	node->value = value;
+	node->prev = NULL;
+	node->next = NULL;
+	return (node);
+}
+
+/*
+ * Token düğümünü listeye ekleme
+ */
+void	add_token(t_token_node *node, t_token_list *list)
+{
+	if (list->size == 0)
+	{
+		list->head = node;
+		list->tail = node;
+	}
+	else
+	{
+		list->tail->next = node;
+		node->prev = list->tail;
+		list->tail = node;
+	}
+	list->size++;
+}
+
+/*
+ * Token listesini temizleme
+ */
+void	free_token_list(t_token_list *list)
+{
+	t_token_node	*current;
+	t_token_node	*next;
+
+	if (!list)
+		return ;
+	current = list->head;
+	while (current)
+	{
+		next = current->next;
+		free(current->value);
+		free(current);
+		current = next;
+	}
+	free(list);
+}
+
+/*
+ * Token tipini string'e dönüştürme
+ */
+const char	*token_type_to_string(t_token_type type)
+{
+	if (type == WORD)
+		return ("WORD");
+	else if (type == PIPE)
+		return ("PIPE");
+	else if (type == REDIR_IN)
+		return ("REDIR_IN");
+	else if (type == REDIR_OUT)
+		return ("REDIR_OUT");
+	else if (type == APPEND)
+		return ("APPEND");
+	else if (type == HEREDOC)
+		return ("HEREDOC");
+	else if (type == ERROR)
+		return ("ERROR");
+	else
+		return ("UNKNOWN");
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/26 18:05:06 by rakman            #+#    #+#             */
+/*   Updated: 2023/04/26 19:07:07 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "lexer.h"
+
+/*
+ * Token listesini yazdırır
+ */
+void	print_tokens(t_token_list *list)
+{
+	t_token_node	*current;
+
+	printf("Tokens:\n");
+	current = list->head;
+	while (current)
+	{
+		printf("Type: %s, Value: '%s'\n",
+			   token_type_to_string(current->type), current->value);
+		current = current->next;
+	}
+}
+
+/*
+ * Command string'ini tokenize eder
+ */
+t_token_list	*tokenize_command(char *command)
+{
+	char			**tokens;
+	t_token_list	*token_list;
+
+	tokens = extract_tokens(command);
+	if (!tokens)
+		return (NULL);
+	token_list = create_token_list_from_array(tokens);
+	free_tokens_array(tokens);
+	return (token_list);
+}
+
+/*
+ * Ana program
+ */
+int	main(int argc, char **argv)
+{
+	t_token_list	*tokens;
+
+	if (argc != 2)
+	{
+		printf("Usage: %s \"command\"\n", argv[0]);
+		return (1);
+	}
+	tokens = tokenize_command(argv[1]);
+	if (!tokens)
+	{
+		printf("Error: Failed to tokenize command\n");
+		return (1);
+	}
+	print_tokens(tokens);
+	free_token_list(tokens);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token_conversions.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/26 18:23:31 by rakman            #+#    #+#             */
+/*   Updated: 2023/04/26 19:09:11 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "lexer.h"
+
+/*
+ * Token string'inin tipini belirler
+ */
+t_token_type	determine_token_type(char *token)
+{
+	if (strcmp(token, "|") == 0)
+		return (PIPE);
+	else if (strcmp(token, "<") == 0)
+		return (REDIR_IN);
+	else if (strcmp(token, ">") == 0)
+		return (REDIR_OUT);
+	else if (strcmp(token, "<<") == 0)
+		return (HEREDOC);
+	else if (strcmp(token, ">>") == 0)
+		return (APPEND);
+	return (WORD);
+}
+
+/*
+ * Token string'inden node oluşturur
+ */
+t_token_node	*token_to_node(char *token)
+{
+	t_token_type	type;
+	char			*value;
+
+	type = determine_token_type(token);
+	value = strdup(token);
+	if (!value)
+		return (NULL);
+	return (create_token_node(type, value));
+}
+
+/*
+ * Token string array'inden linked list oluşturur
+ */
+t_token_list	*create_token_list_from_array(char **tokens)
+{
+	t_token_list	*list;
+	t_token_node	*node;
+	int				i;
+
+	list = init_token_list();
+	if (!list)
+		return (NULL);
+	i = 0;
+	while (tokens[i])
+	{
+		node = token_to_node(tokens[i]);
+		if (!node)
+		{
+			free_token_list(list);
+			return (NULL);
+		}
+		add_token(node, list);
+		i++;
+	}
+	return (list);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/26 18:23:31 by rakman            #+#    #+#             */
+/*   Updated: 2023/04/26 19:16:01 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "lexer.h"
+
+/*
+ * Tırnak işaretlerini işler
+ */
+int	handle_quotes(char *command, int start)
+{
+	int	i;
+	int	quote;
+
+	i = start;
+	quote = command[i];
+	i++;
+	while (command[i] && command[i] != quote)
+		i++;
+	if (command[i] == quote)
+		return (i + 1);
+	return (-1);
+}
+
+/*
+ * Token'ın bitiş pozisyonunu bulur
+ */
+int	get_token_end(char *command, int start)
+{
+	int	i;
+
+	i = start;
+	if (command[i] == '"' || command[i] == '\'')
+	{
+		i = handle_quotes(command, i);
+		if (i == -1)
+			return (-1);
+		return (i);
+	}
+	if (command[i] == '|' || command[i] == '<' || command[i] == '>')
+	{
+		if ((command[i] == '<' && command[i + 1] == '<')
+			|| (command[i] == '>' && command[i + 1] == '>'))
+			return (i + 2);
+		return (i + 1);
+	}
+	while (command[i] && !isspace(command[i])
+		&& !(command[i] == '|' || command[i] == '<' || command[i] == '>'))
+		i++;
+	return (i);
+}
+
+/*
+ * Command string'inden token değerini çıkarır
+ */
+char	*extract_token(char *command, int start, int end)
+{
+	char	*token;
+	int		i;
+
+	token = (char *)malloc(sizeof(char) * (end - start + 1));
+	if (!token)
+		return (NULL);
+	i = 0;
+	while (start + i < end)
+	{
+		token[i] = command[start + i];
+		i++;
+	}
+	token[i] = '\0';
+	return (token);
+}
+
+/*
+ * Token değerini alır (tırnak işaretlerini kaldırır)
+ */
+char	*get_token_value(char *cmd, int start, int end)
+{
+	int	is_quoted;
+
+	is_quoted = (cmd[start] == '"' || cmd[start] == '\'');
+	if (is_quoted)
+		return (extract_token(cmd, start + 1, end - 1));
+	return (extract_token(cmd, start, end));
+}

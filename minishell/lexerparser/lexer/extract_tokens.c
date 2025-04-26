@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "lexer.h"
+#include <stdio.h>
 
 /*
  * Command string'indeki token sayısını sayar
@@ -107,7 +108,10 @@ char	**extract_tokens(char *command)
 		return (NULL);
 	tokens = init_tokens_array(token_count);
 	if (!tokens)
+	{
+		printf("ERROR");
 		return (NULL);
+	}
 	i = 0;
 	pos = 0;
 	while (i < token_count)

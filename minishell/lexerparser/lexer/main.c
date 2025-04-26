@@ -39,7 +39,10 @@ t_token_list	*tokenize_command(char *command)
 
 	tokens = extract_tokens(command);
 	if (!tokens)
+	{
+		printf("Error: Failed to tokenize command\n");
 		return (NULL);
+	}
 	token_list = create_token_list_from_array(tokens);
 	free_tokens_array(tokens);
 	return (token_list);
