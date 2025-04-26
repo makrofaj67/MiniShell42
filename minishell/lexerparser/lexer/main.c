@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/26 18:05:06 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 18:58:09 by rakman           ###   ########.fr       */
+/*   Created: 2023/04/26 18:05:06 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/26 19:27:02 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	print_tokens(t_token_list *list)
 		current = current->next;
 	}
 }
+
 t_token_list	*tokenize_command(char *command)
 {
 	char			**tokens;

@@ -5,14 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/26 18:23:28 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 18:58:58 by rakman           ###   ########.fr       */
+/*   Created: 2023/04/26 18:23:28 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/26 19:25:15 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
 # define LEXER_H
-
 # include <signal.h>
 # include <string.h>
 # include <unistd.h>
@@ -52,11 +51,21 @@ t_token_node	*create_token_node(t_token_type type, char *value);
 void			add_token(t_token_node *node, t_token_list *list);
 const char		*token_type_to_string(t_token_type type);
 
-/* tokenizer.c */
-char			**extract_tokens(char *command);
-t_token_list	*create_token_list_from_array(char **tokens);
-void			free_tokens_array(char **tokens);
+/* token_processing.c */
+t_token_type	determine_token_type(char *token);
 t_token_node	*token_to_node(char *token);
+t_token_list	*create_token_list_from_array(char **tokens);
+
+/* extract_tokens.c */
+char			**extract_tokens(char *command);
+char			**init_tokens_array(int size);
+void			free_tokens_array(char **tokens);
+
+/* token_utils.c */
+int				handle_quotes(char *command, int start);
+int				get_token_end(char *command, int start);
+char			*extract_token(char *command, int start, int end);
+char			*get_token_value(char *cmd, int start, int end);
 
 /* main.c */
 void			free_token_list(t_token_list *list);

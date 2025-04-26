@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/26 18:23:28 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 18:39:31 by rakman           ###   ########.fr       */
+/*   Created: 2023/04/26 18:23:28 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/26 19:25:35 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
-/**
+/*
  * Token listesi başlatma
  */
 t_token_list	*init_token_list(void)
@@ -28,7 +28,7 @@ t_token_list	*init_token_list(void)
 	return (list);
 }
 
-/**
+/*
  * Yeni token düğümü oluşturma
  */
 t_token_node	*create_token_node(t_token_type type, char *value)
@@ -45,7 +45,7 @@ t_token_node	*create_token_node(t_token_type type, char *value)
 	return (node);
 }
 
-/**
+/*
  * Token düğümünü listeye ekleme
  */
 void	add_token(t_token_node *node, t_token_list *list)
@@ -64,7 +64,7 @@ void	add_token(t_token_node *node, t_token_list *list)
 	list->size++;
 }
 
-/**
+/*
  * Token tipini string'e dönüştürme
  */
 const char	*token_type_to_string(t_token_type type)
