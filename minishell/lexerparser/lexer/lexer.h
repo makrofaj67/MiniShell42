@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 18:23:28 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 19:25:15 by rakman           ###   ########.fr       */
+/*   Updated: 2023/04/26 19:17:20 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ typedef struct s_token_list
 t_token_list	*init_token_list(void);
 t_token_node	*create_token_node(t_token_type type, char *value);
 void			add_token(t_token_node *node, t_token_list *list);
+void			free_token_list(t_token_list *list);
 const char		*token_type_to_string(t_token_type type);
 
-/* token_processing.c */
+/* token_conversions.c */
 t_token_type	determine_token_type(char *token);
 t_token_node	*token_to_node(char *token);
 t_token_list	*create_token_list_from_array(char **tokens);
@@ -68,7 +69,6 @@ char			*extract_token(char *command, int start, int end);
 char			*get_token_value(char *cmd, int start, int end);
 
 /* main.c */
-void			free_token_list(t_token_list *list);
 void			print_tokens(t_token_list *list);
 t_token_list	*tokenize_command(char *command);
 

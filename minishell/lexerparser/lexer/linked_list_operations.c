@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 18:23:28 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 19:25:35 by rakman           ###   ########.fr       */
+/*   Updated: 2023/04/26 18:39:31 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,27 @@ void	add_token(t_token_node *node, t_token_list *list)
 		list->tail = node;
 	}
 	list->size++;
+}
+
+/*
+ * Token listesini temizleme
+ */
+void	free_token_list(t_token_list *list)
+{
+	t_token_node	*current;
+	t_token_node	*next;
+
+	if (!list)
+		return ;
+	current = list->head;
+	while (current)
+	{
+		next = current->next;
+		free(current->value);
+		free(current);
+		current = next;
+	}
+	free(list);
 }
 
 /*

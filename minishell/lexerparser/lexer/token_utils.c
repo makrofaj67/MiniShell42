@@ -6,12 +6,15 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 18:23:31 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 19:26:46 by rakman           ###   ########.fr       */
+/*   Updated: 2023/04/26 19:16:01 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
+/*
+ * Tırnak işaretlerini işler
+ */
 int	handle_quotes(char *command, int start)
 {
 	int	i;
@@ -27,6 +30,9 @@ int	handle_quotes(char *command, int start)
 	return (-1);
 }
 
+/*
+ * Token'ın bitiş pozisyonunu bulur
+ */
 int	get_token_end(char *command, int start)
 {
 	int	i;
@@ -52,6 +58,9 @@ int	get_token_end(char *command, int start)
 	return (i);
 }
 
+/*
+ * Command string'inden token değerini çıkarır
+ */
 char	*extract_token(char *command, int start, int end)
 {
 	char	*token;
@@ -70,6 +79,9 @@ char	*extract_token(char *command, int start, int end)
 	return (token);
 }
 
+/*
+ * Token değerini alır (tırnak işaretlerini kaldırır)
+ */
 char	*get_token_value(char *cmd, int start, int end)
 {
 	int	is_quoted;

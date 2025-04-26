@@ -6,12 +6,15 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 18:23:31 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 19:27:16 by rakman           ###   ########.fr       */
+/*   Updated: 2023/04/26 19:16:25 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
+/*
+ * Command string'indeki token sayısını sayar
+ */
 static int	count_tokens(char *command)
 {
 	int	i;
@@ -35,6 +38,9 @@ static int	count_tokens(char *command)
 	return (count);
 }
 
+/*
+ * Token array'i için bellek ayırır
+ */
 char	**init_tokens_array(int size)
 {
 	char	**tokens;
@@ -46,6 +52,9 @@ char	**init_tokens_array(int size)
 	return (tokens);
 }
 
+/*
+ * Tek bir token'ı işler ve array'e ekler
+ */
 static int	process_token(char *command, int *pos, char **tokens, int i)
 {
 	int	start;
@@ -64,6 +73,9 @@ static int	process_token(char *command, int *pos, char **tokens, int i)
 	return (0);
 }
 
+/*
+ * Token array'ini temizler
+ */
 void	free_tokens_array(char **tokens)
 {
 	int	i;
@@ -79,6 +91,9 @@ void	free_tokens_array(char **tokens)
 	free(tokens);
 }
 
+/*
+ * Command string'inden token array'i çıkarır
+ */
 char	**extract_tokens(char *command)
 {
 	char	**tokens;

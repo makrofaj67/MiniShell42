@@ -1,17 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_processing.c                                 :+:      :+:    :+:   */
+/*   token_conversions.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 18:23:31 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 19:26:10 by rakman           ###   ########.fr       */
+/*   Updated: 2023/04/26 19:09:11 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
+/*
+ * Token string'inin tipini belirler
+ */
 t_token_type	determine_token_type(char *token)
 {
 	if (strcmp(token, "|") == 0)
@@ -27,6 +30,9 @@ t_token_type	determine_token_type(char *token)
 	return (WORD);
 }
 
+/*
+ * Token string'inden node oluşturur
+ */
 t_token_node	*token_to_node(char *token)
 {
 	t_token_type	type;
@@ -39,6 +45,9 @@ t_token_node	*token_to_node(char *token)
 	return (create_token_node(type, value));
 }
 
+/*
+ * Token string array'inden linked list oluşturur
+ */
 t_token_list	*create_token_list_from_array(char **tokens)
 {
 	t_token_list	*list;
