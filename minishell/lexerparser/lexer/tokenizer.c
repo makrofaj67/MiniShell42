@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 18:23:31 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/26 18:42:26 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/26 18:44:41 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,33 +197,6 @@ static int	process_token(char *command, int *pos, char **tokens, int i)
 	return (0);
 }
 
-char	**extract_tokens(char *command, int *error)
-{
-	char	**tokens;
-	int		token_count;
-	int		i;
-	int		pos;
-	int		result;
-
-	token_count = setup_tokens(command, error, &tokens);
-	if (token_count == -1 || !tokens)
-		return (NULL);
-	i = 0;
-	pos = 0;
-	while (i < token_count)
-	{
-		result = process_token(command, &pos, tokens, i);
-		if (result == -1)
-		{
-			*error = 1;
-			free_tokens_array(tokens);
-			return (NULL);
-		}
-		i++;
-	}
-	return (tokens);
-}
-
 t_token_list	*create_error_token_list(void)
 {
 	t_token_list	*list;
@@ -272,4 +245,31 @@ t_token_list	*create_token_list_from_array(char **tokens)
 		i++;
 	}
 	return (list);
+}
+
+char	**extract_tokens(char *command, int *error)
+{
+	char	**tokens;
+	int		token_count;
+	int		i;
+	int		pos;
+	int		result;
+
+	token_count = setup_tokens(command, error, &tokens);
+	if (token_count == -1 || !tokens)
+		return (NULL);
+	i = 0;
+	pos = 0;
+	while (i < token_count)
+	{
+		result = process_token(command, &pos, tokens, i);
+		if (result == -1)
+		{
+			*error = 1;
+			free_tokens_array(tokens);
+			return (NULL);
+		}
+		i++;
+	}
+	return (tokens);
 }
