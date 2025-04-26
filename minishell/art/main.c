@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 00:32:21 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/27 00:55:53 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/27 01:08:18 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,27 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <string.h>
 
-extern char **environ;
-
-void	clear_screen(char **envp)
+void	clear_screen(void)
 {
 	int		id;
-	char	*args[3];
+	char	*term_value;
+	char	term_env[100];
+	char	*args[2];
+	char	*envp[2];
 
+	term_value = getenv("TERM");
+	if (term_value)
+	{
+		strcpy(term_env, "TERM=");
+		strcat(term_env, term_value);
+		envp[0] = term_env;
+	}
+	else
+		envp[0] = "TERM=xterm";
+	envp[1] = NULL;
 	args[0] = "/usr/bin/clear";
-	args[1] = NULL;
-	args[2] = NULL;
 	id = fork();
 	if (id == 0)
 		execve(args[0], args, envp);
@@ -35,9 +45,9 @@ void	clear_screen(char **envp)
 
 void	handle_signal(int sig)
 {
-    (void)sig;
-    clear_screen(environ);
-    exit(0);
+	(void)sig;
+	clear_screen();
+	exit(0);
 }
 
 void	print_prompt(void)
@@ -64,7 +74,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)envp;
 	status = 1;
 	signal(SIGINT, handle_signal);
-	clear_screen(envp);
+	clear_screen();
 	while (status == 1)
 	{
 		print_prompt();
