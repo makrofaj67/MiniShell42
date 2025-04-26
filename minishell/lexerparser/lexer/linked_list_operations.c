@@ -1,31 +1,20 @@
-#include "cell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   linked_list_operations.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/26 18:23:28 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/26 18:39:31 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-typedef enum e_token_type
-{
-	WORD,
-	PIPE,
-	REDIR_IN,
-	REDIR_OUT,
-	APPEND,
-	HEREDOC,
-	ERROR
-}	t_token_type;
+#include "lexer.h"
 
-typedef struct s_token_node
-{
-	t_token_type		type;
-	char				*value;
-	struct s_token_node	*next;
-	struct s_token_node	*prev;
-}	t_token_node;
-
-typedef struct s_token_list
-{
-	int				size;
-	t_token_node	*head;
-	t_token_node	*tail;
-}	t_token_list;
-
+/**
+ * Token listesi başlatma
+ */
 t_token_list	*init_token_list(void)
 {
 	t_token_list	*list;
@@ -39,6 +28,9 @@ t_token_list	*init_token_list(void)
 	return (list);
 }
 
+/**
+ * Yeni token düğümü oluşturma
+ */
 t_token_node	*create_token_node(t_token_type type, char *value)
 {
 	t_token_node	*node;
@@ -53,6 +45,9 @@ t_token_node	*create_token_node(t_token_type type, char *value)
 	return (node);
 }
 
+/**
+ * Token düğümünü listeye ekleme
+ */
 void	add_token(t_token_node *node, t_token_list *list)
 {
 	if (list->size == 0)
@@ -69,4 +64,25 @@ void	add_token(t_token_node *node, t_token_list *list)
 	list->size++;
 }
 
-
+/**
+ * Token tipini string'e dönüştürme
+ */
+const char	*token_type_to_string(t_token_type type)
+{
+	if (type == WORD)
+		return ("WORD");
+	else if (type == PIPE)
+		return ("PIPE");
+	else if (type == REDIR_IN)
+		return ("REDIR_IN");
+	else if (type == REDIR_OUT)
+		return ("REDIR_OUT");
+	else if (type == APPEND)
+		return ("APPEND");
+	else if (type == HEREDOC)
+		return ("HEREDOC");
+	else if (type == ERROR)
+		return ("ERROR");
+	else
+		return ("UNKNOWN");
+}

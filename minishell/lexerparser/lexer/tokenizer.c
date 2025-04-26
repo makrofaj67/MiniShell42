@@ -1,6 +1,65 @@
-#include "linked_list_operations.c"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/26 18:23:31 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/26 18:42:26 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-char	*extract_token(char *command, int start, int end)
+#include "lexer.h"
+
+static int	is_special_char(char c)
+{
+	return (c == '|' || c == '<' || c == '>');
+}
+
+static void	skip_spaces(char *command, int *i)
+{
+	while (command[*i] && isspace(command[*i]))
+		(*i)++;
+}
+
+static int	handle_quotes(char *command, int start, int *has_error)
+{
+	int	i;
+	int	quote;
+
+	i = start;
+	quote = command[i];
+	i++;
+	while (command[i] && command[i] != quote)
+		i++;
+	if (command[i] == quote)
+		return (i + 1);
+	*has_error = 1;
+	return (-1);
+}
+
+static int	get_token_end(char *command, int start, int *has_error)
+{
+	int	i;
+
+	*has_error = 0;
+	i = start;
+	if (command[i] == '"' || command[i] == '\'')
+		return (handle_quotes(command, i, has_error));
+	if (is_special_char(command[i]))
+	{
+		if ((command[i] == '<' && command[i + 1] == '<') || 
+			(command[i] == '>' && command[i + 1] == '>'))
+			return (i + 2);
+		return (i + 1);
+	}
+	while (command[i] && !isspace(command[i]) && !is_special_char(command[i]))
+		i++;
+	return (i);
+}
+
+static char	*extract_token(char *command, int start, int end)
 {
 	char	*token;
 	int		i;
@@ -18,262 +77,199 @@ char	*extract_token(char *command, int start, int end)
 	return (token);
 }
 
-/**
- * Tüm token listesini temizleme
- */
-void	free_token_list(t_token_list *list)
+static char	*get_token_value(char *cmd, int start, int end)
 {
-	t_token_node	*current;
-	t_token_node	*next;
+	int	is_quoted;
 
-	if (!list)
-		return ;
-	current = list->head;
-	while (current)
-	{
-		next = current->next;
-		free(current->value);
-		free(current);
-		current = next;
-	}
-	free(list);
-}
-
-/**
- * Özel karakter kontrolü
- */
-int	is_special_char(char c)
-{
-	return (c == '|' || c == '<' || c == '>');
-}
-
-/**
- * Boşlukları atlama
- */
-void	skip_spaces(char *command, int *i)
-{
-	while (command[*i] && isspace(command[*i]))
-		(*i)++;
-}
-
-/**
- * Tırnak işleme
- */
-int	handle_quotes(char *command, int start, int *has_error)
-{
-	int	i;
-	int	quote;
-
-	i = start;
-	quote = command[i];
-	i++;
-	while (command[i] && command[i] != quote)
-		i++;
-	if (command[i] == quote)
-		return (i + 1);
-	*has_error = 1;
-	return (-1);
-}
-
-/**
- * Token tipini belirleme
- */
-t_token_type	determine_token_type(char *command, int start, int end)
-{
-	if (command[start] == '"' || command[start] == '\'')
-		return (WORD);
-	if (end - start == 1)
-	{
-		if (command[start] == '|')
-			return (PIPE);
-		else if (command[start] == '<')
-			return (REDIR_IN);
-		else if (command[start] == '>')
-			return (REDIR_OUT);
-	}
-	else if (end - start == 2)
-	{
-		if (command[start] == '<' && command[start + 1] == '<')
-			return (HEREDOC);
-		else if (command[start] == '>' && command[start + 1] == '>')
-			return (APPEND);
-	}
-	return (WORD);
-}
-
-/**
- * Token bitiş indeksini bulma
- */
-int	get_token_end(char *command, int start, int *has_error)
-{
-	int	i;
-
-	*has_error = 0;
-	i = start;
-	if (command[i] == '"' || command[i] == '\'')
-		return (handle_quotes(command, i, has_error));
-	if (is_special_char(command[i]))
-	{
-		if ((command[i] == '<' && command[i + 1] == '<') ||
-			(command[i] == '>' && command[i + 1] == '>'))
-			return (i + 2);
-		return (i + 1);
-	}
-	while (command[i] && !isspace(command[i]) && !is_special_char(command[i]))
-		i++;
-	return (i);
-}
-
-/**
- * Token değerini oluşturma
- */
-char	*get_token_value(char *cmd, int start, int end, int is_quoted)
-{
+	is_quoted = (cmd[start] == '"' || cmd[start] == '\'');
 	if (is_quoted)
 		return (extract_token(cmd, start + 1, end - 1));
 	return (extract_token(cmd, start, end));
 }
 
-/**
- * Hata mesajı oluşturma
- */
-char	*create_error_message(char *error_msg, char *error_token)
+static int	count_tokens(char *command)
 {
-	char	*value;
-	char	*full_msg;
-	int		len;
+	int	i;
+	int	count;
+	int	has_error;
 
-	if (!error_token)
-		return (strdup(error_msg));
-	len = strlen(error_msg) + strlen(error_token) + 3;
-	full_msg = malloc(len);
-	if (!full_msg)
-		return (NULL);
-	snprintf(full_msg, len, "%s: %s", error_msg, error_token);
-	value = full_msg;
-	return (value);
-}
-
-/**
- * Hata token'ı oluşturma
- */
-int	add_error_token(t_token_list *list, char *error_msg, char *error_token)
-{
-	char			*value;
-	t_token_node	*node;
-
-	value = create_error_message(error_msg, error_token);
-	if (!value)
-		return (0);
-	node = create_token_node(ERROR, value);
-	if (!node)
+	i = 0;
+	count = 0;
+	while (command[i])
 	{
-		free(value);
-		return (0);
+		skip_spaces(command, &i);
+		if (!command[i])
+			break ;
+		count++;
+		i = get_token_end(command, i, &has_error);
+		if (has_error)
+			return (-1);
 	}
-	add_token(node, list);
-	return (1);
+	return (count);
 }
 
-/**
- * Token oluşturma ve ekleme
- */
-int	add_token_to_list(char *cmd, int start, int end, t_token_list *list)
+char	**init_tokens_array(int size)
+{
+	char	**tokens;
+
+	tokens = (char **)malloc(sizeof(char *) * (size + 1));
+	if (!tokens)
+		return (NULL);
+	tokens[size] = NULL;
+	return (tokens);
+}
+
+void	free_tokens_array(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i])
+	{
+		free(tokens[i]);
+		i++;
+	}
+	free(tokens);
+}
+
+t_token_type	determine_token_type(char *token)
+{
+	if (strcmp(token, "|") == 0)
+		return (PIPE);
+	else if (strcmp(token, "<") == 0)
+		return (REDIR_IN);
+	else if (strcmp(token, ">") == 0)
+		return (REDIR_OUT);
+	else if (strcmp(token, "<<") == 0)
+		return (HEREDOC);
+	else if (strcmp(token, ">>") == 0)
+		return (APPEND);
+	return (WORD);
+}
+
+t_token_node	*token_to_node(char *token)
 {
 	t_token_type	type;
 	char			*value;
-	t_token_node	*node;
-	int				is_quoted;
 
-	is_quoted = (cmd[start] == '"' || cmd[start] == '\'');
-	type = determine_token_type(cmd, start, end);
-	value = get_token_value(cmd, start, end, is_quoted);
+	type = determine_token_type(token);
+	value = strdup(token);
 	if (!value)
-		return (0);
-	node = create_token_node(type, value);
-	if (!node)
-	{
-		free(value);
-		return (0);
-	}
-	add_token(node, list);
-	return (1);
+		return (NULL);
+	return (create_token_node(type, value));
 }
 
-/**
- * Bir token işleme
- */
-int	process_token(char *cmd, int *i, t_token_list *list)
+
+static int	setup_tokens(char *command, int *error, char ***tokens)
+{
+	int	token_count;
+
+	*error = 0;
+	token_count = count_tokens(command);
+	if (token_count == -1)
+	{
+		*error = 1;
+		return (-1);
+	}
+	*tokens = init_tokens_array(token_count);
+	if (!(*tokens))
+		return (-1);
+	return (token_count);
+}
+
+static int	process_token(char *command, int *pos, char **tokens, int i)
 {
 	int	start;
 	int	end;
 	int	has_error;
 
-	skip_spaces(cmd, i);
-	if (!cmd[*i])
-		return (1);
-	start = *i;
-	end = get_token_end(cmd, start, &has_error);
-	if (has_error || end == -1)
-	{
-		add_error_token(list, "Unclosed quote error", 
-			extract_token(cmd, start, start + 10));
-		return (0);
-	}
-	if (!add_token_to_list(cmd, start, end, list))
-	{
-		free_token_list(list);
+	skip_spaces(command, pos);
+	start = *pos;
+	end = get_token_end(command, start, &has_error);
+	if (has_error)
 		return (-1);
-	}
-	*i = end;
-	return (1);
+	tokens[i] = get_token_value(command, start, end);
+	if (!tokens[i])
+		return (-1);
+	*pos = end;
+	return (0);
 }
 
-/**
- * Command string'inden token listesi oluşturma
- */
-t_token_list	*tokenize_command(char *command)
+char	**extract_tokens(char *command, int *error)
+{
+	char	**tokens;
+	int		token_count;
+	int		i;
+	int		pos;
+	int		result;
+
+	token_count = setup_tokens(command, error, &tokens);
+	if (token_count == -1 || !tokens)
+		return (NULL);
+	i = 0;
+	pos = 0;
+	while (i < token_count)
+	{
+		result = process_token(command, &pos, tokens, i);
+		if (result == -1)
+		{
+			*error = 1;
+			free_tokens_array(tokens);
+			return (NULL);
+		}
+		i++;
+	}
+	return (tokens);
+}
+
+t_token_list	*create_error_token_list(void)
 {
 	t_token_list	*list;
+	t_token_node	*node;
+	char			*value;
+
+	list = init_token_list();
+	if (!list)
+		return (NULL);
+	value = strdup("Unclosed quote error");
+	if (!value)
+	{
+		free_token_list(list);
+		return (NULL);
+	}
+	node = create_token_node(ERROR, value);
+	if (!node)
+	{
+		free(value);
+		free_token_list(list);
+		return (NULL);
+	}
+	add_token(node, list);
+	return (list);
+}
+
+t_token_list	*create_token_list_from_array(char **tokens)
+{
+	t_token_list	*list;
+	t_token_node	*node;
 	int				i;
-	int				result;
 
 	list = init_token_list();
 	if (!list)
 		return (NULL);
 	i = 0;
-	while (command[i])
+	while (tokens[i])
 	{
-		result = process_token(command, &i, list);
-		if (result == 0)
-			return (list);
-		if (result == -1)
+		node = token_to_node(tokens[i]);
+		if (!node)
+		{
+			free_token_list(list);
 			return (NULL);
+		}
+		add_token(node, list);
+		i++;
 	}
 	return (list);
 }
-
-/**
- * Token tipini string'e dönüştürme
- */
-const char	*token_type_to_string(t_token_type type)
-{
-	if (type == WORD)
-		return ("WORD");
-	else if (type == PIPE)
-		return ("PIPE");
-	else if (type == REDIR_IN)
-		return ("REDIR_IN");
-	else if (type == REDIR_OUT)
-		return ("REDIR_OUT");
-	else if (type == APPEND)
-		return ("APPEND");
-	else if (type == HEREDOC)
-		return ("HEREDOC");
-	else if (type == ERROR)
-		return ("ERROR");
-	else
-		return ("UNKNOWN");
-}
-
-
