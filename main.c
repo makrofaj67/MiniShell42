@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 00:32:21 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/27 14:44:57 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/27 14:48:11 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,11 @@ int	main(int argc, char **argv, char **envp)
 		print_prompt();
 		command = readline("\033[38;5;208m╰─λ \033[0m");
 		if (command == NULL) //ctrl D
+		{
+			clear_screen();
 			exit(EXIT_SUCCESS);
+		}
+		
 		while (has_unclosed_quote(command) || has_unclosed_parenthesis(command))
 		{
 			line = readline("\033[38;5;208m> \033[0m");
