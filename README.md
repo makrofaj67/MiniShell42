@@ -45,6 +45,7 @@ düşünüp bir işleyici oluşturmak gerekiyor.
  - [ ] Lexer
  - [ ] Parser
  - [ ] Executer
+ - [ ] Change functions with libft
  - [ ] Edge Cases
  - [ ] Error Check
  - [ ] Leak Check
