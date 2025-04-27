@@ -46,6 +46,7 @@ düşünüp bir işleyici oluşturmak gerekiyor.
  - [ ] Parser
  - [ ] Executer
  - [ ] Edge Cases
+ - [ ] Error Check
  - [ ] Leak Check
  - [ ] Norm Check
  - [ ] Last Control
