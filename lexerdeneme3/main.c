@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 
     if (argc != 2)
     {
-        fprintf(stderr, "Usage: %s \"command line\"\n", argv[0]);
+        fprintf(stderr, "Usage: %s \"command line\"\n, need exactly 1 argument", argv[0]);
         return (1);
     }
     if (has_unclosed_quote(argv[1]))
