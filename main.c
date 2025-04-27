@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 00:32:21 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/27 01:10:18 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/27 14:44:57 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,12 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <string.h>
+#include "lexer.h"
+#include <ctype.h>
 
 void	clear_screen(void)
 {
@@ -55,10 +58,40 @@ void	print_prompt(void)
 		"\033[38;5;208mMiniHeLL |\n");
 }
 
+int is_all_whitespace(const char *str)
+{
+    while (*str)
+    {
+        if (!isspace((unsigned char)*str))
+            return 0;
+        str++;
+    }
+    return 1;
+}
+
+int has_unclosed_parenthesis(const char *str)
+{
+    int balance = 0;
+
+    while (*str)
+    {
+        if (*str == '(')
+            balance++;
+        else if (*str == ')')
+            balance--;
+        if (balance < 0)
+            return 1;
+        str++;
+    }
+    return balance != 0;
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char				*command;
+	char				*line;
 	struct sigaction	sa;
+	t_token				*tokens;
 
 	sa.sa_handler = handle_signal;
 	sigemptyset(&sa.sa_mask);
@@ -72,23 +105,36 @@ int	main(int argc, char **argv, char **envp)
 		command = readline("\033[38;5;208m╰─λ \033[0m");
 		if (command == NULL) //ctrl D
 			exit(EXIT_SUCCESS);
+		while (has_unclosed_quote(command) || has_unclosed_parenthesis(command))
+		{
+			line = readline("\033[38;5;208m> \033[0m");
+			if (line == NULL)
+			{
+				free(command);
+				exit(EXIT_SUCCESS);
+			}
+			char *temp = command;
+			command = malloc(strlen(temp) + strlen(line) + 2);
+			sprintf(command, "%s\n%s", temp, line);
+			free(temp);
+			free(line);
+		}
 		if (strlen(command) == 0 || is_all_whitespace(command))
 		{
 			free(command);
 			continue;
 		}
 		add_history(command);
-		if (command_lexer(command) != 0)
+		tokens = lexer(command);
+		if (!tokens)
 		{
+			fprintf(stderr, "Lexer error: failed to tokenize command\n");
 			free(command);
 			continue;
 		}
-		if (command_parser(command) != 0)
-		{
-			free(command);
-			continue;
-		}
-		execute_command(command);
+		printf("Tokens:\n");
+		print_tokens(tokens);
+		free_tokens(tokens);
 		free(command);
 	}
 	return (0);
