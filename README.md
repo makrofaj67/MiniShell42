@@ -36,3 +36,17 @@ add_history ayrıca linkedlistli bir history olmalı, history komutu girince ge�
  - [ ] redirection ve pipeların birden çok olduğu komutlar için lexer/parser gerekiyor. yani her komutu bu şekilde
 düşünüp bir işleyici oluşturmak gerekiyor.
  - [ ] $ işareti ve env handllelama
+
+ -------------------------------
+
+**Roadmap**
+
+ - [x] Prompt
+ - [ ] Lexer
+ - [ ] Parser
+ - [ ] Executer
+ - [ ] Edge Cases
+ - [ ] Leak Check
+ - [ ] Norm Check
+ - [ ] Last Control
+ - [ ] Push and Eval
