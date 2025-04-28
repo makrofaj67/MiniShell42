@@ -6,11 +6,11 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 18:14:55 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/27 18:40:08 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/28 19:34:28 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/minishell.h"
+#include "../../inc/__minishell.h"
 
 void	clear_screen(void)
 {
@@ -77,20 +77,4 @@ void	handle_signals(void)
 	sa.sa_handler = signal_handler_func;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGINT, &sa, NULL);
-}
-
-int	is_all_white_space(char *command)
-{
-	int	i;
-
-	i = 0;
-	while (command[i])
-	{
-		if (!(command[i] == '\t' || command[i] == '\b'
-				|| command[i] == '\v' || command[i] == '\n'
-				|| command[i] == ' '))
-			return (0);
-		i++;
-	}
-	return (1);
 }

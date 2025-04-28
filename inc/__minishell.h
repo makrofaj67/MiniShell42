@@ -6,12 +6,12 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 11:51:30 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/28 14:17:35 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/28 19:21:04 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef __MINISHELL_H
+# define __MINISHELL_H
 
 # include <string.h>
 # include <stdio.h>
@@ -22,8 +22,10 @@
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <ctype.h>
-# include "utils.h"
-# include "get_command.h"
 # include <stdbool.h>
+
+# include "a_command.h"
+# include "b_lexer.h"
+# include "e_utils.h"
 
 #endif

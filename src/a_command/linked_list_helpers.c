@@ -10,13 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/minishell.h"
+#include "../../inc/__minishell.h"
+#include <stdlib.h>
 
 t_line_list	*init_line(void)
 {
 	t_line_list	*line;
 
 	line = (t_line_list *)malloc(sizeof(t_line_list));
+	if (line == NULL)
+		return (NULL);
 	line->head = NULL;
 	line->tail = NULL;
 	return (line);
@@ -27,6 +30,8 @@ t_line_node	*create_node(char *line)
 	t_line_node	*node;
 
 	node = (t_line_node *)malloc(sizeof(t_line_node));
+	if (node == NULL)
+		return (NULL);
 	node->next = NULL;
 	node->prev = NULL;
 	node->line = line;

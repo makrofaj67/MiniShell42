@@ -6,14 +6,14 @@
 #    By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/28 11:53:52 by rakman            #+#    #+#              #
-#    Updated: 2025/04/28 16:04:59 by rakman           ###   ########.fr        #
+#    Updated: 2025/04/28 22:04:52 by rakman           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 BUILD_DIR = ./build
-SRCS = ./src/main.c ./src/lexer/lexer.c ./src/utils/main_utils.c ./src/get_command/commander.c ./src/get_command/linked_list_helpers.c \
-	   ./src/get_command/quote_backslash_helpers.c
+SRCS = ./src/main.c ./src/b_lexer/lexer.c ./src/e_utils/main_utils.c ./src/a_command/commander.c ./src/a_command/linked_list_helpers.c \
+	   ./src/a_command/quote_backslash_helpers.c ./src/a_command/commander_helpers.c
 
 all: $(NAME)
 

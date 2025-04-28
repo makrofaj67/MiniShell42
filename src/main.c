@@ -3,26 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 11:51:51 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/28 16:24:57 by rakman           ###   ########.fr       */
+/*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/28 19:30:39 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
-#include <readline/history.h>
+#include "../inc/__minishell.h"
 
 void	shell_loop(char *prompt)
 {
 	char	*command_line;
+	char	**lexed_list;
 
 	while (true)
 	{
 		command_line = get_command(prompt);
-		if (!command_line)
+		if (command_line == NULL)
 			continue ;
-		printf("Command: %s\n", command_line);
+		lexed_list = get_lexed(command_line);
 		free(command_line);
 	}
 }
