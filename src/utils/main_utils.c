@@ -78,3 +78,19 @@ void	handle_signals(void)
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGINT, &sa, NULL);
 }
+
+int	is_all_white_space(char *command)
+{
+	int	i;
+
+	i = 0;
+	while (command[i])
+	{
+		if (!(command[i] == '\t' || command[i] == '\b'
+				|| command[i] == '\v' || command[i] == '\n'
+				|| command[i] == ' '))
+			return (0);
+		i++;
+	}
+	return (1);
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/27 16:29:40 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/27 18:15:42 by rakman           ###   ########.fr       */
+/*   Created: 2025/04/28 11:51:30 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/28 14:17:35 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,7 @@
 # include <sys/wait.h>
 # include <ctype.h>
 # include "utils.h"
+# include "get_command.h"
+# include <stdbool.h>
 
 #endif

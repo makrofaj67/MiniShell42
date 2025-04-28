@@ -42,6 +42,7 @@ düşünüp bir işleyici oluşturmak gerekiyor.
 **Roadmap**
 
  - [x] Prompt
+ - [x] Get Command
  - [ ] Lexer
  - [ ] Parser
  - [ ] Executer
