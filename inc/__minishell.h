@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   __minishell.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 11:51:30 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/28 19:21:04 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/29 11:06:49 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 
 # include "a_command.h"
 # include "b_lexer.h"
+# include "c_parser.h"
+# include "d_executer.h"
 # include "e_utils.h"
 
 #endif

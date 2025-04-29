@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 18:14:55 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/28 19:34:28 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/29 12:33:50 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,12 @@ void	clear_screen(void)
 	int		id;
 
 	value = getenv("TERM");
+	if (!value)
+		return ;
 	term_var = (char *)malloc(sizeof(char)
 			* (strlen("TERM=") + strlen(value) + 1));
+	if (!term_var)
+		return ;
 	strcpy(term_var, "TERM=");
 	strcat(term_var, value);
 	envp[0] = term_var;
@@ -32,7 +36,7 @@ void	clear_screen(void)
 	id = fork();
 	if (id == 0)
 		execve(args[0], args, envp);
-	else
+	else if (id > 0)
 		waitpid(id, NULL, 0);
 	free(term_var);
 }

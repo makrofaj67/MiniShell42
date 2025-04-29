@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/28 19:30:39 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/29 12:15:21 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	shell_loop(char *prompt)
 {
-	char	*command_line;
-	char	**lexed_list;
+	char		*command_line;
+	t_t_list	*lexed_list;
 
 	while (true)
 	{
@@ -23,6 +23,8 @@ void	shell_loop(char *prompt)
 		if (command_line == NULL)
 			continue ;
 		lexed_list = get_lexed(command_line);
+		print_token_list(lexed_list);
+		free_token_list(lexed_list);
 		free(command_line);
 	}
 }
