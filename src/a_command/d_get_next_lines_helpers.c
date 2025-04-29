@@ -6,12 +6,11 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 15:59:47 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/29 12:38:02 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/29 13:12:07 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
-#include <stdio.h>
 
 int	trim_backslash_if_needed(char *str)
 {
