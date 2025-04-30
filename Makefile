@@ -6,7 +6,7 @@
 #    By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/28 11:53:52 by rakman            #+#    #+#              #
-#    Updated: 2025/04/30 21:05:45 by rakman           ###   ########.fr        #
+#    Updated: 2025/04/30 23:29:19 by rakman           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,9 @@ SRC_DIRS = main.c \
 		c_parser/*.c \
 		d_executor/*.c \
 		e_utils/*.c
+		
+# Libft kaynak dosyaları
+LIBFT_SRCS = lib/libft/ft_strjoin.c
 
 # Tüm kaynak dosya yollarını oluştur
 SRCS = $(addprefix src/, $(SRC_DIRS))
@@ -36,8 +39,8 @@ run: all
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-$(NAME): $(SRCS) | $(BUILD_DIR)
-	cc $(CFLAGS) $(SRCS) $(LDFLAGS) -o $(NAME)
+$(NAME): $(SRCS) $(LIBFT_SRCS) | $(BUILD_DIR)
+	cc $(CFLAGS) $(SRCS) $(LIBFT_SRCS) $(LDFLAGS) -o $(NAME)
 
 clean:
 	rm -f $(NAME)

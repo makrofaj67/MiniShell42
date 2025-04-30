@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   __minishell.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 11:51:30 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/29 11:06:49 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/30 23:32:05 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@
 # include "c_parser.h"
 # include "d_executer.h"
 # include "e_utils.h"
+# include "f_libft.h"
 
 #endif

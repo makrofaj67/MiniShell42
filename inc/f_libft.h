@@ -1,30 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   e_utils.h                                          :+:      :+:    :+:   */
+/*   f_libft.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/27 16:42:46 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 23:26:36 by rakman           ###   ########.fr       */
+/*   Created: 2025/04/30 23:27:41 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/30 23:32:04 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef E_UTILS_H
-# define E_UTILS_H
+#ifndef F_LIBFT_H
+# define F_LIBFT_H
 
-/* Main Utils */
-void	clear_screen(void);
-void	print_prompt(void);
-void	handle_signals(void);
-void	signal_handler_func(int signum);
-char	*prepare_prompt(char **envp);
+# include <stdlib.h>
+# include <string.h>
 
-/* From libft */
+/* String functions */
 char	*ft_strjoin(char const *s1, char const *s2);
 
-/* Error handling functions */
-void *perror_rnull(char *message);
-void *perror_exit(char *message);
-
 #endif
+

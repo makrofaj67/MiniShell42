@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   list_ops.c                                         :+:      :+:    :+:   */
+/*   g_list_ops.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:56:34 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 20:56:52 by rakman           ###   ########.fr       */
+/*   Updated: 2025/04/30 23:39:57 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
-
+/*
 t_line_list	*init_line(void)
 {
 	t_line_list	*line;
@@ -90,3 +90,4 @@ void	free_line_list(t_line_list *list)
 	}
 	free(list);
 }
+*/
