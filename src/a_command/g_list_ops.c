@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   linked_list_helpers.c                              :+:      :+:    :+:   */
+/*   list_ops.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 12:02:16 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/29 11:15:44 by rakman           ###   ########.fr       */
+/*   Created: 2025/04/30 20:56:34 by rakman            #+#    #+#             */
+/*   Updated: 2025/04/30 20:56:52 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
-#include <stdlib.h>
 
 t_line_list	*init_line(void)
 {
