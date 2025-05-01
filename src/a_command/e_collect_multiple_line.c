@@ -6,12 +6,18 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:54:26 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 23:26:29 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/01 10:35:47 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
+/*
+** Helper function for collect_multiple_line
+** Combines the existing command with a new line of input
+** Works like a string builder, appending 
+** the next line with a newline separator
+*/
 static char	*combine_cmd_with_newline(char *command, char *next_line)
 {
 	char	*temp;
@@ -34,6 +40,11 @@ static char	*combine_cmd_with_newline(char *command, char *next_line)
 	return (result);
 }
 
+/*
+** Helper function for collect_multiple_line
+** Checks if command has balanced parentheses, quotes, and no backslash
+** Serves as a validator for continuing to read more lines
+*/
 static int	is_command_complete(char *command)
 {
 	int	paren_status;
@@ -50,7 +61,11 @@ static int	is_command_complete(char *command)
 	return (0);
 }
 
-/* Collect multiple lines of input until the command is complete */
+/*
+** Called from get_command when a command is incomplete
+** Collects additional lines until command is syntactically complete
+** Like a puzzle completer, gathering pieces until complete
+*/
 char	*collect_multiple_line(char *command, char *prompt)
 {
 	char	*next_line;

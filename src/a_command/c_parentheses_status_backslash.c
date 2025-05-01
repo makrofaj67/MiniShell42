@@ -6,12 +6,18 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:41:53 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 21:11:22 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/01 11:10:19 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
+/*
+** Used in get_command to detect line continuation with backslash
+** Checks if a command ends with a backslash character
+** Like a prompt sentinel, signals that the command 
+** continues on the next line
+*/
 int	has_end_backslash(char *command)
 {
 	int	len;
@@ -27,7 +33,10 @@ int	has_end_backslash(char *command)
 }
 
 /*
-** Check for unmatched closing parenthesis
+** Used in parentheses_status to handle closing parentheses
+** Detects unmatched closing parentheses and updates the stack
+** Works like a bouncer who checks if someone is 
+** leaving a party they never entered
 */
 static int	check_closing_paren(t_pstack *stack, char c)
 {
@@ -39,8 +48,9 @@ static int	check_closing_paren(t_pstack *stack, char c)
 }
 
 /*
-** Count unclosed parentheses in a command
-** Returns: >0 (unclosed), 0 (balanced), <0 (unexpected closing)
+** Used in get_command to validate parentheses balance
+** Counts unclosed parentheses using a stack data structure
+** Works like a bookkeeper tracking opening and closing symbols
 */
 int	parentheses_status(char *command)
 {

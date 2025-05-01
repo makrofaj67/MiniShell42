@@ -13,8 +13,10 @@
 #include "../../inc/__minishell.h"
 
 /*
-** Check if command has any unclosed quotes
-** Properly handles nested quotes of different types
+** Used in get_command to detect incomplete commands with quote issues
+** Checks if a command has any unclosed quotes (both single and double)
+** Works like a doorman keeping track of who entered and left the building,
+** ensuring that every opening quote has a matching closing quote
 */
 int	has_unclosed_quotes(char *command)
 {

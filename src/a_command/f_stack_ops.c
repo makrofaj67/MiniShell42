@@ -12,6 +12,11 @@
 
 #include "../../inc/__minishell.h"
 
+/*
+** Used in parentheses_status to track opening and closing parentheses
+** Initializes a new empty stack for tracking parentheses
+** Works like creating a clean ledger before tracking transactions
+*/
 t_pstack	*init_pstack(void)
 {
 	t_pstack	*stack;
@@ -25,6 +30,11 @@ t_pstack	*init_pstack(void)
 	return (stack);
 }
 
+/*
+** Used by push_pstack when adding a new element
+** Creates a new empty node to represent an opening parenthesis
+** Like creating a blank record card ready to be filed
+*/
 t_pnode	*init_psnode(void)
 {
 	t_pnode	*node;
@@ -37,6 +47,11 @@ t_pnode	*init_psnode(void)
 	return (node);
 }
 
+/*
+** Called in parentheses_status when an opening parenthesis is found
+** Adds a new node to the stack to track an opening parenthesis
+** Works like adding a marker on a trail, to be picked up on the way back
+*/
 void	push_pstack(t_pstack *stack)
 {
 	t_pnode	*node;
@@ -56,7 +71,11 @@ void	push_pstack(t_pstack *stack)
 	stack->size++;
 }
 
-/* Pop a node from the stack */
+/*
+** Called in check_closing_paren when a closing parenthesis is found
+** Removes a node from the stack to balance with a closing parenthesis
+** Like crossing off an item from a checklist when it's completed
+*/
 void	pop_pstack(t_pstack *stack)
 {
 	t_pnode	*temp;
@@ -78,7 +97,11 @@ void	pop_pstack(t_pstack *stack)
 	stack->size--;
 }
 
-/* Free the entire stack and its nodes */
+/*
+** Called in parentheses_status when finished analyzing parentheses
+** Cleans up all allocated memory for the parentheses tracking stack
+** Works like a janitor cleaning up after a job is completed
+*/
 void	free_pstack(t_pstack *stack)
 {
 	t_pnode	*current;

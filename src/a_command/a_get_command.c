@@ -12,6 +12,12 @@
 
 #include "../../inc/__minishell.h"
 
+/*
+** Main input function called from shell_loop in main.c
+** Reads a command from the user and ensures it is valid
+** Acts like a gatekeeper, only allowing complete commands to pass
+** through to the lexer and parser
+*/
 char	*get_command(char *prompt)
 {
 	char	*command;
