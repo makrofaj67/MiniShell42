@@ -17,7 +17,6 @@ volatile sig_atomic_t g_signal_received = 0;
 
 void	sig_int_handler(int sig)
 {
-	printf("\nsignal yakalandı\n");
 	g_signal_received = sig;
     write(STDOUT_FILENO, "\n", 1);
     rl_on_new_line();

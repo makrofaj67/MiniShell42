@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
-#include <stdlib.h>
 
 /*
 ** Main input function called from shell_loop in main.c
@@ -19,20 +18,28 @@
 ** Acts like a gatekeeper, only allowing complete commands to pass
 ** through to the lexer and parser
 */
-char	*get_command(char *prompt)
+char	*get_command(char *prompt, int *should_exit)
 {
 	char	*command;
 
 	command = readline(prompt);
 	if (command == NULL)
-		perror_exit("exit");
+	{
+		*should_exit = 1;
+		printf("exit");
+		return (NULL);
+	}
 	else if (is_command_blank(command))
 		return (NULL);
-	else if (parentheses_status(command) < 0)
-		perror_rnull("You can not close what you have not open");
-/*	if (parentheses_status(command) > 0
-		|| has_unclosed_quotes(command) || has_end_backslash(command))
-		command = collect_multiple_line(command, prompt,
-				has_end_backslash(command)); */
+	else if (parentheses_status(command) != 0)
+	{
+		printf("Parenthesis Error\n");
+		return (NULL);
+	}
+	else if (has_unclosed_quotes(command))
+	{
+		printf("Unclosed quotes\n");
+		return (NULL);
+	}
 	return (command);
 }

@@ -50,10 +50,10 @@ typedef struct s_pstack
 /**
 ** Main command processing functions
 */
-char	*get_command(char *prompt);
+char	*get_command(char *prompt, int *should_exit);
 int		is_command_blank(char *command);
 char	*collect_multiple_line(char *command, char *prompt, int backslash);
-
+void	setup_interactive_signals(void);
 /**
 ** Command syntax validation functions
 */

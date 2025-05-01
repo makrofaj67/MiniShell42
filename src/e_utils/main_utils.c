@@ -63,22 +63,3 @@ char	*prepare_prompt(char **envp)
 	strcat(all, "\033[38;5;208mMiniHeLL |\n\033[38;5;208m╰─λ \033[0m");
 	return (all);
 }
-
-void	signal_handler_func(int signum)
-{
-	if (signum == SIGINT)
-	{
-		clear_screen();
-		exit(1);
-	}
-}
-
-void	handle_signals(void)
-{
-	struct sigaction	sa;
-
-	sa.sa_flags = 0;
-	sa.sa_handler = signal_handler_func;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa, NULL);
-}

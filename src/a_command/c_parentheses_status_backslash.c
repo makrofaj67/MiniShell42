@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+#include <stdlib.h>
 
 /*
 ** Used in get_command to detect line continuation with backslash
@@ -61,7 +62,9 @@ int	parentheses_status(char *command)
 	i = 0;
 	stack = init_pstack();
 	if (stack == NULL)
-		perror_exit("Malloc failed");
+	{
+		exit(EXIT_SUCCESS);
+	}
 	while (command[i])
 	{
 		if (command[i] == '(')
