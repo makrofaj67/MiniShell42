@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 11:51:30 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 22:47:43 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:30:11 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@
 # include "f_libft.h"
 
 /* Global signal flag */
-extern volatile sig_atomic_t g_signal_received;
+extern volatile sig_atomic_t	g_signal_received;
 
 #endif

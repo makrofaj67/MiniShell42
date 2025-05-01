@@ -6,12 +6,13 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 14:13:44 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 20:35:16 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:34:06 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef A_COMMAND_H
 # define A_COMMAND_H
+
 /**
 ** Struct and node for parenthesis tracking
 ** Used to maintain a stack of opening parentheses for validation
@@ -32,7 +33,6 @@ typedef struct s_pstack
 /**
 ** Main command processing functions
 */
-
 char		*get_command(char *prompt, int *should_exit);
 int			is_command_blank(char *command);
 int			has_unclosed_quotes(char *command);
