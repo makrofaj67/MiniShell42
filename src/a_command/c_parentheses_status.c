@@ -1,37 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   c_parentheses_status_backslash.c                   :+:      :+:    :+:   */
+/*   c_parentheses_status.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:41:53 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 11:10:19 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/01 21:17:17 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
-#include <stdlib.h>
-
-/*
-** Used in get_command to detect line continuation with backslash
-** Checks if a command ends with a backslash character
-** Like a prompt sentinel, signals that the command 
-** continues on the next line
-*/
-int	has_end_backslash(char *command)
-{
-	int	len;
-
-	if (!command)
-		return (0);
-	len = strlen(command);
-	if (len == 0)
-		return (0);
-	if (command[len - 1] == '\\' || command[len - 1] == '|')
-		return (1);
-	return (0);
-}
 
 /*
 ** Used in parentheses_status to handle closing parentheses
@@ -53,7 +32,7 @@ static int	check_closing_paren(t_pstack *stack, char c)
 ** Counts unclosed parentheses using a stack data structure
 ** Works like a bookkeeper tracking opening and closing symbols
 */
-int	parentheses_status(char *command)
+int	parenthesis_status(char *command)
 {
 	int			i;
 	t_pstack	*stack;

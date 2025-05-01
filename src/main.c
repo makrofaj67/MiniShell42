@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/29 13:54:14 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/01 21:09:15 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ void	shell_loop(char *prompt, char **envp)
 		{
 			if (should_exit == 1)
 				exit(EXIT_SUCCESS);
-			free(command);
+			continue ;
 		}
-		printf("\n\n-->%s<--\n", command);
+		printf("-->%s<--\n", command);
 		free(command);
 	}
 }
@@ -50,5 +50,6 @@ int	main(int argc, char **argv, char **envp)
 	prompt = prepare_prompt(envp);
 	shell_loop(prompt, envp);
 	free(prompt);
+	rl_clear_history();
 	return (0);
 }

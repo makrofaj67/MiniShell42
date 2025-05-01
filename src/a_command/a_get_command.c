@@ -6,11 +6,38 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:24:07 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 20:35:16 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/01 21:10:20 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+
+/* 
+** Validate command for syntax errors
+** Returns NULL if command has errors, otherwise returns the command
+*/
+static char	*validate_command(char *command)
+{
+	if (is_command_blank(command))
+	{
+		free(command);
+		return (NULL);
+	}
+	else if (parenthesis_status(command) != 0)
+	{
+		printf("Parenthesis Error\n");
+		free(command);
+		return (NULL);
+	}
+	else if (has_unclosed_quotes(command))
+	{
+		printf("Unclosed quotes\n");
+		free(command);
+		return (NULL);
+	}
+	add_history(command);
+	return (command);
+}
 
 /*
 ** Main input function called from shell_loop in main.c
@@ -22,6 +49,11 @@ char	*get_command(char *prompt, int *should_exit)
 {
 	char	*command;
 
+	if (g_signal_received == SIGINT)
+	{
+		reset_signal_flag();
+		return (NULL);
+	}
 	command = readline(prompt);
 	if (command == NULL)
 	{
@@ -29,17 +61,5 @@ char	*get_command(char *prompt, int *should_exit)
 		printf("exit");
 		return (NULL);
 	}
-	else if (is_command_blank(command))
-		return (NULL);
-	else if (parentheses_status(command) != 0)
-	{
-		printf("Parenthesis Error\n");
-		return (NULL);
-	}
-	else if (has_unclosed_quotes(command))
-	{
-		printf("Unclosed quotes\n");
-		return (NULL);
-	}
-	return (command);
+	return (validate_command(command));
 }
