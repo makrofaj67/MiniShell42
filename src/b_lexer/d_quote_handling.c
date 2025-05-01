@@ -6,39 +6,16 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:45:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 23:32:44 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:02:02 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Process token for environment variables - Part 2
-** Handles the environment variable expansion
+** Structure to hold token processing state
+** Helps reduce function argument count
 */
-static int	process_token_part2(char *token, int *i, char *result, int *j)
-{
-	char	env_name[256];
-	char	*env_value;
-	int		k;
-
-	if (isalnum(token[*i]) || token[*i] == '_')
-	{
-		k = 0;
-		while ((isalnum(token[*i]) || token[*i] == '_') && k < 255)
-			env_name[k++] = token[(*i)++];
-		env_name[k] = '\0';
-		env_value = getenv(env_name);
-		if (env_value)
-		{
-			k = 0;
-			while (env_value[k])
-				result[(*j)++] = env_value[k++];
-		}
-		return (1);
-	}
-	return (0);
-}
 
 /*
 ** Check if a character is a quote (single or double)
@@ -69,74 +46,34 @@ int	update_quote_state(char c, char *quote_state)
 }
 
 /*
-** Process token for quotes and environment variables - Part 1
-** Handles token processing and environment variable expansion
+** Initialize token processing state
 */
-static char	*process_token_part1(char *token, int exit_status,
-								char *result, int max_len)
+t_token_state	init_token_state(char *token, int exit_status)
 {
-	int		i;
-	int		j;
-	char	quote_state;
-	char	exit_str[12];
-	int		k;
+	t_token_state	state;
 
-	i = 0;
-	j = 0;
-	quote_state = 0;
-	while (token[i] && j < max_len)
-	{
-		if (is_quote(token[i]))
-		{
-			if (quote_state == 0)
-			{
-				quote_state = token[i++];
-				continue;
-			}
-			else if (quote_state == token[i])
-			{
-				quote_state = 0;
-				i++;
-				continue;
-			}
-		}
-		if (token[i] == '$' && quote_state != '\'')
-		{
-			i++;
-			if (token[i] == '?')
-			{
-				sprintf(exit_str, "%d", exit_status);
-				k = 0;
-				while (exit_str[k] && j < max_len)
-					result[j++] = exit_str[k++];
-				i++;
-			}
-			else if (process_token_part2(token, &i, result, &j))
-				continue ;
-			else
-				result[j++] = '$';
-		}
-		else
-			result[j++] = token[i++];
-	}
-	result[j] = '\0';
-	return (result);
+	state.token = token;
+	state.max_len = strlen(token) * 2;
+	state.result = (char *)malloc(sizeof(char) * (state.max_len + 1));
+	state.i = 0;
+	state.j = 0;
+	state.exit_status = exit_status;
+	state.quote_state = 0;
+	return (state);
 }
 
 /*
-** Process token to handle quotes and expand environment variables
-** Returns a processed token string with quotes and env vars handled
+** Handle the quote character in the token
 */
-char	*process_token(char *token, int exit_status)
+void	handle_quotes(t_token_state *state)
 {
-	char	*result;
-	int		max_len;
-
-	if (!token)
-		return (NULL);
-	max_len = strlen(token) * 2;
-	result = (char *)malloc(sizeof(char) * (max_len + 1));
-	if (!result)
-		return (NULL);
-	return (process_token_part1(token, exit_status, result, max_len));
+	if (state->quote_state == 0)
+		state->quote_state = state->token[state->i++];
+	else if (state->quote_state == state->token[state->i])
+	{
+		state->quote_state = 0;
+		state->i++;
+	}
+	else
+		state->result[state->j++] = state->token[state->i++];
 }

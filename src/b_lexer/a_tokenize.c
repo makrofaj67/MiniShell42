@@ -6,11 +6,59 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:00:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 23:32:44 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 00:57:37 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+
+/*
+** Extract token from start to current position
+*/
+static char	*extract_token_part(const char *command, int start, int len)
+{
+	char	*token;
+
+	token = (char *)malloc(sizeof(char) * (len + 1));
+	if (!token)
+		return (NULL);
+	strncpy(token, &command[start], len);
+	token[len] = '\0';
+	return (token);
+}
+
+/*
+** Process operator token
+*/
+static char	*process_operator(const char *command, int *pos, int start)
+{
+	int	len;
+
+	len = get_operator_len(&command[*pos]);
+	*pos += len;
+	return (extract_token_part(command, start, len));
+}
+
+/*
+** Process word token
+*/
+static char	*process_word(const char *command, int *pos, int start)
+{
+	int		len;
+	char	quote_state;
+
+	quote_state = 0;
+	while (command[*pos])
+	{
+		update_quote_state(command[*pos], &quote_state);
+		if (!quote_state && (is_whitespace(command[*pos])
+				|| is_operator(command[*pos])))
+			break ;
+		(*pos)++;
+	}
+	len = *pos - start;
+	return (extract_token_part(command, start, len));
+}
 
 /*
 ** Extract a single token from the command string
@@ -19,39 +67,16 @@
 static char	*extract_token(const char *command, int *pos)
 {
 	int		start;
-	int		len;
-	char	quote_state;
-	char	*token;
 
 	while (command[*pos] && is_whitespace(command[*pos]))
 		(*pos)++;
 	if (!command[*pos])
 		return (NULL);
 	start = *pos;
-	quote_state = 0;
 	if (is_operator(command[*pos]))
-	{
-		len = get_operator_len(&command[*pos]);
-		*pos += len;
-	}
+		return (process_operator(command, pos, start));
 	else
-	{
-		while (command[*pos])
-		{
-			update_quote_state(command[*pos], &quote_state);
-			if (!quote_state && (is_whitespace(command[*pos]) || 
-				is_operator(command[*pos])))
-				break;
-			(*pos)++;
-		}
-		len = *pos - start;
-	}
-	token = (char *)malloc(sizeof(char) * (len + 1));
-	if (!token)
-		return (NULL);
-	strncpy(token, &command[start], len);
-	token[len] = '\0';
-	return (token);
+		return (process_word(command, pos, start));
 }
 
 /*
@@ -75,7 +100,7 @@ t_token_list	*tokenize_command(char *command, int exit_status)
 	{
 		token_str = extract_token(command, &pos);
 		if (!token_str)
-			break;
+			break ;
 		processed_token = process_token(token_str, exit_status);
 		free(token_str);
 		if (processed_token)

@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 11:00:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 23:32:44 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 00:44:29 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ void	print_tokens(t_token_list *list)
 	count = 1;
 	while (current)
 	{
-		printf("Token %d: [%s] Value: '%s'\n", 
-			count++, 
+		printf("Token %d: [%s] Value: '%s'\n",
+			count++,
 			get_token_type_str(current->type),
 			current->value);
 		current = current->next;

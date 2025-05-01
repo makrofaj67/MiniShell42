@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:15:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 23:32:44 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 00:24:47 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ int	get_operator_len(const char *str)
 {
 	if (!str || !*str)
 		return (0);
-	if ((str[0] == '<' && str[1] == '<') || 
-		(str[0] == '>' && str[1] == '>'))
+	if ((str[0] == '<' && str[1] == '<')
+		|| (str[0] == '>' && str[1] == '>'))
 		return (2);
 	if (is_operator(str[0]))
 		return (1);

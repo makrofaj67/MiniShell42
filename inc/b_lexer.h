@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:18:09 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 23:07:14 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:02:12 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,17 @@ typedef enum e_token_type
 	APPEND,  /* >> karakteri (append mode output redirection) */
 	HEREDOC  /* << karakteri (heredoc) */
 }	t_token_type;
+
+typedef struct s_token_state
+{
+	char	*token;
+	char	*result;
+	int		i;
+	int		j;
+	int		max_len;
+	int		exit_status;
+	char	quote_state;
+}	t_token_state;
 
 /* Token düğümü yapısı */
 typedef struct s_token_node
@@ -54,6 +65,10 @@ int				get_operator_len(const char *str);  // Updated to accept const char*
 int				is_quote(char c);
 int				update_quote_state(char c, char *quote_state);
 char			*process_token(char *token, int exit_status);
+
+/* Token state işlemleri - d_quote_handling.c ve d_token_processing.c arasında paylaşılıyor */
+t_token_state	init_token_state(char *token, int exit_status);
+void			handle_quotes(t_token_state *state);
 
 /* Token listesi işlemleri */
 t_token_list	*create_token_list(void);
