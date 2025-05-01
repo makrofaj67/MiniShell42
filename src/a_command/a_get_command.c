@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   a_get_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:24:07 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 20:24:54 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/01 20:35:16 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ char	*get_command(char *prompt)
 	if (command == NULL)
 		perror_exit("exit");
 	else if (is_command_blank(command))
-		return (NULL);		
+		return (NULL);
 	else if (parentheses_status(command) < 0)
 		perror_rnull("You can not close what you have not open");
-	if (parentheses_status(command) > 0
+/*	if (parentheses_status(command) > 0
 		|| has_unclosed_quotes(command) || has_end_backslash(command))
-		command = collect_multiple_line(command, prompt, has_end_backslash(command));
+		command = collect_multiple_line(command, prompt,
+				has_end_backslash(command)); */
 	return (command);
 }

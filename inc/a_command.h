@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 14:13:44 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 11:25:22 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/01 20:35:16 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,5 +78,19 @@ t_pnode		*init_psnode(void);
 void		push_pstack(t_pstack *stack);
 void		pop_pstack(t_pstack *stack);
 void		free_pstack(t_pstack *stack);
+
+/**
+** Multi-line command processing helper functions 
+*/
+int		check_quotes(char *str, int pos);
+char	*trim_trailing_spaces(char *str);
+int		get_continuation_char(const char *str);
+int		is_quote_start(const char *str);
+char	*remove_trailing_backslash(char *cmd);
+int		is_command_complete(char *command);
+char	*process_backslash_cont(char *cmd, char *next_line);
+char	*handle_pipe_paren(char *cmd, char *next_line);
+char	*handle_quote(char *cmd, char *next_line);
+char	*combine_cmd_with_newline(char *cmd, char *next_line);
 
 #endif
