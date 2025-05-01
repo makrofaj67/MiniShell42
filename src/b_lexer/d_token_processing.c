@@ -6,14 +6,18 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:50:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 01:01:45 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:14:35 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Process environment variables in tokens
+** Expands environment variables like $USER or $HOME within tokens
+** Fetches the actual value of the variable from the environment
+** Extracts valid environment variable names (alphanumeric + underscore)
+** 
+** @param state: The token processing state structure
 */
 static void	process_env_var(t_token_state *state)
 {
@@ -36,7 +40,10 @@ static void	process_env_var(t_token_state *state)
 }
 
 /*
-** Handle exit status expansion ($?)
+** Processes the $? special parameter which expands to last command's exit status
+** Converts the numeric exit status to a string and appends to result
+** 
+** @param state: The token processing state structure
 */
 static void	handle_exit_status(t_token_state *state)
 {
@@ -51,7 +58,11 @@ static void	handle_exit_status(t_token_state *state)
 }
 
 /*
-** Handle dollar sign expansion
+** Handles all $ expansions (variables and special parameters)
+** Routes to appropriate handler based on what follows the $ character
+** Special cases: $? for exit status, alphanumeric for environment variables
+** 
+** @param state: The token processing state structure
 */
 static void	handle_dollar_sign(t_token_state *state)
 {
@@ -66,8 +77,16 @@ static void	handle_dollar_sign(t_token_state *state)
 }
 
 /*
-** Process token to handle quotes and expand environment variables
-** Returns a processed token string with quotes and vars handled
+** Main token processing function that handles:
+** 1. Quote removal (preserving quoted content)
+** 2. Environment variable expansion
+** 3. Exit status expansion
+** 
+** Respects shell quote rules: variables aren't expanded in single quotes
+** 
+** @param token: The raw token string to process
+** @param exit_status: Current exit status for $? expansion
+** @return: A newly allocated string with processed token content
 */
 char	*process_token(char *token, int exit_status)
 {

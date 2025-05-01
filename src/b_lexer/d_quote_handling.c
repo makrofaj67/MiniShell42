@@ -6,20 +6,18 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:45:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 01:02:02 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:16:36 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Structure to hold token processing state
-** Helps reduce function argument count
-*/
-
-/*
-** Check if a character is a quote (single or double)
-** Returns 1 if the character is a quote, 0 otherwise
+** Detects if a character is a quote character (single or double)
+** Essential for proper handling of quoted strings in shell commands
+** 
+** @param c: The character to check
+** @return: 1 if the character is a quote, 0 otherwise
 */
 int	is_quote(char c)
 {
@@ -27,8 +25,13 @@ int	is_quote(char c)
 }
 
 /*
-** Update the quote state based on current character
-** Returns 1 if the quote state changed, 0 otherwise
+** Tracks and manages the current quote state during tokenization
+** Changes state when entering/exiting quoted sections based on the character
+** 
+** @param c: The current character being processed
+** @param quote_state: Pointer to the current quote state 
+** (0 for none, ' or " for quoted)
+** @return: 1 if the quote state changed (quote opened or closed), 0 otherwise
 */
 int	update_quote_state(char c, char *quote_state)
 {
@@ -46,7 +49,12 @@ int	update_quote_state(char c, char *quote_state)
 }
 
 /*
-** Initialize token processing state
+** Creates and initializes a token processing state structure
+** Allocates memory for the result buffer based on token length
+** 
+** @param token: The token string to process
+** @param exit_status: Current exit status for $? expansion
+** @return: An initialized t_token_state structure
 */
 t_token_state	init_token_state(char *token, int exit_status)
 {
@@ -63,7 +71,10 @@ t_token_state	init_token_state(char *token, int exit_status)
 }
 
 /*
-** Handle the quote character in the token
+** Manages quote characters during token processing
+** Handles opening/closing quotes and copying characters inside quotes
+** 
+** @param state: The token processing state structure
 */
 void	handle_quotes(t_token_state *state)
 {

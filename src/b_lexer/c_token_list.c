@@ -6,15 +6,17 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:30:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 00:24:47 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:14:35 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Create a new token list
-** Returns a newly allocated empty token list or NULL if allocation fails
+** Initializes a new doubly-linked token list data structure
+** Used as the main container for all tokens during lexical analysis
+** 
+** @return: A newly allocated empty token list or NULL if allocation fails
 */
 t_token_list	*create_token_list(void)
 {
@@ -29,8 +31,12 @@ t_token_list	*create_token_list(void)
 }
 
 /*
-** Create a new token node with given value and type
-** Returns a newly allocated token node or NULL if allocation fails
+** Creates a new token node in memory with specified value and type
+** Makes a deep copy of the token value for memory safety
+** 
+** @param value: The string value of the token
+** @param type: The token's type (WORD, PIPE, etc.)
+** @return: A new token node or NULL if allocation fails
 */
 t_token_node	*create_token(char *value, t_token_type type)
 {
@@ -54,8 +60,12 @@ t_token_node	*create_token(char *value, t_token_type type)
 }
 
 /*
-** Add a token to the end of the token list
-** Updates the list with the new token
+** Adds a new token to the end of the doubly-linked token list
+** Automatically determines token type based on the token value
+** Maintains prev/next pointers for bi-directional traversal
+** 
+** @param list: The token list to add to
+** @param value: The string value of the token to add
 */
 void	add_token(t_token_list *list, char *value)
 {
@@ -82,8 +92,11 @@ void	add_token(t_token_list *list, char *value)
 }
 
 /*
-** Free the entire token list and its contents
-** Properly deallocates all memory used by the token list
+** Deallocates the entire token list and all contained token nodes
+** Properly frees all memory to prevent leaks, including token values
+** Should be called when the token list is no longer needed
+** 
+** @param list: The token list to free
 */
 void	free_token_list(t_token_list *list)
 {

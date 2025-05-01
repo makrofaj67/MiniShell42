@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 23:07:14 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:21:36 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,13 @@
 #include <unistd.h>
 
 /*
-** The main shell loop
+** Primary execution loop for the shell program
+** Continuously prompts for and processes user commands
+** Handles the read-evaluate-print loop pattern of a command-line interface
+** Controls the lifetime of command, token, and execution objects
+** 
+** @param prompt: The shell prompt string to display to the user
+** @param envp: Array of environment variables for command execution
 */
 void	shell_loop(char *prompt, char **envp)
 {
@@ -24,7 +30,7 @@ void	shell_loop(char *prompt, char **envp)
 	int             exit_status;
 
 	should_exit = 0;
-	exit_status = 0;  // Başlangıçta çıkış kodu 0
+	exit_status = 0;
 	while (true)
 	{
 		command = get_command(prompt, &should_exit);
@@ -36,18 +42,20 @@ void	shell_loop(char *prompt, char **envp)
 		}
 		tokens = tokenize_command(command, exit_status);
 		print_tokens(tokens);
-		free_token_list(tokens);  // Free the token list to prevent memory leaks
+		free_token_list(tokens);
 		free(command);
-		
-		// Normalde burada komutunuz çalıştırılacak ve exit_status güncellenecek
-		// Şimdilik basitçe exit_status'u 0 olarak bırakalım
-		// Gerçek executor implementasyonunda bu değer güncellenmeli
-		// exit_status = <last command's exit status>;
 	}
 }
 
 /*
-** Main function
+** Entry point for the MiniShell42 program
+** Initializes the shell environment, signal handlers, and prompt
+** Starts the main command processing loop and performs cleanup on exit
+** 
+** @param argc: Count of command-line arguments (unused but required by C standard)
+** @param argv: Array of command-line argument strings (unused but required by C standard)
+** @param envp: Array of environment variable strings passed from the parent process
+** @return: Exit status code (0 for normal termination)
 */
 int	main(int argc, char **argv, char **envp)
 {

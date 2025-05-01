@@ -6,14 +6,19 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 10:00:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 00:57:37 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:14:35 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Extract token from start to current position
+** Extracts a substring from the command and creates a new token
+** 
+** @param command: The original command string
+** @param start: Starting index of the token in the command
+** @param len: Length of the token to extract
+** @return: A newly allocated string containing the token or NULL on failure
 */
 static char	*extract_token_part(const char *command, int start, int len)
 {
@@ -28,7 +33,12 @@ static char	*extract_token_part(const char *command, int start, int len)
 }
 
 /*
-** Process operator token
+** Processes shell operators like pipes and redirections
+** 
+** @param command: The original command string
+** @param pos: Pointer to the current position in command (updated by function)
+** @param start: Starting index of the operator in the command
+** @return: A newly allocated string containing the operator token
 */
 static char	*process_operator(const char *command, int *pos, int start)
 {
@@ -40,7 +50,13 @@ static char	*process_operator(const char *command, int *pos, int start)
 }
 
 /*
-** Process word token
+** Processes a word token, handling quotes and advancing position
+** Handles complex quoted words by tracking quote state
+** 
+** @param command: The original command string
+** @param pos: Pointer to the current position in command (updated by function)
+** @param start: Starting index of the word token in the command
+** @return: A newly allocated string containing the word token
 */
 static char	*process_word(const char *command, int *pos, int start)
 {
@@ -61,8 +77,12 @@ static char	*process_word(const char *command, int *pos, int start)
 }
 
 /*
-** Extract a single token from the command string
-** Returns the extracted token or NULL if end of command
+** Extracts the next token from the command string
+** Skips whitespace and determines token type (operator or word)
+** 
+** @param command: The original command string
+** @param pos: Pointer to the current position in command (updated by function)
+** @return: A newly allocated string containing the next token or NULL if at end
 */
 static char	*extract_token(const char *command, int *pos)
 {
@@ -80,8 +100,12 @@ static char	*extract_token(const char *command, int *pos)
 }
 
 /*
-** Tokenize a command string into a list of tokens
-** Returns a list of tokens for the given command
+** Main tokenization function that breaks a command into a linked list of tokens
+** Processes quotes and environment variables in the tokens
+** 
+** @param command: The command string to tokenize
+** @param exit_status: The current exit status for $? expansion
+** @return: A linked list of tokens or NULL if tokenization fails
 */
 t_token_list	*tokenize_command(char *command, int exit_status)
 {

@@ -6,17 +6,20 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:41:53 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 00:52:47 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:19:23 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Used in parentheses_status to handle closing parentheses
-** Detects unmatched closing parentheses and updates the stack
-** Works like a bouncer who checks if someone is 
-** leaving a party they never entered
+** Verifies that a closing parenthesis has a matching opening parenthesis
+** Detects syntax errors where closing parentheses appear without matching opens
+** Uses a stack to track parenthesis pairs
+** 
+** @param stack: The parenthesis tracking stack
+** @param c: The current character (checked if it's a closing parenthesis)
+** @return: 1 if an unmatched closing parenthesis is found, 0 otherwise
 */
 static int	check_closing_paren(t_pstack *stack, char c)
 {
@@ -28,9 +31,13 @@ static int	check_closing_paren(t_pstack *stack, char c)
 }
 
 /*
-** Used in get_command to validate parentheses balance
-** Counts unclosed parentheses using a stack data structure
-** Works like a bookkeeper tracking opening and closing symbols
+** Validates that all parentheses in a command are properly matched
+** Ensures command has syntactically correct parenthesis pairs
+** Uses a stack-based algorithm to track opening and closing pairs
+** 
+** @param command: The command string to check for balanced parentheses
+** @return: 0 if all parentheses are matched, positive count of unclosed
+**          parentheses, or -1 if there are unmatched closing parentheses
 */
 int	parenthesis_status(char *command)
 {

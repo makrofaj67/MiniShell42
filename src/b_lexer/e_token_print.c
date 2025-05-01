@@ -6,15 +6,18 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 11:00:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 00:44:29 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:14:35 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Convert token type to readable string for debug printing
-** Returns a string representation of the token type
+** Converts numerical token types to human-readable string representations
+** Used by the debug printing function to display token types clearly
+** 
+** @param type: The token type enumeration value
+** @return: A string representing the token type (e.g., "WORD", "PIPE")
 */
 static char	*get_token_type_str(t_token_type type)
 {
@@ -34,8 +37,11 @@ static char	*get_token_type_str(t_token_type type)
 }
 
 /*
-** Print the token list for debugging
-** Displays all tokens in a formatted list
+** Displays the contents of the token list for debugging purposes
+** Formats and prints each token with its type and value for inspection
+** Useful for troubleshooting command parsing and execution issues
+** 
+** @param list: The token list to print
 */
 void	print_tokens(t_token_list *list)
 {

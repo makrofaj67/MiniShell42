@@ -6,16 +6,18 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:36:22 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/01 11:07:53 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:19:23 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Helper function used by is_command_blank
-** Checks if a string contains only whitespace characters
-** Like a scanner that examines each character looking for any substance
+** Determines if a string consists solely of whitespace characters
+** Checks each character against a set of standard whitespace characters
+** 
+** @param command: The command string to check
+** @return: 1 if the string contains only whitespace, 0 otherwise
 */
 static int	is_all_white_space(char *command)
 {
@@ -34,9 +36,11 @@ static int	is_all_white_space(char *command)
 }
 
 /*
-** Used in get_command to validate user input
-** Checks if a command string contains only whitespace or is empty
-** Works like a filter that prevents empty commands from being processed
+** Validates if a command string is empty or contains only whitespace
+** Prevents processing of meaningless commands, saving system resources
+** 
+** @param command: The command string to check
+** @return: 1 if the command is empty or blank, 0 if it contains content
 */
 int	is_command_blank(char *command)
 {

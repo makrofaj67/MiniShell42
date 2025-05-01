@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   f_stack_ops.c                                      :+:      :+:    :+:   */
+/*   e_stack_ops.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:42:50 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 21:38:33 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:19:23 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Used in parentheses_status to track opening and closing parentheses
-** Initializes a new empty stack for tracking parentheses
-** Works like creating a clean ledger before tracking transactions
+** Creates and initializes a new parenthesis tracking stack
+** Allocates memory for the stack structure and initializes its properties
+** Used for tracking parenthesis balance in command validation
+** 
+** @return: A pointer to the newly created stack, or NULL if allocation fails
 */
 t_pstack	*init_pstack(void)
 {
@@ -31,9 +33,11 @@ t_pstack	*init_pstack(void)
 }
 
 /*
-** Used by push_pstack when adding a new element
-** Creates a new empty node to represent an opening parenthesis
-** Like creating a blank record card ready to be filed
+** Creates and initializes a new node for the parenthesis stack
+** Allocates memory for a node that represents a single parenthesis
+** Used by push_pstack to add parenthesis markers to the stack
+** 
+** @return: A pointer to the newly created node, or NULL if allocation fails
 */
 t_pnode	*init_psnode(void)
 {
@@ -48,9 +52,11 @@ t_pnode	*init_psnode(void)
 }
 
 /*
-** Called in parentheses_status when an opening parenthesis is found
-** Adds a new node to the stack to track an opening parenthesis
-** Works like adding a marker on a trail, to be picked up on the way back
+** Adds a new node to the parenthesis stack
+** Represents tracking an opening parenthesis during command parsing
+** Handles proper linking of nodes in the doubly-linked stack
+** 
+** @param stack: The stack to which the new node should be added
 */
 void	push_pstack(t_pstack *stack)
 {
@@ -72,9 +78,11 @@ void	push_pstack(t_pstack *stack)
 }
 
 /*
-** Called in check_closing_paren when a closing parenthesis is found
-** Removes a node from the stack to balance with a closing parenthesis
-** Like crossing off an item from a checklist when it's completed
+** Removes the top node from the parenthesis stack
+** Represents matching a closing parenthesis with an opening parenthesis
+** Maintains proper stack structure after node removal
+** 
+** @param stack: The stack from which the top node should be removed
 */
 void	pop_pstack(t_pstack *stack)
 {
@@ -98,9 +106,11 @@ void	pop_pstack(t_pstack *stack)
 }
 
 /*
-** Called in parentheses_status when finished analyzing parentheses
-** Cleans up all allocated memory for the parentheses tracking stack
-** Works like a janitor cleaning up after a job is completed
+** Deallocates all memory used by the parenthesis stack
+** Frees each node in the stack and then the stack itself
+** Called after parenthesis checking is complete to prevent memory leaks
+** 
+** @param stack: The stack to be deallocated
 */
 void	free_pstack(t_pstack *stack)
 {

@@ -6,17 +6,19 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:51:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 23:35:01 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/02 01:19:23 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
 /*
-** Used in get_command to detect incomplete commands with quote issues
-** Checks if a command has any unclosed quotes (both single and double)
-** Works like a doorman keeping track of who entered and left the building,
-** ensuring that every opening quote has a matching closing quote
+** Detects if a command contains any unclosed quote pairs
+** Handles both single and double quotes, respecting escape characters
+** Follows shell parsing rules where quotes must be properly paired
+** 
+** @param command: The command string to check for unclosed quotes
+** @return: 1 if there are unclosed quotes, 0 if all quotes are properly closed
 */
 int	has_unclosed_quotes(char *command)
 {
