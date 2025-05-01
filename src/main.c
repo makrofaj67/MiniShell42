@@ -17,29 +17,15 @@
 */
 void	shell_loop(char *prompt, char **envp)
 {
-	char			*command_line;
-	t_t_list		*lexed_list;
-	t_ast_node		*ast;
-	t_exec_context	*ctx;
+	char			*command;
 
-	ctx = init_exec_context(envp);
-	if (!ctx)
-		return ;
 	while (true)
 	{
-		command_line = get_command(prompt);
-		if (command_line == NULL)
+		command = get_command(prompt);
+		if (command == NULL)
 			continue ;
-		
-		// Lexical analysis - convert command to tokens
-		lexed_list = get_lexed(command_line);
-		if (!lexed_list)
-		{
-			free(command_line);
-			continue ;
-		}
-		
-		print_token_list(lexed_list);
+
+		printf("\n\n-->%s<--\n", command);
 		// Parsing - convert tokens to AST
 		/*ast = parse(lexed_list);
 		if (!ast)
@@ -63,13 +49,11 @@ void	shell_loop(char *prompt, char **envp)
 		// Clean up
 		free_ast(ast);*/
 
-		free_token_list(lexed_list);
-		free(command_line);
+		free(command);
 	}
 	
 	// This part is never reached in the current implementation
 	// but good practice for memory management
-	free(ctx);
 }
 
 /*

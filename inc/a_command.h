@@ -52,7 +52,7 @@ typedef struct s_pstack
 */
 char	*get_command(char *prompt);
 int		is_command_blank(char *command);
-char	*collect_multiple_line(char *command, char *prompt);
+char	*collect_multiple_line(char *command, char *prompt, int backslash);
 
 /**
 ** Command syntax validation functions

@@ -27,7 +27,7 @@ int	has_end_backslash(char *command)
 	len = strlen(command);
 	if (len == 0)
 		return (0);
-	if (command[len - 1] == '\\')
+	if (command[len - 1] == '\\' || command[len - 1] == '|')
 		return (1);
 	return (0);
 }
