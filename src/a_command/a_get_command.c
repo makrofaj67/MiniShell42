@@ -5,69 +5,134 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/30 20:24:07 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 01:19:35 by rakman           ###   ########.fr       */
+/*   Created: 2025/05/03 22:35:19 by rakman            #+#    #+#             */
+/*   Updated: 2025/05/03 21:54:14 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <dirent.h>
 
-/* 
-** Performs syntax validation on the user-entered command
-** Checks for blank commands, mismatched parentheses, and unclosed quotes
-** Adds valid commands to the command history
-** 
-** @param command: The command string to validate
-** @return: The validated command or NULL if the command contains errors
-*/
-static char	*validate_command(char *command)
+/**
+ * @brief Maximum items in completion list
+ */
+#define MAX_COMPLETIONS 500
+
+/**
+ * @brief History file path
+ */
+#define HISTORY_FILE ".minishell_history"
+
+/**
+ * @brief Global variable for completion state
+ */
+static char *g_completions[MAX_COMPLETIONS];
+static int g_completion_count = 0;
+
+/**
+ * @brief Custom readline completion function for file paths
+ * 
+ * @param text The text to complete
+ * @param start Start position of text in rl_line_buffer
+ * @param end End position
+ * @return char** List of completion matches
+ */
+static char **custom_completion(const char *text, int start, int end)
 {
-	if (is_command_blank(command))
-	{
-		free(command);
+	// This disables default filename completion
+	rl_attempted_completion_over = 1;
+	
+	// If not at the beginning of line and previous char is not space, 
+	// use custom completion
+	if (start > 0 && !isspace(rl_line_buffer[start - 1]))
 		return (NULL);
-	}
-	else if (parenthesis_status(command) != 0)
-	{
-		printf("Parenthesis Error\n");
-		free(command);
-		return (NULL);
-	}
-	else if (has_unclosed_quotes(command))
-	{
-		printf("Unclosed quotes\n");
-		free(command);
-		return (NULL);
-	}
-	add_history(command);
-	return (command);
+	
+	return (rl_completion_matches(text, rl_filename_completion_function));
 }
 
-/*
-** Reads a command from the user input and performs initial validation
-** Handles EOF (Ctrl+D) by setting the exit flag
-** Manages interruption signals (Ctrl+C) through global signal handler
-** 
-** @param prompt: The prompt string to display to the user
-** @param should_exit: Pointer to the shell exit flag, 
-** set to 1 if EOF is detected
-** @return: A validated command string or NULL on error, EOF, or interruption
-*/
-char	*get_command(char *prompt, int *should_exit)
+/**
+ * @brief Initialize readline settings, history, and completion
+ */
+static void initialize_readline(void)
 {
-	char	*command;
+	char *home_dir;
+	char history_path[1024];
+	
+	// Set up custom completion
+	rl_attempted_completion_function = custom_completion;
+	
+	// Load history from file
+	home_dir = getenv("HOME");
+	if (home_dir)
+	{
+		snprintf(history_path, sizeof(history_path), "%s/%s", home_dir, HISTORY_FILE);
+		read_history(history_path);
+	}
+}
 
-	if (g_signal_received == SIGINT)
+/**
+ * @brief Save command history to file
+ */
+static void save_history(void)
+{
+	char *home_dir;
+	char history_path[1024];
+	
+	home_dir = getenv("HOME");
+	if (home_dir)
 	{
-		reset_signal_flag();
-		return (NULL);
+		snprintf(history_path, sizeof(history_path), "%s/%s", home_dir, HISTORY_FILE);
+		write_history(history_path);
 	}
+}
+
+/**
+ * @brief Get user input using readline with enhanced features
+ * 
+ * @param prompt The prompt to display
+ * @param should_exit Pointer to flag indicating if user wants to exit
+ * @return char* The command entered by the user
+ */
+char *get_command(char *prompt, int *should_exit)
+{
+	char *command;
+	static int first_call = 1;
+	
+	// Initialize readline on first call
+	if (first_call)
+	{
+		initialize_readline();
+		first_call = 0;
+	}
+	
+	// Reset signal handler for each new command
+	if (g_signal_received)
+	{
+		g_signal_received = 0;
+		*should_exit = 0;
+	}
+	
+	// Get command using readline
 	command = readline(prompt);
-	if (command == NULL)
+	
+	// Check for EOF (Ctrl+D)
+	if (!command)
 	{
+		write(STDOUT_FILENO, "exit\n", 5);
 		*should_exit = 1;
-		printf("exit");
+		save_history();
 		return (NULL);
 	}
-	return (validate_command(command));
+	
+	// Skip empty commands from history
+	if (*command)
+	{
+		add_history(command);
+		save_history();
+	}
+	
+	return (command);
 }

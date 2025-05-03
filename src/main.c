@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 20:24:42 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 21:59:46 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,43 +20,56 @@
 ** Handles the read-evaluate-print loop pattern of a command-line interface
 ** Controls the lifetime of command, token, and execution objects
 ** 
-** @param prompt: The shell prompt string to display to the user
 ** @param envp: Array of environment variables for command execution
 */
 
-
-
-void	shell_loop(char *prompt, char **envp)
+void	shell_loop(char **envp)
 {
 	char			*command;
 	int				should_exit;
 	t_token_list	*tokens;
-	int             exit_status;
+	int				exit_status;
 	ast_node		*root_node;
+	char			*prompt;
 
 	should_exit = 0;
 	exit_status = 0;
 	while (true)
 	{
+		// Get a fancy prompt with current status
+		prompt = prepare_fancy_prompt(envp, exit_status);
+		
+		// Set up interactive signal handling for command entry
+		setup_interactive_signals();
+		
+		// Get user command
 		command = get_command(prompt, &should_exit);
+		free(prompt);
+		
 		if (command == NULL)
 		{
 			if (should_exit == 1)
 				exit(EXIT_SUCCESS);
-			continue ;
+			continue;
 		}
-		add_history(command);
+		
+		// Process the command
 		tokens = tokenize_command(command, exit_status);
 		root_node = parse_tokens(tokens);
 		
-		// Display the AST structure when a command is entered
 		if (root_node)
 		{
 			visualize_ast(root_node);
+			
+			// Set up execution signal handling
+			setup_execution_signals();
+			
+			// Execute the command
+			execute_command(root_node, &exit_status, envp);
+			
+			// Reset signals back to interactive mode
+			setup_interactive_signals();
 		}
-		
-		// Continue with command execution...
-		// execute_command(root_node, &exit_status, envp);
 		
 		free_token_list(tokens);
 		free_ast(root_node);
@@ -76,15 +89,31 @@ void	shell_loop(char *prompt, char **envp)
 */
 int	main(int argc, char **argv, char **envp)
 {
-	char	*prompt;
-
 	(void)argc;
 	(void)argv;
-	clear_screen();
+	
+	// Clear the screen for a fresh start
+
+	
+	
+	// Display a welcome message
+	printf("\033[1;36m");
+	printf("╔═════════════════════════════════════════╗\n");
+	printf("║            \033[1;33mMiniShell42\033[1;36m                ║\n");
+	printf("║                                         ║\n");
+	printf("║  \033[0;32mWelcome to your 42 shell implementation\033[1;36m  ║\n");
+	printf("║  \033[0;37mType commands and enjoy the features!\033[1;36m    ║\n");
+	printf("║  \033[0;37mPress Ctrl+D or type 'exit' to quit\033[1;36m      ║\n");
+	printf("╚═════════════════════════════════════════╝\n");
+	printf("\033[0m\n");
+	
+	// Set up signal handlers
 	setup_interactive_signals();
-	prompt = prepare_prompt(envp);
-	shell_loop(prompt, envp);
-	free(prompt);
+	
+	// Run the main shell loop
+	shell_loop(envp);
+	
+	// Clean up
 	rl_clear_history();
 	return (0);
 }
