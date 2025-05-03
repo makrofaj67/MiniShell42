@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:39:17 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 20:24:42 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 20:29:53 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -618,7 +618,7 @@ ast_node *parse_tokens(t_token_list *tokens) {
              free_command_value(cmd_details);
              return NULL;
         }
-        return command_node; // Başarılı
+        return command_node; // Başarıl
     }
 }
 
