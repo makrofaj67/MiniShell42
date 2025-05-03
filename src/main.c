@@ -6,11 +6,12 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 16:02:36 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 20:02:23 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/__minishell.h"
+#include <readline/history.h>
 #include <unistd.h>
 
 /*
@@ -22,6 +23,9 @@
 ** @param prompt: The shell prompt string to display to the user
 ** @param envp: Array of environment variables for command execution
 */
+
+
+
 void	shell_loop(char *prompt, char **envp)
 {
 	char			*command;
@@ -41,9 +45,12 @@ void	shell_loop(char *prompt, char **envp)
 				exit(EXIT_SUCCESS);
 			continue ;
 		}
+		add_history(command);
 		tokens = tokenize_command(command, exit_status);
 		root_node = parse_tokens(tokens);
 		free_token_list(tokens);
+
+		free_ast(root_node);
 		free(command);
 	}
 }

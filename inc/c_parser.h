@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:36:50 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 16:02:36 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 20:00:20 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,5 @@ typedef struct t_ast_node
 }	ast_node;
 
 ast_node *parse_tokens(t_token_list *tokens);
-
+void free_ast(ast_node *node);
 #endif
