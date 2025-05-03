@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 01:21:36 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 16:02:36 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	shell_loop(char *prompt, char **envp)
 	int				should_exit;
 	t_token_list	*tokens;
 	int             exit_status;
+	ast_node		*root_node;
 
 	should_exit = 0;
 	exit_status = 0;
@@ -41,7 +42,7 @@ void	shell_loop(char *prompt, char **envp)
 			continue ;
 		}
 		tokens = tokenize_command(command, exit_status);
-		print_tokens(tokens);
+		root_node = parse_tokens(tokens);
 		free_token_list(tokens);
 		free(command);
 	}

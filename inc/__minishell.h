@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 11:51:30 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/02 01:30:11 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 15:37:36 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 # include "a_command.h"
 # include "b_lexer.h"
+# include "c_parser.h"
 # include "e_utils.h"
 # include "f_libft.h"
 
