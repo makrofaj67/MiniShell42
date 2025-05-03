@@ -50,4 +50,12 @@ typedef struct t_ast_node
 
 ast_node *parse_tokens(t_token_list *tokens);
 void free_ast(ast_node *node);
+
+/**
+ * @brief Visualizes the AST in a pretty tree format with colors
+ * 
+ * @param root The root node of the AST to visualize
+ */
+void visualize_ast(ast_node *root);
+
 #endif

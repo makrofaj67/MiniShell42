@@ -48,8 +48,17 @@ void	shell_loop(char *prompt, char **envp)
 		add_history(command);
 		tokens = tokenize_command(command, exit_status);
 		root_node = parse_tokens(tokens);
+		
+		// Display the AST structure when a command is entered
+		if (root_node)
+		{
+			visualize_ast(root_node);
+		}
+		
+		// Continue with command execution...
+		// execute_command(root_node, &exit_status, envp);
+		
 		free_token_list(tokens);
-
 		free_ast(root_node);
 		free(command);
 	}
