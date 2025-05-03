@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:39:17 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 20:13:26 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 20:24:42 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,11 @@ void add_word(t_token_node *node, t_generic_list *list)
     }
 }
 
+/**
+ * @brief Free only the list structure without freeing the contained values
+ * 
+ * @param list Generic list to free
+ */
 void free_generic_list_nodes_only(t_generic_list *list) {
     
 	t_gl_node *next_node;
@@ -181,18 +186,66 @@ void free_generic_list_nodes_only(t_generic_list *list) {
 	free(list);
 }
 
+/**
+ * @brief Free a generic list and its contents depending on the list type
+ * 
+ * @param list Generic list to free
+ * @param is_redir_list Whether this is a redirection list (true) or word list (false)
+ */
+void free_generic_list_with_contents(t_generic_list *list, int is_redir_list) {
+    t_gl_node *next_node;
+    t_gl_node *current;
+    
+    if (list == NULL)
+        return;
+        
+    current = list->head;
+    while (current != NULL) {
+        next_node = current->next;
+        
+        if (current->value) {
+            if (is_redir_list) {
+                // Handle redirection nodes
+                t_redirection *redir = (t_redirection *)current->value;
+                if (redir->filename) {
+                    free(redir->filename);
+                }
+                free(redir);
+            } else {
+                // Handle word nodes (just strings)
+                free(current->value);
+            }
+        }
+        
+        free(current);
+        current = next_node;
+    }
+    
+    free(list);
+}
+
 command_value *parse_simple_command(t_token_list *tokens)
 {
 	command_value		*cmd_details;
 	t_generic_list		*redir_list;
 	t_generic_list		*word_list;
 	t_token_node		*current_token;
+	int					i;
+	int					j;
+	t_gl_node			*current_word;
+	t_gl_node			*current_redir;
 
 	cmd_details = (command_value *)malloc(sizeof(command_value));
 	if (cmd_details == NULL)
 		return (NULL);
 	redir_list = init_generic_list();
 	word_list = init_generic_list();
+	if (!redir_list || !word_list) {
+		free(cmd_details);
+		free_generic_list_with_contents(redir_list, 1);
+		free_generic_list_with_contents(word_list, 0);
+		return (NULL);
+	}
 	current_token = tokens->head;
 	while(current_token != NULL)
 	{
@@ -201,6 +254,9 @@ command_value *parse_simple_command(t_token_list *tokens)
 			if (current_token->next == NULL || current_token->next->type != WORD)
 			{
 				printf("Syntax Error");
+				free(cmd_details);
+				free_generic_list_with_contents(redir_list, 1);
+				free_generic_list_with_contents(word_list, 0);
 				return (NULL);
 			}
 			else
@@ -218,16 +274,22 @@ command_value *parse_simple_command(t_token_list *tokens)
 		else
 		{
 			printf("Unknown error");
+			free(cmd_details);
+			free_generic_list_with_contents(redir_list, 1);
+			free_generic_list_with_contents(word_list, 0);
 			return (NULL);
 		}
 	}
 
 	cmd_details->arg_array = (char **)malloc(sizeof(char *) * (word_list->size + 1));
-	if (cmd_details->arg_array == NULL)
+	if (cmd_details->arg_array == NULL) {
+		free(cmd_details);
+		free_generic_list_with_contents(redir_list, 1);
+		free_generic_list_with_contents(word_list, 0);
 		return (NULL);
-	int i;
+	}
+	
 	i = 0;
-	t_gl_node *current_word;
 	current_word = word_list->head;
 	while(current_word != NULL)
 	{
@@ -237,20 +299,24 @@ command_value *parse_simple_command(t_token_list *tokens)
 	cmd_details->arg_array[i] = NULL;
 
 	cmd_details->redirections = (t_redirection **)malloc(sizeof(t_redirection *) * (redir_list->size + 1));
-	if (cmd_details->redirections == NULL)
+	if (cmd_details->redirections == NULL) {
+		free(cmd_details->arg_array);
+		free(cmd_details);
+		free_generic_list_with_contents(redir_list, 1);
+		free_generic_list_with_contents(word_list, 0);
 		return (NULL);
-	int j;
+	}
+	
 	j = 0;
-	t_gl_node *current_redir;
 	current_redir = redir_list->head;
 	while(current_redir != NULL)
 	{	
-		cmd_details->redirections[j] = (t_redirection *)current_redir->value; //void için castingi bizim yapmamız lazım
-		j++;
+		cmd_details->redirections[j++] = (t_redirection *)current_redir->value;
 		current_redir = current_redir->next;
 	}
 	cmd_details->redirections[j] = NULL; // Add NULL terminator to mark the end of redirections array
 
+	// Only free the list structure, not the content, as we've moved ownership to cmd_details
 	free_generic_list_nodes_only(redir_list);
 	free_generic_list_nodes_only(word_list);
 	return (cmd_details);
