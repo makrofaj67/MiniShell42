@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:39:17 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 18:09:27 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/03 18:28:50 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,32 @@ t_generic_list *init_generic_list(void)
 	return (gn_list);
 }
 
-void add_redir(t_gl_node *node, t_generic_list *list)
+int add_node_to_generic_list(t_generic_list *list, void *value)
 {
-
+    t_gl_node *new_node = (t_gl_node *)malloc(sizeof(t_gl_node));
+    if (new_node == NULL) {
+        return (0);
+    }    new_node->value = value; 
+    new_node->next = NULL;
+    if (list->tail == NULL) {
+        new_node->prev = NULL;
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        new_node->prev = list->tail;
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+    return (1); // Başarılı oldu
 }
 
-void add_word(t_gl_node *node, t_generic_list *list)
+
+void add_redir(t_token_node *node, t_generic_list *list)
+{
+		//adding
+}
+
+void add_word(t_token_node *node, t_generic_list *list)
 {
 
 }
@@ -70,10 +90,30 @@ command_value *parse_simple_command(t_token_list *tokens)
 	current_token = tokens->head;
 	while(current_token != NULL)
 	{
-		if (current_token->type == RDRT_IN || current_token->type == RDRT_OUT)
-			add_redir(current_token, redir_list);
-		if (current_token->type == WORD)
-			add_word(current_token, word_list)
+		if (current_token->type == RDRT_IN || current_token->type == RDRT_OUT || current_token->type == HEREDOC || current_token->type == APPEND)
+		{
+			if (current_token->next == NULL || current_token->next->type != WORD)
+			{
+				printf("Syntax Error");
+				return (NULL);
+			}
+			else
+			{
+				add_redir(current_token, redir_list);
+				if (current_token->next != NULL)
+					current_token = current_token->next->next;
+			}
+		}
+		else if (current_token->type == WORD)
+		{
+			add_word(current_token, word_list);
+			current_token = current_token->next;
+		}
+		else
+		{
+			printf("Unknown error");
+			return (NULL);
+		}
 	}
 	return (cmd_details);
 }
