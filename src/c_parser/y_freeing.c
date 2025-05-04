@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 14:40:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/04 14:41:40 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/04 15:19:03 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void free_generic_list_nodes_only(t_generic_list *list) {
 	}
 	free(list);
 }
-
 /**
  * @brief Free a generic list and its contents depending on the list type
  * 
@@ -96,9 +95,6 @@ void free_command_value(command_value *details) {
     }
     free(details);
 }
-
-
-
 
 void free_ast(ast_node *node) {
     if (node == NULL) {

@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:39:17 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/04 14:41:32 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/04 15:22:41 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ t_token_list *get_tokens_after(t_token_list *tokens, t_token_node *pipe_location
     }
     return new_list;
 }
-
 
 t_token_list *get_tokens_before(t_token_list *tokens, t_token_node *pipe_location) 
 {
@@ -85,7 +84,7 @@ int add_node_to_generic_list(t_generic_list *list, void *value)
         list->tail = new_node;
     }
 	list->size++;
-	return (1); // Başarılı oldu
+	return (1);
 }
 
 void add_redir(t_token_node *node, t_generic_list *list) 
