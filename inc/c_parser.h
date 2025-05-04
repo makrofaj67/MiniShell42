@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:36:50 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 20:24:42 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/04 14:42:50 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,25 @@ typedef struct t_ast_node
 	command_value		*value;	
 }	ast_node;
 
+typedef struct s_generic_list_node {
+    void *value;
+    struct s_generic_list_node *prev;
+    struct s_generic_list_node *next;
+} t_gl_node;
+
+typedef struct s_generic_list {
+	int			size;
+	t_gl_node *head;
+	t_gl_node *tail;
+} t_generic_list;
+
+
+
+void free_command_value(command_value *details);
+void free_generic_list_nodes_only(t_generic_list *list);
 ast_node *parse_tokens(t_token_list *tokens);
 void free_ast(ast_node *node);
-
+void free_generic_list_with_contents(t_generic_list *list, int is_redir_list);
 /**
  * @brief Visualizes the AST in a pretty tree format with colors
  * 

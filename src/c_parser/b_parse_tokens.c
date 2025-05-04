@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:39:17 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 20:29:53 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/04 14:41:32 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,18 +52,6 @@ t_token_list *get_tokens_before(t_token_list *tokens, t_token_node *pipe_locatio
     }
     return new_list;
 }
-
-typedef struct s_generic_list_node {
-    void *value;
-    struct s_generic_list_node *prev;
-    struct s_generic_list_node *next;
-} t_gl_node;
-
-typedef struct s_generic_list {
-	int			size;
-	t_gl_node *head;
-	t_gl_node *tail;
-} t_generic_list;
 
 t_generic_list *init_generic_list(void)
 {
@@ -163,63 +151,6 @@ void add_word(t_token_node *node, t_generic_list *list)
     }
 }
 
-/**
- * @brief Free only the list structure without freeing the contained values
- * 
- * @param list Generic list to free
- */
-void free_generic_list_nodes_only(t_generic_list *list) {
-    
-	t_gl_node *next_node;
-	t_gl_node *current; 
-	
-	if (list == NULL) 
-		return;
-	current = list->head;
-	while (current != NULL) 
-	{
-		next_node = current->next; 
-		free(current); 
-		current = next_node; 
-	}
-	free(list);
-}
-
-/**
- * @brief Free a generic list and its contents depending on the list type
- * 
- * @param list Generic list to free
- * @param is_redir_list Whether this is a redirection list (true) or word list (false)
- */
-void free_generic_list_with_contents(t_generic_list *list, int is_redir_list) {
-    t_gl_node *next_node;
-    t_gl_node *current;
-    
-    if (list == NULL)
-        return;
-        
-    current = list->head;
-    while (current != NULL) {
-        next_node = current->next;
-        
-        if (current->value) {
-            if (is_redir_list) {
-                t_redirection *redir = (t_redirection *)current->value;
-                if (redir->filename) {
-                    free(redir->filename);
-                }
-                free(redir);
-            } else {
-                free(current->value);
-            }
-        }
-        
-        free(current);
-        current = next_node;
-    }
-    
-    free(list);
-}
 
 command_value *parse_simple_command(t_token_list *tokens)
 {
@@ -358,50 +289,6 @@ ast_node *create_pipe_node(ast_node *left_child, ast_node *right_child)
 	return(pipe_node);
 }
 
-void free_command_value(command_value *details) {
-    int i;
-    if (details == NULL) {
-        return;
-    }
-    if (details->arg_array != NULL) {
-        i = 0;
-        while (details->arg_array[i] != NULL) {
-            free(details->arg_array[i]);
-            i++;
-        }
-        free(details->arg_array);
-    }
-    if (details->redirections != NULL) {
-        i = 0;
-        while (details->redirections[i] != NULL) {
-            if (details->redirections[i]->filename != NULL) {
-                free(details->redirections[i]->filename);
-            }
-            free(details->redirections[i]);
-            i++;
-        }
-        free(details->redirections);
-    }
-    free(details);
-}
-
-void free_ast(ast_node *node) {
-    if (node == NULL) {
-        return;
-    }
-    switch (node->type) {
-        case COMMAND_NODE:
-            free_command_value(node->value);
-            break;
-
-        case PIPE_NODE:
-            free_ast(node->left);
-            free_ast(node->right);
-            break;
-    }
-    free(node);
-}
-
 ast_node *parse_tokens(t_token_list *tokens) {
 
 	if (tokens == NULL || tokens->head == NULL)
@@ -424,9 +311,9 @@ ast_node *parse_tokens(t_token_list *tokens) {
         free_token_list(right_tokens);
         if (left_child == NULL || right_child == NULL) {
              fprintf(stderr, "Error parsing sub-commands for pipe\n");
-             free_ast(left_child);  // Eğer left_child NULL ise free_ast bir şey yapmaz
-             free_ast(right_child); // Eğer right_child NULL ise free_ast bir şey yapmaz
-             return NULL; // AST oluşturma başarısız
+             free_ast(left_child);
+             free_ast(right_child);
+             return NULL;
         }
         ast_node *pipe_node = create_pipe_node(left_child, right_child);
         if (pipe_node == NULL) {
@@ -435,9 +322,9 @@ ast_node *parse_tokens(t_token_list *tokens) {
             free_ast(right_child);
             return NULL;
         }
-        return pipe_node; // Başarılı
+        return pipe_node;
     }
-    else // Pipe bulunamadı -> Basit komut durumu
+    else
     {
         command_value *cmd_details = parse_simple_command(tokens);
         if (cmd_details == NULL) {
@@ -449,7 +336,7 @@ ast_node *parse_tokens(t_token_list *tokens) {
              free_command_value(cmd_details);
              return NULL;
         }
-        return command_node; // Başarıl
+        return command_node;
     }
 }
 
