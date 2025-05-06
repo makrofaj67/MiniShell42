@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 15:26:22 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/04 15:26:35 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/06 16:34:03 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ ast_node *parse_tokens(t_token_list *tokens) {
 
 	if (tokens == NULL || tokens->head == NULL)
 	    return NULL;
-
 	t_token_node *pipe_location = find_last_pipe(tokens);
     if (pipe_location != NULL)
     {
