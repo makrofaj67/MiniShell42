@@ -1,56 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   z_parse_tokens.c                                   :+:      :+:    :+:   */
+/*   00000.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:39:17 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/04 15:33:53 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/06 16:24:47 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
-
-t_token_list *get_tokens_after(t_token_list *tokens, t_token_node *pipe_location)
-{
-	t_token_list *new_list;
-    t_token_node *current_original;
-	
-	new_list = create_token_list();
-    if (new_list == NULL) 
-	{
-        perror("Failed to create new token list in get_tokens_before");
-        return NULL;
-    }
-	current_original = pipe_location->next;
-    while (current_original != NULL && current_original != pipe_location) 
-	{
-        add_token(new_list, current_original->value);
-        current_original = current_original->next;
-    }
-    return new_list;
-}
-
-t_token_list *get_tokens_before(t_token_list *tokens, t_token_node *pipe_location) 
-{
-	t_token_list *new_list;
-    t_token_node *current_original;
-	
-	new_list = create_token_list();
-    if (new_list == NULL) 
-	{
-        perror("Failed to create new token list in get_tokens_before");
-        return NULL;
-    }
-	current_original = tokens->head;
-    while (current_original != NULL && current_original != pipe_location) 
-	{
-        add_token(new_list, current_original->value);
-        current_original = current_original->next;
-    }
-    return new_list;
-}
 
 t_generic_list *init_generic_list(void)
 {
@@ -150,7 +110,6 @@ void add_word(t_token_node *node, t_generic_list *list)
     }
 }
 
-
 command_value *parse_simple_command(t_token_list *tokens)
 {
 	command_value		*cmd_details;
@@ -246,45 +205,3 @@ command_value *parse_simple_command(t_token_list *tokens)
 	free_generic_list_nodes_only(word_list);
 	return (cmd_details);
 }
-
-ast_node *create_command_node(command_value *cmd_details)
-{
-	ast_node *command_node;
-	command_node = (ast_node *)malloc(sizeof(ast_node));
-	if (command_node == NULL)
-		return (NULL);
-	command_node->type = COMMAND_NODE;
-	command_node->left = NULL;
-	command_node->right = NULL;
-	command_node->value = cmd_details;
-	return(command_node);
-}
-
-t_token_node *find_last_pipe(t_token_list *tokens)
-{
-	t_token_node *current;
-	if (tokens == NULL || tokens->head == NULL || tokens->tail == NULL)
-		return (NULL);
-	current = tokens->tail;
-	while (current != NULL)
-	{
-		if (current->type == PIPE)
-			return (current);
-		current = current->prev;
-	}
-	return (NULL);
-}
-
-ast_node *create_pipe_node(ast_node *left_child, ast_node *right_child)
-{
-	ast_node *pipe_node;
-	pipe_node = (ast_node *)malloc(sizeof(ast_node));
-	if (pipe_node == NULL)
-		return (NULL);
-	pipe_node->type = PIPE_NODE;
-	pipe_node->left = left_child;
-	pipe_node->right = right_child;
-	pipe_node->value = NULL;
-	return(pipe_node);
-}
-
