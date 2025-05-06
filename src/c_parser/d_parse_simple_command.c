@@ -28,7 +28,8 @@ command_value *parse_simple_command(t_token_list *tokens)
 		return (NULL);
 	redir_list = init_cmdval_list();
 	word_list = init_cmdval_list();
-	if (!redir_list || !word_list) {
+	if (!redir_list || !word_list) 
+	{
 		free(cmd_details);
 		free_cmdval_list_with_contents(redir_list, 1);
 		free_cmdval_list_with_contents(word_list, 0);
@@ -68,6 +69,14 @@ command_value *parse_simple_command(t_token_list *tokens)
 			return (NULL);
 		}
 	}
+
+//redirlist
+//wordlist
+
+	//params (t_cmdval_list *redirlist, t_cmdval_list *wordlist, command_value *cmd_details)
+	//return command_value
+	//
+	//command_value *join_cmd_details(t_cmdval_list *redirlist, t_cmdval_list *wordlist, command_value *cmd_details)
 
 	cmd_details->arg_array = (char **)malloc(sizeof(char *) * (word_list->size + 1));
 	if (cmd_details->arg_array == NULL) {
