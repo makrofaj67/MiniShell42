@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:23:10 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/06 16:24:25 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/06 17:28:41 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ ast_node *create_pipe_node(ast_node *left_child, ast_node *right_child)
 {
 	ast_node *pipe_node;
 	pipe_node = (ast_node *)malloc(sizeof(ast_node));
-	if (pipe_node == NULL)
+	if (pipe_node == NULL || left_child == NULL || right_child == NULL)
 		return (NULL);
 	pipe_node->type = PIPE_NODE;
 	pipe_node->left = left_child;
