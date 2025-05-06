@@ -6,42 +6,64 @@
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 15:26:22 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/06 16:34:03 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/06 17:03:05 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+#include <stdlib.h>
 
-ast_node *parse_tokens(t_token_list *tokens) {
+ast_node **parse_simple_node(t_token_list *tokens, t_token_node *pipe_location)
+{
+	ast_node	**childs;
+	t_token_list *left_tokens;
+	t_token_list *right_tokens;
+	ast_node *left_child;
+	ast_node *right_child;
+
+	childs = (ast_node **)malloc(sizeof(ast_node*) * 2);
+	if (childs == NULL)
+		return (NULL);
+	left_tokens = get_tokens_before(tokens, pipe_location);
+	right_tokens = get_tokens_after(tokens, pipe_location);
+	if (left_tokens == NULL || right_tokens == NULL)
+	{
+		fprintf(stderr, "Error creating sub token list\n");
+		free_token_list(left_tokens);
+		free_token_list(right_tokens);
+		return (NULL);
+	}
+	left_child = parse_tokens(left_tokens);
+	right_child = parse_tokens(right_tokens);
+	if (left_tokens == NULL || right_tokens == NULL)
+	{		
+		fprintf(stderr, "Error parsing sub-commands for pipe\n");
+		free_token_list(left_tokens);
+		free_token_list(right_tokens);
+		return (NULL);
+	}
+	childs[0] = left_child;
+	childs[1] = right_child;
+	return (childs);
+}
+
+
+ast_node *parse_tokens(t_token_list *tokens) 
+{
+	t_token_node *pipe_location;
+	ast_node **childs;
 
 	if (tokens == NULL || tokens->head == NULL)
-	    return NULL;
-	t_token_node *pipe_location = find_last_pipe(tokens);
+	    return (NULL);
+	pipe_location = find_last_pipe(tokens);
     if (pipe_location != NULL)
     {
-        t_token_list *left_tokens = get_tokens_before(tokens, pipe_location);
-        t_token_list *right_tokens = get_tokens_after(tokens, pipe_location);
-        if (left_tokens == NULL || right_tokens == NULL) {
-             fprintf(stderr, "Error creating sub token lists\n");
-             free_token_list(left_tokens);
-             free_token_list(right_tokens);
-             return NULL;
-        }
-        ast_node *left_child = parse_tokens(left_tokens);
-        ast_node *right_child = parse_tokens(right_tokens);
-        free_token_list(left_tokens);
-        free_token_list(right_tokens);
-        if (left_child == NULL || right_child == NULL) {
-             fprintf(stderr, "Error parsing sub-commands for pipe\n");
-             free_ast(left_child);
-             free_ast(right_child);
-             return NULL;
-        }
-        ast_node *pipe_node = create_pipe_node(left_child, right_child);
+		childs = parse_simple_node(tokens, pipe_location);	
+        ast_node *pipe_node = create_pipe_node(childs[0], childs[1]);
         if (pipe_node == NULL) {
             fprintf(stderr, "Error creating pipe node\n");
-            free_ast(left_child);
-            free_ast(right_child);
+            free_ast(childs[0]);
+            free_ast(childs[1]);
             return NULL;
         }
         return pipe_node;
