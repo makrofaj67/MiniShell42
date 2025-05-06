@@ -14,24 +14,24 @@
 
 command_value *parse_simple_command(t_token_list *tokens)
 {
-	command_value		*cmd_details;
-	t_generic_list		*redir_list;
-	t_generic_list		*word_list;
-	t_token_node		*current_token;
-	int					i;
-	int					j;
-	t_gl_node			*current_word;
-	t_gl_node			*current_redir;
+	command_value			*cmd_details;
+	t_cmdval_list			*redir_list;
+	t_cmdval_list			*word_list;
+	t_cmdval_node			*current_word;
+	t_cmdval_node			*current_redir;
+	t_token_node			*current_token;
+	int						i;
+	int						j;
 
 	cmd_details = (command_value *)malloc(sizeof(command_value));
 	if (cmd_details == NULL)
 		return (NULL);
-	redir_list = init_generic_list();
-	word_list = init_generic_list();
+	redir_list = init_cmdval_list();
+	word_list = init_cmdval_list();
 	if (!redir_list || !word_list) {
 		free(cmd_details);
-		free_generic_list_with_contents(redir_list, 1);
-		free_generic_list_with_contents(word_list, 0);
+		free_cmdval_list_with_contents(redir_list, 1);
+		free_cmdval_list_with_contents(word_list, 0);
 		return (NULL);
 	}
 	current_token = tokens->head;
@@ -43,8 +43,8 @@ command_value *parse_simple_command(t_token_list *tokens)
 			{
 				printf("Syntax Error");
 				free(cmd_details);
-				free_generic_list_with_contents(redir_list, 1);
-				free_generic_list_with_contents(word_list, 0);
+				free_cmdval_list_with_contents(redir_list, 1);
+				free_cmdval_list_with_contents(word_list, 0);
 				return (NULL);
 			}
 			else
@@ -63,8 +63,8 @@ command_value *parse_simple_command(t_token_list *tokens)
 		{
 			printf("Unknown error");
 			free(cmd_details);
-			free_generic_list_with_contents(redir_list, 1);
-			free_generic_list_with_contents(word_list, 0);
+			free_cmdval_list_with_contents(redir_list, 1);
+			free_cmdval_list_with_contents(word_list, 0);
 			return (NULL);
 		}
 	}
@@ -72,8 +72,8 @@ command_value *parse_simple_command(t_token_list *tokens)
 	cmd_details->arg_array = (char **)malloc(sizeof(char *) * (word_list->size + 1));
 	if (cmd_details->arg_array == NULL) {
 		free(cmd_details);
-		free_generic_list_with_contents(redir_list, 1);
-		free_generic_list_with_contents(word_list, 0);
+		free_cmdval_list_with_contents(redir_list, 1);
+		free_cmdval_list_with_contents(word_list, 0);
 		return (NULL);
 	}
 	
@@ -90,8 +90,8 @@ command_value *parse_simple_command(t_token_list *tokens)
 	if (cmd_details->redirections == NULL) {
 		free(cmd_details->arg_array);
 		free(cmd_details);
-		free_generic_list_with_contents(redir_list, 1);
-		free_generic_list_with_contents(word_list, 0);
+		free_cmdval_list_with_contents(redir_list, 1);
+		free_cmdval_list_with_contents(word_list, 0);
 		return (NULL);
 	}
 	
@@ -103,7 +103,7 @@ command_value *parse_simple_command(t_token_list *tokens)
 		current_redir = current_redir->next;
 	}
 	cmd_details->redirections[j] = NULL; 
-	free_generic_list_nodes_only(redir_list);
-	free_generic_list_nodes_only(word_list);
+	free_cmdval_list_nodes_only(redir_list);
+	free_cmdval_list_nodes_only(word_list);
 	return (cmd_details);
 }

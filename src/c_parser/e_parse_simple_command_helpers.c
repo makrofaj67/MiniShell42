@@ -12,10 +12,10 @@
 
 #include "../../inc/__minishell.h"
 
-t_generic_list *init_generic_list(void)
+t_cmdval_list *init_generic_liss(void)
 {
-	t_generic_list *gn_list;
-	gn_list = (t_generic_list *)malloc(sizeof(t_generic_list));
+	t_cmdval_list *gn_list;
+	gn_list = (t_cmdval_list *)malloc(sizeof(t_cmdval_node));
 	if (gn_list == NULL)
 		return (NULL);
 	gn_list->head = NULL;
@@ -24,9 +24,9 @@ t_generic_list *init_generic_list(void)
 	return (gn_list);
 }
 
-int add_node_to_generic_list(t_generic_list *list, void *value)
+int add_node_to_generic_list(t_cmdval_list *list, void *value)
 {
-    t_gl_node *new_node = (t_gl_node *)malloc(sizeof(t_gl_node));
+    t_cmdval_node *new_node = (t_cmdval_node *)malloc(sizeof(t_cmdval_node));
     if (new_node == NULL) 
         return (0);    
 	new_node->value = value; 
@@ -47,7 +47,7 @@ int add_node_to_generic_list(t_generic_list *list, void *value)
 	return (1);
 }
 
-void add_redir(t_token_node *node, t_generic_list *list) 
+void add_redir(t_token_node *node, t_cmdval_list *list) 
 {
     t_redirection	*new_redir;
 	int				success;
@@ -90,7 +90,7 @@ void add_redir(t_token_node *node, t_generic_list *list)
     }
 }
 
-void add_word(t_token_node *node, t_generic_list *list)
+void add_word(t_token_node *node, t_cmdval_list *list)
 {
 	char *word_copy;
 	int success;

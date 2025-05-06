@@ -12,9 +12,10 @@
 
 #include "../../inc/__minishell.h"
 
-ast_node *create_pipe_node(ast_node *left_child, ast_node *right_child)
+ast_node	*create_pipe_node(ast_node *left_child, ast_node *right_child)
 {
-	ast_node *pipe_node;
+	ast_node	*pipe_node;
+
 	pipe_node = (ast_node *)malloc(sizeof(ast_node));
 	if (pipe_node == NULL || left_child == NULL || right_child == NULL)
 		return (NULL);
@@ -22,12 +23,13 @@ ast_node *create_pipe_node(ast_node *left_child, ast_node *right_child)
 	pipe_node->left = left_child;
 	pipe_node->right = right_child;
 	pipe_node->value = NULL;
-	return(pipe_node);
+	return (pipe_node);
 }
 
-ast_node *create_command_node(command_value *cmd_details)
+ast_node	*create_command_node(command_value *cmd_details)
 {
-	ast_node *command_node;
+	ast_node	*command_node;
+
 	command_node = (ast_node *)malloc(sizeof(ast_node));
 	if (command_node == NULL)
 		return (NULL);
@@ -35,7 +37,5 @@ ast_node *create_command_node(command_value *cmd_details)
 	command_node->left = NULL;
 	command_node->right = NULL;
 	command_node->value = cmd_details;
-	return(command_node);
+	return (command_node);
 }
-
-

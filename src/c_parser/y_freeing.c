@@ -17,10 +17,10 @@
  * 
  * @param list Generic list to free
  */
-void free_generic_list_nodes_only(t_generic_list *list) {
+void free_cmdval_list_nodes_only(t_cmdval_list *list) {
     
-	t_gl_node *next_node;
-	t_gl_node *current; 
+	t_cmdval_node *next_node;
+	t_cmdval_node *current; 
 	
 	if (list == NULL) 
 		return;
@@ -39,9 +39,9 @@ void free_generic_list_nodes_only(t_generic_list *list) {
  * @param list Generic list to free
  * @param is_redir_list Whether this is a redirection list (true) or word list (false)
  */
-void free_generic_list_with_contents(t_generic_list *list, int is_redir_list) {
-    t_gl_node *next_node;
-    t_gl_node *current;
+void free_cmdval_list_with_contents(t_cmdval_list *list, int is_redir_list) {
+    t_cmdval_node *next_node;
+    t_cmdval_node *current;
     
     if (list == NULL)
         return;
