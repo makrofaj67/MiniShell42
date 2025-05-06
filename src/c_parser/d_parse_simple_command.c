@@ -30,7 +30,6 @@ command_value *join_cmd_details(t_cmdval_list *redir_list, t_cmdval_list *word_l
 		free_cmdval_list_with_contents(word_list, 0);
 		return (NULL);
 	}
-	
 	i = 0;
 	current_word = word_list->head;
 	while(current_word != NULL)
@@ -48,7 +47,6 @@ command_value *join_cmd_details(t_cmdval_list *redir_list, t_cmdval_list *word_l
 		free_cmdval_list_with_contents(word_list, 0);
 		return (NULL);
 	}
-	
 	j = 0;
 	current_redir = redir_list->head;
 	while(current_redir != NULL)
@@ -113,9 +111,6 @@ command_value *parse_simple_command(t_token_list *tokens)
 	t_cmdval_list			**val_lists;
 	t_cmdval_list			*redir_list;
 	t_cmdval_list			*word_list;
-	t_cmdval_node			*current_word;
-	t_cmdval_node			*current_redir;
-	t_token_node			*current_token;
 
 	redir_list = init_cmdval_list();
 	word_list = init_cmdval_list();
