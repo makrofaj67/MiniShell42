@@ -12,7 +12,7 @@
 
 #include "../../inc/__minishell.h"
 
-t_cmdval_list *init_generic_liss(void)
+t_cmdval_list *init_cmdval_list(void)
 {
 	t_cmdval_list *gn_list;
 	gn_list = (t_cmdval_list *)malloc(sizeof(t_cmdval_node));
@@ -24,7 +24,7 @@ t_cmdval_list *init_generic_liss(void)
 	return (gn_list);
 }
 
-int add_node_to_generic_list(t_cmdval_list *list, void *value)
+int add_node_to_cmdval_list(t_cmdval_list *list, void *value)
 {
     t_cmdval_node *new_node = (t_cmdval_node *)malloc(sizeof(t_cmdval_node));
     if (new_node == NULL) 
@@ -80,10 +80,10 @@ void add_redir(t_token_node *node, t_cmdval_list *list)
         free(new_redir);
         return; 
     }
-    success = add_node_to_generic_list(list, new_redir);
+    success = add_node_to_cmdval_list(list, new_redir);
     if (!success) 
 	{
-        perror("add_node_to_generic_list failed in add_redir");
+        perror("add_node_to_cmdval_list failed in add_redir");
         free(new_redir->filename);
         free(new_redir);
         return;
@@ -101,11 +101,11 @@ void add_word(t_token_node *node, t_cmdval_list *list)
         perror("strdup failed in add_word"); 
         return;
     }
-    success = add_node_to_generic_list(list, word_copy);
+    success = add_node_to_cmdval_list(list, word_copy);
     if (success == 0) 
 	{
         free(word_copy); 
-        perror("add_node_to_generic_list failed in add_word");
+        perror("add_node_to_cmdval_list failed in add_word");
         return;
     }
 }
