@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 15:36:50 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/07 11:29:49 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/07 14:04:03 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,5 +269,32 @@ void			free_cmdval_list_with_contents(t_cmdval_list *list,
  * @param root Root node of the AST to visualize
  */
 void			visualize_ast(ast_node *root);
+
+/**
+ * @brief Creates a formatted indentation string for tree visualization
+ * 
+ * @param depth Current depth level in the tree
+ * @param is_last Whether this is the last child at this level
+ * @param prefix The prefix string to build upon
+ * @return char* Formatted indentation string
+ */
+char			*get_tree_branch(int depth, int is_last, char *prefix);
+
+/**
+ * @brief Creates the prefix for the next level of the tree
+ * 
+ * @param depth Current depth level in the tree
+ * @param is_last Whether this is the last child at this level
+ * @param prefix The current prefix string
+ * @return char* Prefix for the next level
+ */
+char			*get_next_prefix(int depth, int is_last, char *prefix);
+
+/**
+ * @brief Visualizes a redirection with ASCII art
+ * 
+ * @param redir The redirection to visualize
+ */
+void			visualize_redirection(t_redirection *redir);
 
 #endif
