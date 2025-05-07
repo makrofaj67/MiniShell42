@@ -73,6 +73,25 @@ t_cmdval_list **fill_cmdval_lists(t_token_list *tokens, t_cmdval_list *redir_lis
 	{
 		if (current_token->type == RDRT_IN || current_token->type == RDRT_OUT || current_token->type == HEREDOC || current_token->type == APPEND)
 		{
+			//void *fill_redirtovallis(t_token_node **current_token, t_cmdval_list *)
+			//{
+			//	if (*current_token->next == NULL || *current_token->next->type != WORD)
+			//	{
+			//		printf("Syntax Error");
+			//		free_cmdval_list_with_contents(redir_list, 1);
+			//		free_cmdval_lst_with_contents(word_list, 0);
+			//		return (NULL);
+			//	}
+			//	else
+			//	{
+			//		add_redir(*current_token, redir_list);
+			//		if(*current_token->next != NULL)
+			//			*current_token = *current_token->next->next;
+			//	}
+			//
+			//}
+			//
+			//fill_redirtovallist(current)
 			if (current_token->next == NULL || current_token->next->type != WORD)
 			{
 				printf("Syntax Error");
