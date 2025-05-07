@@ -3,145 +3,107 @@
 /*                                                        :::      ::::::::   */
 /*   d_parse_simple_command.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 16:25:48 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/06 16:31:02 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/07 11:06:12 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
-command_value *join_cmd_details(t_cmdval_list *redir_list, t_cmdval_list *word_list)
+static int	init_args_array(command_value *cmd, t_cmdval_list *word_list)
 {
-	command_value			*cmd_details;	
-	t_cmdval_node			*current_word;
-	t_cmdval_node			*current_redir;	
-	int						i;
-	int						j;
+	t_cmdval_node	*current;
+	int				i;
 
-	cmd_details = (command_value *)malloc(sizeof(command_value));
-	if (cmd_details == NULL)
-		return (NULL);
-	cmd_details->arg_array = (char **)malloc(sizeof(char *) * (word_list->size + 1));
-	if (cmd_details->arg_array == NULL) {
-		free(cmd_details);
-		free_cmdval_list_with_contents(redir_list, 1);
-		free_cmdval_list_with_contents(word_list, 0);
-		return (NULL);
-	}
+	cmd->arg_array = (char **)malloc(sizeof(char *) * (word_list->size + 1));
+	if (cmd->arg_array == NULL)
+		return (0);
 	i = 0;
-	current_word = word_list->head;
-	while(current_word != NULL)
+	current = word_list->head;
+	while (current != NULL)
 	{
-		cmd_details->arg_array[i++] = current_word->value;
-		current_word = current_word->next;
+		cmd->arg_array[i++] = current->value;
+		current = current->next;
 	}
-	cmd_details->arg_array[i] = NULL;
+	cmd->arg_array[i] = NULL;
+	return (1);
+}
 
-	cmd_details->redirections = (t_redirection **)malloc(sizeof(t_redirection *) * (redir_list->size + 1));
-	if (cmd_details->redirections == NULL) {
-		free(cmd_details->arg_array);
-		free(cmd_details);
-		free_cmdval_list_with_contents(redir_list, 1);
-		free_cmdval_list_with_contents(word_list, 0);
+static int	init_redir_array(command_value *cmd, t_cmdval_list *redir_list)
+{
+	t_cmdval_node	*current;
+	int				j;
+
+	cmd->redirections = (t_redirection **)malloc(sizeof(t_redirection *)
+			* (redir_list->size + 1));
+	if (cmd->redirections == NULL)
+		return (0);
+	j = 0;
+	current = redir_list->head;
+	while (current != NULL)
+	{
+		cmd->redirections[j++] = (t_redirection *)current->value;
+		current = current->next;
+	}
+	cmd->redirections[j] = NULL;
+	return (1);
+}
+
+static int	cmd_alloc_error(command_value *cmd, t_cmdval_list *r_list,
+						t_cmdval_list *w_list)
+{
+	if (cmd)
+		free(cmd);
+	free_cmdval_list_with_contents(r_list, 1);
+	free_cmdval_list_with_contents(w_list, 0);
+	return (0);
+}
+
+command_value	*join_cmd_details(t_cmdval_list *redir_list,
+						t_cmdval_list *word_list)
+{
+	command_value	*cmd;
+
+	cmd = (command_value *)malloc(sizeof(command_value));
+	if (cmd == NULL)
+		return (NULL);
+	if (!init_args_array(cmd, word_list))
+	{
+		cmd_alloc_error(cmd, redir_list, word_list);
 		return (NULL);
 	}
-	j = 0;
-	current_redir = redir_list->head;
-	while(current_redir != NULL)
-	{	
-		cmd_details->redirections[j++] = (t_redirection *)current_redir->value;
-		current_redir = current_redir->next;
+	if (!init_redir_array(cmd, redir_list))
+	{
+		free(cmd->arg_array);
+		cmd_alloc_error(cmd, redir_list, word_list);
+		return (NULL);
 	}
-	cmd_details->redirections[j] = NULL; 
 	free_cmdval_list_nodes_only(redir_list);
 	free_cmdval_list_nodes_only(word_list);
-	return (cmd_details);
+	return (cmd);
 }
 
-t_cmdval_list **fill_cmdval_lists(t_token_list *tokens, t_cmdval_list *redir_list, t_cmdval_list *word_list)
+command_value	*parse_simple_command(t_token_list *tokens)
 {
-	t_cmdval_list			**double_cmdval_list;
-	t_token_node			*current_token;
-	
-	current_token = tokens->head;
-	double_cmdval_list = (t_cmdval_list **)malloc(sizeof(t_cmdval_list *) * 2);
-	if (double_cmdval_list == NULL)
-		return(NULL);
-	while(current_token != NULL)
-	{
-		if (current_token->type == RDRT_IN || current_token->type == RDRT_OUT || current_token->type == HEREDOC || current_token->type == APPEND)
-		{
-			//void *fill_redirtovallis(t_token_node **current_token, t_cmdval_list *)
-			//{
-			//	if (*current_token->next == NULL || *current_token->next->type != WORD)
-			//	{
-			//		printf("Syntax Error");
-			//		free_cmdval_list_with_contents(redir_list, 1);
-			//		free_cmdval_lst_with_contents(word_list, 0);
-			//		return (NULL);
-			//	}
-			//	else
-			//	{
-			//		add_redir(*current_token, redir_list);
-			//		if(*current_token->next != NULL)
-			//			*current_token = *current_token->next->next;
-			//	}
-			//
-			//}
-			//
-			//fill_redirtovallist(current)
-			if (current_token->next == NULL || current_token->next->type != WORD)
-			{
-				printf("Syntax Error");
-				free_cmdval_list_with_contents(redir_list, 1);
-				free_cmdval_list_with_contents(word_list, 0);
-				return (NULL);
-			}
-			else
-			{
-				add_redir(current_token, redir_list);
-				if (current_token->next != NULL)
-					current_token = current_token->next->next;
-			}
-		}
-		else if (current_token->type == WORD)
-		{
-			add_word(current_token, word_list);
-			current_token = current_token->next;
-		}
-		else
-		{
-			printf("Unknown error");
-			free_cmdval_list_with_contents(redir_list, 1);
-			free_cmdval_list_with_contents(word_list, 0);
-			return (NULL);
-		}
-	}
-	double_cmdval_list[0] = redir_list;
-	double_cmdval_list[1] = word_list;
-	return(double_cmdval_list);;
-}
-
-command_value *parse_simple_command(t_token_list *tokens)
-{
-	command_value			*cmd_details;
-	t_cmdval_list			**val_lists;
-	t_cmdval_list			*redir_list;
-	t_cmdval_list			*word_list;
+	command_value	*cmd_details;
+	t_cmdval_list	*redir_list;
+	t_cmdval_list	*word_list;
+	t_cmdval_list	**val_lists;
 
 	redir_list = init_cmdval_list();
 	word_list = init_cmdval_list();
-	if (!redir_list || !word_list) 
+	if (!redir_list || !word_list)
 	{
 		free_cmdval_list_with_contents(redir_list, 1);
 		free_cmdval_list_with_contents(word_list, 0);
 		return (NULL);
 	}
 	val_lists = fill_cmdval_lists(tokens, redir_list, word_list);
-	cmd_details = join_cmd_details(redir_list, word_list);
-	if (cmd_details == NULL)
+	if (!val_lists)
 		return (NULL);
+	free(val_lists);
+	cmd_details = join_cmd_details(redir_list, word_list);
 	return (cmd_details);
 }
