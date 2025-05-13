@@ -12,12 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/**
- * @brief Prints command arguments and redirections
- * 
- * @param value Command value to visualize
- * @param branch Branch prefix for the tree visualization
- */
 static void	print_command_args(command_value *value, char *branch)
 {
 	int	i;
@@ -43,12 +37,6 @@ static void	print_command_args(command_value *value, char *branch)
 	printf("\n");
 }
 
-/**
- * @brief Visualizes a command node in the AST
- * 
- * @param node AST node to visualize
- * @param branch Branch prefix for the tree visualization
- */
 static void	visualize_cmd_node(ast_node *node, char *branch)
 {
 	if (node->value && node->value->arg_array && node->value->arg_array[0])
@@ -57,14 +45,6 @@ static void	visualize_cmd_node(ast_node *node, char *branch)
 		printf("%s\033[1;31mEMPTY COMMAND\033[0m\n", branch);
 }
 
-/**
- * @brief Recursively visualizes the AST
- * 
- * @param node Current AST node to visualize
- * @param depth Current depth in the tree
- * @param is_last Whether this node is the last child at its level
- * @param prefix Current prefix for the tree visualization
- */
 void	visualize_ast_recursive(ast_node *node, int depth, int is_last,
 		char *prefix)
 {
@@ -87,11 +67,6 @@ void	visualize_ast_recursive(ast_node *node, int depth, int is_last,
 	free(branch);
 }
 
-/**
- * @brief Visualizes the entire AST in a pretty tree format with colors
- * 
- * @param root Root node of the AST to visualize
- */
 void	visualize_ast(ast_node *root)
 {
 	if (root == NULL)

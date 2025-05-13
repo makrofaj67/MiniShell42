@@ -12,14 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/* 
-** Performs syntax validation on the user-entered command
-** Checks for blank commands, mismatched parentheses, and unclosed quotes
-** Adds valid commands to the command history
-** 
-** @param command: The command string to validate
-** @return: The validated command or NULL if the command contains errors
-*/
 static char	*validate_command(char *command)
 {
 	if (is_command_blank(command))
@@ -43,16 +35,6 @@ static char	*validate_command(char *command)
 	return (command);
 }
 
-/*
-** Reads a command from the user input and performs initial validation
-** Handles EOF (Ctrl+D) by setting the exit flag
-** Manages interruption signals (Ctrl+C) through global signal handler
-** 
-** @param prompt: The prompt string to display to the user
-** @param should_exit: Pointer to the shell exit flag, 
-** set to 1 if EOF is detected
-** @return: A validated command string or NULL on error, EOF, or interruption
-*/
 char	*get_command(char *prompt, int *should_exit)
 {
 	char	*command;

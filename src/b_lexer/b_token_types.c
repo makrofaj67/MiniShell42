@@ -12,38 +12,16 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Identifies shell special operator characters (|, <, >)
-** Used during tokenization to distinguish operators from regular words
-** 
-** @param c: The character to check
-** @return: 1 if character is a shell operator, 0 otherwise
-*/
 int	is_operator(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
 
-/*
-** Detects whitespace characters in the command string
-** Used to separate tokens and ignore spaces in the command
-** 
-** @param c: The character to check
-** @return: 1 if character is whitespace, 0 otherwise
-*/
 int	is_whitespace(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v');
 }
 
-/*
-** Calculates the length of shell operators including compound operators
-** Handles both single-char operators (|,<,>) and double-char operators (<<,>>)
-** 
-** @param str: Pointer to the operator in the command string
-** @return: 2 for compound operators (<<,>>),
-** 1 for simple operators, 0 if not an operator
-*/
 int	get_operator_len(const char *str)
 {
 	if (!str || !*str)
@@ -56,14 +34,6 @@ int	get_operator_len(const char *str)
 	return (0);
 }
 
-/*
-** Maps token strings to their corresponding token type enumerations
-** Used after tokenization to classify each token for parsing
-** 
-** @param token_str: The token string to classify
-** @return: Appropriate token type enum value 
-** (PIPE, RDRT_IN, etc. or WORD by default)
-*/
 t_token_type	get_token_type(char *token_str)
 {
 	if (!token_str || !*token_str)

@@ -12,11 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/**
- * @brief Initialize a generic command value list
- * 
- * @return t_cmdval_list* Pointer to the initialized list
- */
 t_cmdval_list	*init_cmdval_list(void)
 {
 	t_cmdval_list	*list;
@@ -30,13 +25,7 @@ t_cmdval_list	*init_cmdval_list(void)
 	return (list);
 }
 
-/**
- * @brief Add a new node to a command value list
- * 
- * @param list The list to add to
- * @param value The value to store in the new node
- * @return int 1 on success, 0 on failure
- */
+
 int	add_node_to_cmdval_list(t_cmdval_list *list, void *value)
 {
 	t_cmdval_node	*new_node;
@@ -62,12 +51,6 @@ int	add_node_to_cmdval_list(t_cmdval_list *list, void *value)
 	return (1);
 }
 
-/**
- * @brief Add a word token to a command value list
- * 
- * @param node The token node containing the word
- * @param list The list to add the word to
- */
 void	add_word(t_token_node *node, t_cmdval_list *list)
 {
 	char	*word_copy;

@@ -12,14 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/**
- * @brief Creates a formatted indentation string for tree visualization
- * 
- * @param depth Current depth level in the tree
- * @param is_last Whether this is the last child at this level
- * @param prefix The prefix string to build upon
- * @return char* Formatted indentation string
- */
 char	*get_tree_branch(int depth, int is_last, char *prefix)
 {
 	char	*new_prefix;
@@ -40,14 +32,6 @@ char	*get_tree_branch(int depth, int is_last, char *prefix)
 	return (new_prefix);
 }
 
-/**
- * @brief Creates the prefix for the next level of the tree
- * 
- * @param depth Current depth level in the tree
- * @param is_last Whether this is the last child at this level
- * @param prefix The current prefix string
- * @return char* Prefix for the next level
- */
 char	*get_next_prefix(int depth, int is_last, char *prefix)
 {
 	char	*next_prefix;

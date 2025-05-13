@@ -12,14 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Extracts a substring from the command and creates a new token
-** 
-** @param command: The original command string
-** @param start: Starting index of the token in the command
-** @param len: Length of the token to extract
-** @return: A newly allocated string containing the token or NULL on failure
-*/
 static char	*extract_token_part(const char *command, int start, int len)
 {
 	char	*token;
@@ -32,14 +24,6 @@ static char	*extract_token_part(const char *command, int start, int len)
 	return (token);
 }
 
-/*
-** Processes shell operators like pipes and redirections
-** 
-** @param command: The original command string
-** @param pos: Pointer to the current position in command (updated by function)
-** @param start: Starting index of the operator in the command
-** @return: A newly allocated string containing the operator token
-*/
 static char	*process_operator(const char *command, int *pos, int start)
 {
 	int	len;
@@ -49,15 +33,6 @@ static char	*process_operator(const char *command, int *pos, int start)
 	return (extract_token_part(command, start, len));
 }
 
-/*
-** Processes a word token, handling quotes and advancing position
-** Handles complex quoted words by tracking quote state
-** 
-** @param command: The original command string
-** @param pos: Pointer to the current position in command (updated by function)
-** @param start: Starting index of the word token in the command
-** @return: A newly allocated string containing the word token
-*/
 static char	*process_word(const char *command, int *pos, int start)
 {
 	int		len;
@@ -76,14 +51,6 @@ static char	*process_word(const char *command, int *pos, int start)
 	return (extract_token_part(command, start, len));
 }
 
-/*
-** Extracts the next token from the command string
-** Skips whitespace and determines token type (operator or word)
-** 
-** @param command: The original command string
-** @param pos: Pointer to the current position in command (updated by function)
-** @return: A newly allocated string containing the next token or NULL if at end
-*/
 static char	*extract_token(const char *command, int *pos)
 {
 	int		start;
@@ -99,14 +66,6 @@ static char	*extract_token(const char *command, int *pos)
 		return (process_word(command, pos, start));
 }
 
-/*
-** Main tokenization function that breaks a command into a linked list of tokens
-** Processes quotes and environment variables in the tokens
-** 
-** @param command: The command string to tokenize
-** @param exit_status: The current exit status for $? expansion
-** @return: A linked list of tokens or NULL if tokenization fails
-*/
 t_token_list	*tokenize_command(char *command, int exit_status)
 {
 	t_token_list	*token_list;

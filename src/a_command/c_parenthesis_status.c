@@ -12,15 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Verifies that a closing parenthesis has a matching opening parenthesis
-** Detects syntax errors where closing parentheses appear without matching opens
-** Uses a stack to track parenthesis pairs
-** 
-** @param stack: The parenthesis tracking stack
-** @param c: The current character (checked if it's a closing parenthesis)
-** @return: 1 if an unmatched closing parenthesis is found, 0 otherwise
-*/
 static int	check_closing_paren(t_pstack *stack, char c)
 {
 	if (c == ')' && stack->head == NULL)
@@ -30,15 +21,6 @@ static int	check_closing_paren(t_pstack *stack, char c)
 	return (0);
 }
 
-/*
-** Validates that all parentheses in a command are properly matched
-** Ensures command has syntactically correct parenthesis pairs
-** Uses a stack-based algorithm to track opening and closing pairs
-** 
-** @param command: The command string to check for balanced parentheses
-** @return: 0 if all parentheses are matched, positive count of unclosed
-**          parentheses, or -1 if there are unmatched closing parentheses
-*/
 int	parenthesis_status(char *command)
 {
 	int			i;

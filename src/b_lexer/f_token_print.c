@@ -12,13 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Converts numerical token types to human-readable string representations
-** Used by the debug printing function to display token types clearly
-** 
-** @param type: The token type enumeration value
-** @return: A string representing the token type (e.g., "WORD", "PIPE")
-*/
 static char	*get_token_type_str(t_token_type type)
 {
 	if (type == WORD)
@@ -36,13 +29,6 @@ static char	*get_token_type_str(t_token_type type)
 	return ("UNKNOWN");
 }
 
-/*
-** Displays the contents of the token list for debugging purposes
-** Formats and prints each token with its type and value for inspection
-** Useful for troubleshooting command parsing and execution issues
-** 
-** @param list: The token list to print
-*/
 void	print_tokens(t_token_list *list)
 {
 	t_token_node	*current;

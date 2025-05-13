@@ -12,12 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Initializes a new doubly-linked token list data structure
-** Used as the main container for all tokens during lexical analysis
-** 
-** @return: A newly allocated empty token list or NULL if allocation fails
-*/
 t_token_list	*create_token_list(void)
 {
 	t_token_list	*list;
@@ -30,14 +24,6 @@ t_token_list	*create_token_list(void)
 	return (list);
 }
 
-/*
-** Creates a new token node in memory with specified value and type
-** Makes a deep copy of the token value for memory safety
-** 
-** @param value: The string value of the token
-** @param type: The token's type (WORD, PIPE, etc.)
-** @return: A new token node or NULL if allocation fails
-*/
 t_token_node	*create_token(char *value, t_token_type type)
 {
 	t_token_node	*node;
@@ -59,14 +45,6 @@ t_token_node	*create_token(char *value, t_token_type type)
 	return (node);
 }
 
-/*
-** Adds a new token to the end of the doubly-linked token list
-** Automatically determines token type based on the token value
-** Maintains prev/next pointers for bi-directional traversal
-** 
-** @param list: The token list to add to
-** @param value: The string value of the token to add
-*/
 void	add_token(t_token_list *list, char *value)
 {
 	t_token_node	*new_node;
@@ -91,13 +69,6 @@ void	add_token(t_token_list *list, char *value)
 	}
 }
 
-/*
-** Deallocates the entire token list and all contained token nodes
-** Properly frees all memory to prevent leaks, including token values
-** Should be called when the token list is no longer needed
-** 
-** @param list: The token list to free
-*/
 void	free_token_list(t_token_list *list)
 {
 	t_token_node	*current;

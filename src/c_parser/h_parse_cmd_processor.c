@@ -12,13 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/**
- * @brief Handle a redirection token during parsing
- * 
- * @param token Pointer to current token pointer (will be updated)
- * @param redir_list List to add redirection to
- * @return int 1 on success, 0 on failure
- */
 static int	handle_redirection_token(t_token_node **token,
 				t_cmdval_list *redir_list)
 {
@@ -35,13 +28,6 @@ static int	handle_redirection_token(t_token_node **token,
 	return (1);
 }
 
-/**
- * @brief Handle a word token during parsing
- * 
- * @param token Pointer to current token pointer (will be updated)
- * @param word_list List to add word to
- * @return int 1 on success, 0 on failure
- */
 static int	handle_word_token(t_token_node **token, t_cmdval_list *word_list)
 {
 	add_word(*token, word_list);
@@ -49,14 +35,6 @@ static int	handle_word_token(t_token_node **token, t_cmdval_list *word_list)
 	return (1);
 }
 
-/**
- * @brief Process a token during command parsing
- * 
- * @param token Pointer to current token pointer (will be updated)
- * @param r_list Redirection list
- * @param w_list Word list
- * @return int 1 on success, 0 on failure
- */
 static int	process_token_node(t_token_node **token, t_cmdval_list *r_list,
 				t_cmdval_list *w_list)
 {
@@ -76,14 +54,6 @@ static int	process_token_node(t_token_node **token, t_cmdval_list *r_list,
 	}
 }
 
-/**
- * @brief Fill command value lists with tokens
- * 
- * @param tokens Token list to process
- * @param r_list Redirection list to fill
- * @param w_list Word list to fill
- * @return t_cmdval_list** Array of both lists or NULL on failure
- */
 t_cmdval_list	**fill_cmdval_lists(t_token_list *tokens, t_cmdval_list *r_list,
 				t_cmdval_list *w_list)
 {

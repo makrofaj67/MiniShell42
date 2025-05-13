@@ -12,13 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Expands environment variables like $USER or $HOME within tokens
-** Fetches the actual value of the variable from the environment
-** Extracts valid environment variable names (alphanumeric + underscore)
-** 
-** @param state: The token processing state structure
-*/
 static void	process_env_var(t_token_state *state)
 {
 	char	env_name[256];
@@ -39,12 +32,6 @@ static void	process_env_var(t_token_state *state)
 	}
 }
 
-/*
-** Processes the $? special parameter which expands to last command's exit status
-** Converts the numeric exit status to a string and appends to result
-** 
-** @param state: The token processing state structure
-*/
 static void	handle_exit_status(t_token_state *state)
 {
 	char	exit_str[12];

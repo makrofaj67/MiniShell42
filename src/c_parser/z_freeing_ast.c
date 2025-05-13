@@ -12,11 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/**
- * @brief Free a string array with null termination
- * 
- * @param arg_array Array of strings to free
- */
 static void	free_arg_array(char **arg_array)
 {
 	int	i;
@@ -32,11 +27,6 @@ static void	free_arg_array(char **arg_array)
 	free(arg_array);
 }
 
-/**
- * @brief Free an array of redirection structures
- * 
- * @param redirections Array of redirection structures to free
- */
 static void	free_redirection_array(t_redirection **redirections)
 {
 	int	i;
@@ -54,11 +44,6 @@ static void	free_redirection_array(t_redirection **redirections)
 	free(redirections);
 }
 
-/**
- * @brief Free all resources associated with a command value structure
- * 
- * @param details Command value structure to free
- */
 void	free_command_value(command_value *details)
 {
 	if (details == NULL)
@@ -70,11 +55,6 @@ void	free_command_value(command_value *details)
 	free(details);
 }
 
-/**
- * @brief Free all resources in an AST node and its children
- * 
- * @param node AST node to free
- */
 void	free_ast(ast_node *node)
 {
 	if (node == NULL)

@@ -12,27 +12,11 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Detects if a character is a quote character (single or double)
-** Essential for proper handling of quoted strings in shell commands
-** 
-** @param c: The character to check
-** @return: 1 if the character is a quote, 0 otherwise
-*/
 int	is_quote(char c)
 {
 	return (c == '\'' || c == '"');
 }
 
-/*
-** Tracks and manages the current quote state during tokenization
-** Changes state when entering/exiting quoted sections based on the character
-** 
-** @param c: The current character being processed
-** @param quote_state: Pointer to the current quote state 
-** (0 for none, ' or " for quoted)
-** @return: 1 if the quote state changed (quote opened or closed), 0 otherwise
-*/
 int	update_quote_state(char c, char *quote_state)
 {
 	if (!*quote_state && is_quote(c))
@@ -48,14 +32,6 @@ int	update_quote_state(char c, char *quote_state)
 	return (0);
 }
 
-/*
-** Creates and initializes a token processing state structure
-** Allocates memory for the result buffer based on token length
-** 
-** @param token: The token string to process
-** @param exit_status: Current exit status for $? expansion
-** @return: An initialized t_token_state structure
-*/
 t_token_state	init_token_state(char *token, int exit_status)
 {
 	t_token_state	state;
@@ -70,12 +46,6 @@ t_token_state	init_token_state(char *token, int exit_status)
 	return (state);
 }
 
-/*
-** Manages quote characters during token processing
-** Handles opening/closing quotes and copying characters inside quotes
-** 
-** @param state: The token processing state structure
-*/
 void	handle_quotes(t_token_state *state)
 {
 	if (state->quote_state == 0)

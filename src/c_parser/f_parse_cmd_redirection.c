@@ -12,12 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/**
- * @brief Set the type of a redirection based on token type
- * 
- * @param redir Redirection structure to set the type for
- * @param type Token type to convert
- */
 static void	set_redir_type(t_redirection *redir, t_token_type type)
 {
 	if (type == RDRT_IN)
@@ -30,13 +24,6 @@ static void	set_redir_type(t_redirection *redir, t_token_type type)
 		redir->type = REDIR_HEREDOC;
 }
 
-/**
- * @brief Setup a redirection with filename from token
- * 
- * @param redir Redirection structure to setup
- * @param node Token node with redirection information
- * @return int 1 on success, 0 on failure
- */
 static int	setup_redirection(t_redirection *redir, t_token_node *node)
 {
 	set_redir_type(redir, node->type);
@@ -46,12 +33,6 @@ static int	setup_redirection(t_redirection *redir, t_token_node *node)
 	return (1);
 }
 
-/**
- * @brief Add a redirection token to a command value list
- * 
- * @param node The token node containing the redirection
- * @param list The list to add the redirection to
- */
 void	add_redir(t_token_node *node, t_cmdval_list *list)
 {
 	t_redirection	*new_redir;

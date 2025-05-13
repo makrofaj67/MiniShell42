@@ -12,13 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/*
-** Creates and initializes a new parenthesis tracking stack
-** Allocates memory for the stack structure and initializes its properties
-** Used for tracking parenthesis balance in command validation
-** 
-** @return: A pointer to the newly created stack, or NULL if allocation fails
-*/
 t_pstack	*init_pstack(void)
 {
 	t_pstack	*stack;
@@ -32,13 +25,6 @@ t_pstack	*init_pstack(void)
 	return (stack);
 }
 
-/*
-** Creates and initializes a new node for the parenthesis stack
-** Allocates memory for a node that represents a single parenthesis
-** Used by push_pstack to add parenthesis markers to the stack
-** 
-** @return: A pointer to the newly created node, or NULL if allocation fails
-*/
 t_pnode	*init_psnode(void)
 {
 	t_pnode	*node;
@@ -51,13 +37,6 @@ t_pnode	*init_psnode(void)
 	return (node);
 }
 
-/*
-** Adds a new node to the parenthesis stack
-** Represents tracking an opening parenthesis during command parsing
-** Handles proper linking of nodes in the doubly-linked stack
-** 
-** @param stack: The stack to which the new node should be added
-*/
 void	push_pstack(t_pstack *stack)
 {
 	t_pnode	*node;
@@ -77,13 +56,6 @@ void	push_pstack(t_pstack *stack)
 	stack->size++;
 }
 
-/*
-** Removes the top node from the parenthesis stack
-** Represents matching a closing parenthesis with an opening parenthesis
-** Maintains proper stack structure after node removal
-** 
-** @param stack: The stack from which the top node should be removed
-*/
 void	pop_pstack(t_pstack *stack)
 {
 	t_pnode	*temp;

@@ -12,11 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/**
- * @brief Free only the list structure without freeing the contained values
- * 
- * @param list Generic list to free
- */
 void	free_cmdval_list_nodes_only(t_cmdval_list *list)
 {
 	t_cmdval_node	*next_node;
@@ -34,11 +29,6 @@ void	free_cmdval_list_nodes_only(t_cmdval_list *list)
 	free(list);
 }
 
-/**
- * @brief Free a redirection node from a cmdval list
- * 
- * @param node Node containing redirection to free
- */
 static void	free_redir_node(t_cmdval_node *node)
 {
 	t_redirection	*redir;
@@ -49,12 +39,6 @@ static void	free_redir_node(t_cmdval_node *node)
 	free(redir);
 }
 
-/**
- * @brief Free a generic list and its contents depending on the list type
- * 
- * @param list Generic list to free
- * @param is_redir_list Whether this is a redirection list (true) or word list
- */
 void	free_cmdval_list_with_contents(t_cmdval_list *list, int is_redir_list)
 {
 	t_cmdval_node	*next_node;
