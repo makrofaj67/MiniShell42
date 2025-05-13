@@ -20,30 +20,65 @@
 ** @param command: The command string to check for unclosed quotes
 ** @return: 1 if there are unclosed quotes, 0 if all quotes are properly closed
 */
-int	has_unclosed_quotes(char *command)
-{
-	int	i;
-	int	in_single_quote;
-	int	in_double_quote;
-	int	escaped;
 
-	if (!command)
+int check_quotes_mine_implementation(char *str) 
+{
+ 	int i;
+ 	int state;
+
+ 	i = 0;
+ 	state = 0;
+	if (str == NULL)
 		return (0);
-	i = 0;
-	in_single_quote = 0;
-	in_double_quote = 0;
-	escaped = 0;
-	while (command[i])
+	while (str[i]) 
 	{
-		if (command[i] == '\\' && !escaped && !in_single_quote)
-			escaped = 1;
-		else if (command[i] == '\'' && !escaped && !in_double_quote)
-			in_single_quote = !in_single_quote;
-		else if (command[i] == '"' && !escaped && !in_single_quote)
-			in_double_quote = !in_double_quote;
-		else
-			escaped = 0;
+    	if (state == 0)
+    	{
+			if (str[i] == '\\')
+			{
+				if (str[i+1] != '\0')
+					i++;
+			}
+			else
+			{
+				if (str[i] == '\'')
+				{
+					state = 1;
+    			}
+				else if (str[i] == '"') 
+				{
+					state = 2;
+    			}
+			}
+    	} 
+		else if (state == 1) 
+		{
+    		if (str[i] == '\'') 
+			{
+				state = 0;
+    		}
+		}
+		else if (state == 2) 
+		{
+			if (str[i] == '\\')
+            {
+                if (str[i+1] != '\0')
+                {
+                    if (str[i+1] == '$' || str[i+1] == '`' || \
+                        str[i+1] == '"' || str[i+1] == '\\')
+                    {
+                        i++;
+                    }
+                }
+
+            }
+            else if (str[i] == '"') 
+            {
+                state = 0;
+            }
+		}
 		i++;
 	}
-	return (in_single_quote || in_double_quote);
+	return (state || 0);
 }
+
