@@ -6,62 +6,55 @@
 /*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 11:47:23 by nakbas            #+#    #+#             */
-/*   Updated: 2025/05/13 17:25:00 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/12 11:47:23 by nakbas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/__minishell.h"
+#include "../../inc/f_builtins.h"
 
-char	*env_value(const char *name, t_env *env_list)
+void	env_value(char *args, t_env *env, int n)
 {
 	t_env *tmp;
 
-	if (!name || !env_list)
-		return (NULL);
-
-	tmp = env_list;
+	tmp = env;
 	while (tmp != NULL)
 	{
-		if (mini_strcmp_path(name, tmp->key))
-			return (tmp->value);
+		if (mini_strcmp_path(args, (tmp)->key))
+		{
+			if (n == 0)
+				printf("%s\n", tmp->value);
+			else
+				printf("%s", tmp->value);
+			return ;
+		}
 		tmp = tmp->next;
 	}
-	return (NULL);
+	printf("\n");
 }
 
-int	echo_cmd(char **args)
+void	echo_cmd(char **args, t_env **env)
 {
 	int	i;
-	int n_flag;
-
-	if (!args || !args[0])
-		return (1);
+	int n;
 
 	i = 1;
-	n_flag = 0;
-
-	// "-n" bayrağını kontrol et
-	if (args[i] && mini_strcmp_path(args[i], "-n") == 1)
+	n = 0;
+	if (mini_strcmp_path(args[i], "-n") == 1)
 	{
-		n_flag = 1;
+		n = 1;
 		i++;
 	}
-
-	// Argümanları yazdır
+	if (args[i][0] == '$')
+	{
+		env_value(args[i] + 1, *env, n);
+		return ;
+	}
 	while (args[i])
 	{
-		printf("%s", args[i]);
-		
-		// Son argüman değilse boşluk ekle
-		if (args[i + 1])
-			printf(" ");
-		
+		if (n == 0)
+			printf("%s\n", args[i]);
+		else
+			printf("%s", args[i]);
 		i++;
 	}
-
-	// -n bayrağı yoksa yeni satır ekle
-	if (!n_flag)
-		printf("\n");
-
-	return (0);
 }

@@ -6,109 +6,84 @@
 /*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 12:00:09 by nakbas            #+#    #+#             */
-/*   Updated: 2025/05/13 17:15:00 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/12 12:00:09 by nakbas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/__minishell.h"
+#include "../../inc/f_builtins.h"
 
-int		mini_strcmp_path(const char *s1, const char *s2)
+int		mini_strcmp_path(char *path, char *cmd)
 {
 	int i = 0;
 	
-	if (s1 == NULL || s2 == NULL)
+	if (path == NULL || cmd == NULL)
 		return (0);
 	
-	while (s1[i] != '\0' && s2[i] != '\0')
+	while (path[i] != '\0' && cmd[i] != '\0')
 	{
-		if (s1[i] != s2[i])
+		if (path[i] != cmd[i])
 			return (0);
 		i++;
 	}
-	if (s1[i] == '\0' && s2[i] == '\0')
+	if (path[i] == '\0' && cmd[i] == '\0')
 		return (1);
 	else
 		return (0);
 }
 
-char	*mini_strcat_p(char *dest, const char *src_path_segment, const char *src_command)
+char	*mini_strcat_p(char *dest, char *src)
 {
 	char *result_path;
 	int i = 0;
 	int j = 0;
 
-	result_path = malloc(mini_strlen(dest) + mini_strlen(src_path_segment) + mini_strlen(src_command) + 2);
+	result_path = malloc(mini_strlen(dest) + mini_strlen(src));
 	if (result_path == NULL)
-		return NULL;
-		
-	// Temel yol kopyalanıyor
+	return NULL;
 	while (dest[i] != '\0')
 	{
 		result_path[i] = dest[i];
 		i++;
 	}
-	
-	// Path segmenti kopyalanıyor (gerekirse)
-	if (src_path_segment && *src_path_segment)
+	while (src[j] != '\0')
 	{
-		if (result_path[i-1] != '/')
-			result_path[i++] = '/';
-			
-		j = 0;
-		while (src_path_segment[j] != '\0')
-		{
-			result_path[i] = src_path_segment[j];
-			i++;
-			j++;
-		}
-	}
-	
-	// Komut adı kopyalanıyor
-	if (result_path[i-1] != '/')
-		result_path[i++] = '/';
-		
-	j = 0;
-	while (src_command[j] != '\0')
-	{
-		result_path[i] = src_command[j];
+		result_path[i] = src[j];
 		i++;
 		j++;
 	}
-	
 	result_path[i] = '\0';
 	return result_path;
 }
 
-char	*mini_strcat(char *dest, const char *src)
+char	*mini_strcat(char *dest, char *src)
 {
-	char *result;
+	char *result_path;
 	int i = 0;
 	int j = 0;
 
-	result = malloc(mini_strlen(dest) + mini_strlen(src) + 1);
-	if (result == NULL)
+	result_path = malloc(mini_strlen(dest) + mini_strlen(src) + 2);
+	result_path[i] = '\0';
+	if (result_path == NULL)
 		return NULL;
-		
 	while (dest[i] != '\0')
 	{
-		result[i] = dest[i];
+		result_path[i] = dest[i];
 		i++;
 	}
-	
+	result_path[i] = '/';
+	i++;
 	while (src[j] != '\0')
 	{
-		result[i] = src[j];
+		result_path[i] = src[j];
 		i++;
 		j++;
 	}
-	
-	result[i] = '\0';
-	return result;
+	return result_path;
 }
 
-size_t	mini_strlen(const char *s)
+int		mini_strlen(char *s)
 {
-	size_t i;
+	int i;
 
 	i = 0;
 	while (s[i])

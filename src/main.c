@@ -33,9 +33,16 @@ void	shell_loop(char *prompt, char **envp)
 	t_token_list	*tokens;
 	int             exit_status;
 	ast_node		*root_node;
+	t_env			*env_list;
+	t_env			*export_list;
 
 	should_exit = 0;
 	exit_status = 0;
+	env_list = NULL;
+	export_list = NULL;
+	create_env(&env_list);    // Çevre değişkenlerini liste olarak yükle
+	create_env(&export_list); // Export listesini de oluştur
+
 	while (true)
 	{
 		command = get_command(prompt, &should_exit);
@@ -53,10 +60,9 @@ void	shell_loop(char *prompt, char **envp)
 		if (root_node)
 		{
 			visualize_ast(root_node);
+			// AST ağacını kullanarak komutu yürüt
+			execute_ast(root_node, &exit_status, &env_list, &export_list);
 		}
-		
-		// Continue with command execution...
-		// execute_command(root_node, &exit_status, envp);
 		
 		free_token_list(tokens);
 		free_ast(root_node);

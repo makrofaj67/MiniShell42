@@ -27,8 +27,10 @@
 # include "a_command.h"
 # include "b_lexer.h"
 # include "c_parser.h"
+# include "d_executor.h"
 # include "e_utils.h"
 # include "f_libft.h"
+# include "f_builtins.h"
 
 /* Global signal flag */
 extern volatile sig_atomic_t	g_signal_received;

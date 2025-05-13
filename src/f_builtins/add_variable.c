@@ -6,91 +6,75 @@
 /*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 12:00:30 by nakbas            #+#    #+#             */
-/*   Updated: 2025/05/13 17:00:00 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/12 12:00:30 by nakbas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/__minishell.h"
+#include "../../inc/f_builtins.h"
 
-int		is_variable(const char *str)
+int		is_variable(char **args)
 {
 	int	i;
 	int	len;
 
 	i = 0;
-	len = mini_strlen(str);
-	if (len < 3)
+	len = mini_strlen(args[0]);
+	if (len < 3 && args[1] == NULL)
 		return (0);
-	while (str[i])
+	while (args[0][i])
 	{
-		if (str[i + 1] == '=')
+		if (args[0][i + 1] == '=')
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-void	env_lengths(t_env *env, int *count_vars, int *max_len)
+void	env_lengths(t_env **len, char **args)
 {
 	int	i;
 	int j;
 
 	i = 0;
-	while (env->key[i] != '=')
+	*len = malloc(sizeof(t_env));
+	while (args[0][i] != '=')
 		i++;
 	j = i;
 	i++;
-	while (env->key[i] != '\0')
+	while (args[0][i] != '\0')
 		i++;
-	*count_vars = j;
-	*max_len = i - j;
+	i = i - j;
+	(*len)->key = malloc((j + 1) * sizeof(char));
+	(*len)->value = malloc((i + 1) * sizeof(char));
+	if (!(*len)->key || !(*len)->value)
+		exit(1);
 }
 
-void	add_variable(const char *arg, t_env **env_list)
+void	add_variable(char **args, t_env **env)
 {
 	int i;
 	int j;
-	t_env *new_env;
 
 	j = 0;
 	i = 0;
-	new_env = malloc(sizeof(t_env));
-	if (!new_env)
-		exit(1);
-	
-	// Anahtar değerini kopyala
-	while (arg[i] != '=')
-		i++;
-	new_env->key = malloc((i + 1) * sizeof(char));
-	if (!new_env->key)
-		exit(1);
-	i = 0;
-	while (arg[i] != '=')
+	env_lengths(env, args);
+	while (args[0][i] != '\0')
 	{
-		new_env->key[i] = arg[i];
+		(*env)->key[i] = args[0][i];
 		i++;
+		if (args[0][i] == '=')
+			break;
 	}
-	new_env->key[i] = '\0';
-	
-	// Değeri kopyala
-	i++;
-	j = 0;
-	while (arg[i + j])
-		j++;
-	new_env->value = malloc((j + 1) * sizeof(char));
-	if (!new_env->value)
-		exit(1);
-	j = 0;
-	while (arg[i])
+	(*env)->key[i] = '\0';
+	i++; 
+	while (args[0][i] != '\0')
 	{
-		new_env->value[j] = arg[i];
+		(*env)->value[j] = args[0][i];
 		i++;
 		j++;
 	}
-	new_env->value[j] = '\0';
-	new_env->next = NULL;
-	
-	*env_list = new_env;
+	(*env)->value[j] = '\0';
+	(*env)->next = NULL;
 }
 
 void	add_list_variable(char **args, t_env **env)
@@ -99,11 +83,11 @@ void	add_list_variable(char **args, t_env **env)
     {
         t_env *last = mini_lstlast(*env);
         t_env *new_node = NULL;
-        add_variable(args[0], &new_node);
+        add_variable(args, &new_node);
         last->next = new_node;
     }
     else
     {
-        add_variable(args[0], env);
+        add_variable(args, env);
     }	
 }

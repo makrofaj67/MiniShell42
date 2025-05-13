@@ -20,7 +20,8 @@ SRC_DIRS = main.c \
 		b_lexer/*.c \
 		c_parser/*.c \
 		d_executor/*.c \
-		e_utils/*.c
+		e_utils/*.c \
+		f_builtins/*.c
 		
 # Libft kaynak dosyaları
 LIBFT_SRCS = lib/libft/ft_strjoin.c
