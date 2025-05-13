@@ -37,24 +37,35 @@ void	echo_cmd(char **args, t_env **env)
 	int	i;
 	int n;
 
+	if (!args || !args[1])
+	{
+		printf("\n");
+		return;
+	}
+
 	i = 1;
 	n = 0;
+	
 	if (mini_strcmp_path(args[i], "-n") == 1)
 	{
 		n = 1;
 		i++;
 	}
-	if (args[i][0] == '$')
+	
+	if (args[i] && args[i][0] == '$')
 	{
 		env_value(args[i] + 1, *env, n);
-		return ;
+		return;
 	}
+	
 	while (args[i])
 	{
-		if (n == 0)
-			printf("%s\n", args[i]);
-		else
-			printf("%s", args[i]);
+		printf("%s", args[i]);
+		if (args[i + 1])
+			printf(" ");
 		i++;
 	}
+	
+	if (n == 0)
+		printf("\n");
 }

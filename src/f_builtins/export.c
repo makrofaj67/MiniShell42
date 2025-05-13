@@ -17,6 +17,9 @@ int		compare_env(t_env **env, t_env **env_var)
 	t_env *tmp1;
 	t_env *tmp2;
 
+	if (!env || !*env || !env_var || !*env_var)
+		return (0);
+		
 	tmp2 = *env_var;
 	while (tmp2 != NULL)
 	{
@@ -24,18 +27,11 @@ int		compare_env(t_env **env, t_env **env_var)
 		while (tmp1 != NULL)
 		{
 			if (mini_strcmp_path(tmp1->key, tmp2->key) == 1)
-			{
-				tmp1 = NULL;
-				tmp2 = NULL;
 				return (0);
-			}
 			tmp1 = tmp1->next;
 		}
-		tmp1 = NULL;
 		tmp2 = tmp2->next;
 	}
-	free(tmp1);
-	free(tmp2);
 	return (1);
 }
 
@@ -73,25 +69,24 @@ void	export_cmd(char *arg, t_env **env, t_env **env_var)
 	t_env	*tmp;
 	t_env *new_node;
 
-	new_node = NULL;
-	tmp = *env_var;
+	if (!arg || !env || !env_var || !*env_var)
+		return;
+		
 	if (compare_env(env, env_var) == 0)
-		return ;	
+		return;
+		
+	tmp = *env_var;
 	while (tmp != NULL)
 	{
 		if (mini_strcmp_path(tmp->key, arg) == 1)
 		{
-        	t_env *last = mini_lstlast(*env);
-        	new_node = malloc(sizeof(t_env));
-        	add_env_var(tmp->key, tmp->value, &new_node);
-        	last->next = new_node;
-			break;
-		}
-		else
-		{
-			new_node = NULL;
-			tmp = NULL;
-			return ;
+			t_env *last = mini_lstlast(*env);
+			new_node = malloc(sizeof(t_env));
+			if (!new_node)
+				return;
+			add_env_var(tmp->key, tmp->value, &new_node);
+			last->next = new_node;
+			return;
 		}
 		tmp = tmp->next;
 	}
