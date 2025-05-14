@@ -73,10 +73,10 @@ t_token_list	*tokenize_command(char *command, int exit_status)
 	char			*processed_token;
 	int				pos;
 
-	if (!command)
+	if (command == NULL)
 		return (NULL);
 	token_list = create_token_list();
-	if (!token_list)
+	if (token_list == NULL)
 		return (NULL);
 	pos = 0;
 	while (1)

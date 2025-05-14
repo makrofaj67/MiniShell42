@@ -44,13 +44,6 @@ static void	handle_exit_status(t_token_state *state)
 	state->i++;
 }
 
-/*
-** Handles all $ expansions (variables and special parameters)
-** Routes to appropriate handler based on what follows the $ character
-** Special cases: $? for exit status, alphanumeric for environment variables
-** 
-** @param state: The token processing state structure
-*/
 static void	handle_dollar_sign(t_token_state *state)
 {
 	state->i++;
@@ -63,18 +56,6 @@ static void	handle_dollar_sign(t_token_state *state)
 		state->result[state->j++] = '$';
 }
 
-/*
-** Main token processing function that handles:
-** 1. Quote removal (preserving quoted content)
-** 2. Environment variable expansion
-** 3. Exit status expansion
-** 
-** Respects shell quote rules: variables aren't expanded in single quotes
-** 
-** @param token: The raw token string to process
-** @param exit_status: Current exit status for $? expansion
-** @return: A newly allocated string with processed token content
-*/
 char	*process_token(char *token, int exit_status)
 {
 	t_token_state	state;
