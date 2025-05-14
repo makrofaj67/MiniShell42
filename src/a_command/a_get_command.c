@@ -19,15 +19,27 @@ static char	*validate_command(char *command)
 		free(command);
 		return (NULL);
 	}
-	else if (parenthesis_status(command) != 0)
+	else if (parenthesis_status(command) == -1)
 	{
-		printf("Parenthesis Error\n");
+		printf("Unopened parenthesis error --> ')'\n");
 		free(command);
 		return (NULL);
 	}
-	else if (has_unclosed_quotes(command))
+	else if (parenthesis_status(command) == 1)
 	{
-		printf("Unclosed quotes\n");
+		printf("Unclosed parenthesis error --> '('\n");
+		free(command);
+		return(NULL);
+	}
+	else if (has_unclosed_quotes(command) == 1)
+	{
+		printf("There is unclosed single quote on your command --> '\n");
+		free(command);
+		return (NULL);
+	}
+	else if (has_unclosed_quotes(command) == 2)
+	{
+		printf("There is unclosed double quote on your command --> '\n");
 		free(command);
 		return (NULL);
 	}

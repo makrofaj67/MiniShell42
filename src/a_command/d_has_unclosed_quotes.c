@@ -78,5 +78,5 @@ int has_unclosed_quotes(char *command)
             handle_two(command, &i, &state);
         i++;
     }
-    return (state || 0);
+    return (state);
 }
