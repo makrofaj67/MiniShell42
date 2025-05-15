@@ -59,7 +59,7 @@ void shell_loop(char *prompt, char **envp) {
     // 	execute_ast(root_node, &exit_status, &env_list, &export_list);
     // }
     //
-    // free_token_list(tokens);
+    free_token_list(tokens);
     // free_ast(root_node);
     free(command);
   }
