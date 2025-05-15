@@ -28,13 +28,11 @@ void shell_loop(char *prompt, char **envp) {
   char *command;
   int should_exit;
   t_token_list *tokens;
-  int exit_status;
   ast_node *root_node;
   t_env *env_list;
   t_env *export_list;
 
   should_exit = 0;
-  exit_status = 0;
   env_list = NULL;
   export_list = NULL;
   create_env(&env_list);    // Çevre değişkenlerini liste olarak yükle
@@ -48,7 +46,7 @@ void shell_loop(char *prompt, char **envp) {
       continue;
     }
     add_history(command);
-    tokens = tokenize_command(command, exit_status);
+    tokens = tokenize_command(command);
     // root_node = parse_tokens(tokens);
 
     // Display the AST structure when a command is entered
