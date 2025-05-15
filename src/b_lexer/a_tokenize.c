@@ -92,5 +92,6 @@ t_token_list	*tokenize_command(char *command, int exit_status)
 			free(processed_token);
 		}
 	}
+	print_tokens(token_list);
 	return (token_list);
 }

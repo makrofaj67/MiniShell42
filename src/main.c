@@ -47,8 +47,8 @@ void shell_loop(char *prompt, char **envp) {
         exit(EXIT_SUCCESS);
       continue;
     }
-    // add_history(command);
-    // tokens = tokenize_command(command, exit_status);
+    add_history(command);
+    tokens = tokenize_command(command, exit_status);
     // root_node = parse_tokens(tokens);
 
     // Display the AST structure when a command is entered
