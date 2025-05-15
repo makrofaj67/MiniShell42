@@ -15,6 +15,7 @@
 t_token_list	*tokenize_command(char *command, int exit_status)
 {
 	t_token_list	*token_list;
+	int i;
 
 	token_list = create_token_list();
 	if (token_list == NULL)
