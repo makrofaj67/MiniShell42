@@ -69,7 +69,6 @@ t_token_list	*tokenize_command(char *command);
 ** Token type classification
 */
 t_token_type	get_token_type(char *token_str);
-int				is_operator(char c);
 int				is_whitespace(char c);
 int				get_operator_len(const char *str);
 

@@ -12,16 +12,267 @@
 
 #include "../../inc/__minishell.h"
 
+char	*ft_strdup(const char *s1)
+{
+	char	*dup;
+	size_t	len;
+	size_t	i;
+
+	len = 0;
+	while (s1[len])
+		len++;
+	dup = (char *)malloc(sizeof(char) * (len + 1));
+	if (dup == NULL)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		dup[i] = s1[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*sub;
+	size_t	s_len;
+	size_t	sub_len;
+	size_t	i;
+
+	if (!s)
+		return (NULL);
+	s_len = 0;
+	while (s[s_len])
+		s_len++;
+	if (start >= s_len)
+		return (ft_strdup(""));
+	sub_len = len;
+	if (start + sub_len > s_len)
+		sub_len = s_len - start;
+	sub = (char *)malloc(sub_len + 1);
+	if (!sub)
+		return (NULL);
+	i = 0;
+	while (i < sub_len)
+	{
+		sub[i] = s[start + i];
+		i++;
+	}
+	sub[i] = '\0';
+	return (sub);
+}
+
+static void	handle_quotes_in_word(const char *command, int *index_ptr, int *state)
+{
+	if (*state == 0)
+	{
+		if (command[*index_ptr] == '\\')
+		{
+			if (command[*index_ptr + 1] != '\0')
+				(*index_ptr)++;
+		}
+		else if (command[*index_ptr] == '\'')
+			*state = 1;
+		else if (command[*index_ptr] == '"')
+			*state = 2;
+	}
+	else if (*state == 1)
+	{
+		if (command[*index_ptr] == '\'')
+			*state = 0;
+	}
+	else if (*state == 2)
+	{
+		if (command[*index_ptr] == '\\')
+		{
+			if (command[*index_ptr + 1] != '\0' && 
+				(command[*index_ptr + 1] == '$' || command[*index_ptr + 1] == '`' || 
+				command[*index_ptr + 1] == '"' || command[*index_ptr + 1] == '\\'))
+				(*index_ptr)++;
+		}
+		else if (command[*index_ptr] == '"')
+			*state = 0;
+	}
+}
+
+char	*handle_word_token(const char *command, int *index_ptr)
+{
+	int	token_start;
+	int	state;
+  
+	token_start = *index_ptr;
+	state = 0;
+	while (command[*index_ptr] != '\0')
+	{
+		handle_quotes_in_word(command, index_ptr, &state);
+		if (state == 0 && (isspace(command[*index_ptr]) || 
+			command[*index_ptr] == '|' || command[*index_ptr] == '<' || 
+			command[*index_ptr] == '>'))
+			break ;
+		(*index_ptr)++;
+	}
+	if (*index_ptr == token_start)
+		return (ft_strdup(""));
+	return (ft_substr(command, token_start, (*index_ptr) - token_start));
+} 
+
+char	*handle_operator_token(const char *command, int *index_ptr, t_token_type type)
+{
+	int		operator_len;
+	char	*op_value;
+
+	operator_len = 0;
+	if (type == APPEND || type == HEREDOC)
+		operator_len = 2;
+	else if (type == RDRT_OUT || type == RDRT_IN || type == PIPE)
+		operator_len = 1;
+	else
+		return (ft_strdup(""));
+	op_value = ft_substr(command, *index_ptr, operator_len);
+	*index_ptr += operator_len;
+	return (op_value);
+}
+
+t_token_type	define_token_type(const char *command, int current_pos)
+{
+	if (command[current_pos] == '>')
+	{
+		if (command[current_pos + 1] != '\0')
+		{
+			if (command[current_pos + 1] == '>')
+				return (APPEND);
+		}
+		return (RDRT_OUT);
+	}
+	if (command[current_pos] == '<')
+	{
+		if (command[current_pos + 1] != '\0')
+		{
+			if (command[current_pos + 1] == '<')
+				return (HEREDOC);
+		}
+		return (RDRT_IN);
+	}
+	if (command[current_pos] == '|')
+		return (PIPE);
+	return (WORD);
+}
+
+static char	*handle_double_status(const char *command, int *index)
+{
+	int		start;
+	int		state;
+	
+	start = *index;
+	state = 2;
+	(*index)++;
+	
+	while (command[*index] && state == 2)
+	{
+		if (command[*index] == '\\')
+		{
+			if (command[*index + 1] != '\0' && 
+				(command[*index + 1] == '$' || command[*index + 1] == '`' || 
+				 command[*index + 1] == '"' || command[*index + 1] == '\\'))
+				(*index)++;
+		}
+		else if (command[*index] == '"')
+			state = 0;
+		(*index)++;
+	}
+	return (ft_substr(command, start, *index - start));
+}
+
+static char	*handle_single_status(const char *command, int *index)
+{
+	int		start;
+	int		state;
+	
+	start = *index;
+	state = 1;
+	(*index)++;
+	
+	while (command[*index] && state == 1)
+	{
+		if (command[*index] == '\'')
+			state = 0;
+		(*index)++;
+	}
+	return (ft_substr(command, start, *index - start));
+}
+
+static char	*handle_zero_status(const char *command, int *index)
+{
+	t_token_type	type;
+	
+	type = define_token_type(command, *index);
+	if (type != WORD)
+		return (handle_operator_token(command, index, type));
+	return (handle_word_token(command, index));
+}
+
+static int	define_state_status(const char *command, int pos)
+{
+	if (command[pos] == '\'')
+		return (1);
+	else if (command[pos] == '"')
+		return (2);
+	return (0);
+}
+
+static char	*filter_token_string(const char *command, int *index, int status)
+{
+	if (status == 0)
+		return (handle_zero_status(command, index));
+	else if (status == 1)
+		return (handle_single_status(command, index));
+	else if (status == 2)
+		return (handle_double_status(command, index));
+	return (NULL);
+}
+
+static char	*prepare_token(char *token, int status)
+{
+	char	*processed;
+	
+	if (!token)
+		return (NULL);
+	processed = ft_strdup(token);
+	free(token);
+	return (processed);
+}
+
 t_token_list	*tokenize_command(char *command)
 {
 	t_token_list	*token_list;
-	int i;
+	char			*to_send_to_handler;
+	char			*current_token_value;
+	int				i;
+	int				status;
 
 	token_list = create_token_list();
 	if (token_list == NULL)
 		return (NULL);
-	// TODO: Implement actual tokenization logic here
-	// For now, we're just returning an empty token list
+	i = 0;
+	while (command[i])
+	{
+		while (command[i] != '\0' && isspace(command[i]))
+			i++;
+		if (command[i] == '\0')
+			break ;
+		status = define_state_status(command, i);
+		to_send_to_handler = filter_token_string(command, &i, status);
+		current_token_value = prepare_token(to_send_to_handler, status);
+		if (current_token_value != NULL)
+		{
+			add_token(token_list, current_token_value);
+			free(current_token_value);
+		}
+	}
 	print_tokens(token_list);
 	return (token_list);
 }
+
+

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+#include <stdio.h>
 
 static char	*get_token_type_str(t_token_type type)
 {
@@ -34,13 +35,18 @@ void	print_tokens(t_token_list *list)
 	t_token_node	*current;
 	int				count;
 
-	if (!list || !list->head)
+	if (!list)
+	{
+		printf("Token list is NULL.\n");
+		return ;
+	}
+	current = list->head;
+	if (!current)
 	{
 		printf("Token list is empty.\n");
 		return ;
 	}
 	printf("\n=== TOKEN LIST ===\n");
-	current = list->head;
 	count = 1;
 	while (current)
 	{
