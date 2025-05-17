@@ -163,13 +163,11 @@ t_token_type	define_token_type(const char *command, int current_pos)
 static char	*handle_double_status(const char *command, int *index)
 {
 	int		start;
-	int		state;
 	
 	start = *index;
-	state = 2;
 	(*index)++;
 	
-	while (command[*index] && state == 2)
+	while (command[*index] && command[*index] != '\0')
 	{
 		if (command[*index] == '\\')
 		{
@@ -179,7 +177,10 @@ static char	*handle_double_status(const char *command, int *index)
 				(*index)++;
 		}
 		else if (command[*index] == '"')
-			state = 0;
+		{
+			(*index)++;
+			break;
+		}
 		(*index)++;
 	}
 	return (ft_substr(command, start, *index - start));
@@ -188,16 +189,17 @@ static char	*handle_double_status(const char *command, int *index)
 static char	*handle_single_status(const char *command, int *index)
 {
 	int		start;
-	int		state;
 	
 	start = *index;
-	state = 1;
 	(*index)++;
 	
-	while (command[*index] && state == 1)
+	while (command[*index] && command[*index] != '\0')
 	{
 		if (command[*index] == '\'')
-			state = 0;
+		{
+			(*index)++;
+			break;
+		}
 		(*index)++;
 	}
 	return (ft_substr(command, start, *index - start));
