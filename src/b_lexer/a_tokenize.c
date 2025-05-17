@@ -64,6 +64,113 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (sub);
 }
 
+/**
+ * Trims quotes from token and processes it for the token list
+ * For quoted strings, remove the surrounding quotes
+ *
+ * @param token The raw token string
+ * @param status The token state (0=normal, 1=single quote, 2=double quote)
+ * @return The processed token string with quotes trimmed if needed
+ */
+static char	*prepare_token(char *token, int status)
+{
+	char	*processed;
+	int		len;
+	
+	if (!token)
+		return (NULL);
+	
+	len = 0;
+	while (token[len])
+		len++;
+	
+	if ((status == 1 || status == 2) && len >= 2)
+	{
+		// For quoted strings, remove the surrounding quotes
+		processed = ft_substr(token, 1, len - 2);
+		free(token);
+		return (processed);
+	}
+	else
+	{
+		// For normal tokens, just return as is
+		processed = ft_strdup(token);
+		free(token);
+		return (processed);
+	}
+}
+
+
+static char	*handle_double_status(const char *command, int *index)
+{
+	int		start;
+	
+	start = *index;
+	(*index)++;
+	
+	while (command[*index] && command[*index] != '\0')
+	{
+		if (command[*index] == '\\')
+		{
+			if (command[*index + 1] != '\0' && 
+				(command[*index + 1] == '$' || command[*index + 1] == '`' || 
+				 command[*index + 1] == '"' || command[*index + 1] == '\\'))
+				(*index)++;
+		}
+		else if (command[*index] == '"')
+		{
+			(*index)++;
+			break;
+		}
+		(*index)++;
+	}
+	return (ft_substr(command, start, *index - start));
+}
+
+static char	*handle_single_status(const char *command, int *index)
+{
+	int		start;
+	
+	start = *index;
+	(*index)++;
+	
+	while (command[*index] && command[*index] != '\0')
+	{
+		if (command[*index] == '\'')
+		{
+			(*index)++;
+			break;
+		}
+		(*index)++;
+	}
+	return (ft_substr(command, start, *index - start));
+}
+
+t_token_type	define_token_type(const char *command, int current_pos)
+{
+	if (command[current_pos] == '>')
+	{
+		if (command[current_pos + 1] != '\0')
+		{
+			if (command[current_pos + 1] == '>')
+				return (APPEND);
+		}
+		return (RDRT_OUT);
+	}
+	if (command[current_pos] == '<')
+	{
+		if (command[current_pos + 1] != '\0')
+		{
+			if (command[current_pos + 1] == '<')
+				return (HEREDOC);
+		}
+		return (RDRT_IN);
+	}
+	if (command[current_pos] == '|')
+		return (PIPE);
+	return (WORD);
+}
+
 static void	handle_quotes_in_word(const char *command, int *index_ptr, int *state)
 {
 	if (*state == 0)
@@ -135,76 +242,6 @@ char	*handle_operator_token(const char *command, int *index_ptr, t_token_type ty
 	return (op_value);
 }
 
-t_token_type	define_token_type(const char *command, int current_pos)
-{
-	if (command[current_pos] == '>')
-	{
-		if (command[current_pos + 1] != '\0')
-		{
-			if (command[current_pos + 1] == '>')
-				return (APPEND);
-		}
-		return (RDRT_OUT);
-	}
-	if (command[current_pos] == '<')
-	{
-		if (command[current_pos + 1] != '\0')
-		{
-			if (command[current_pos + 1] == '<')
-				return (HEREDOC);
-		}
-		return (RDRT_IN);
-	}
-	if (command[current_pos] == '|')
-		return (PIPE);
-	return (WORD);
-}
-
-static char	*handle_double_status(const char *command, int *index)
-{
-	int		start;
-	
-	start = *index;
-	(*index)++;
-	
-	while (command[*index] && command[*index] != '\0')
-	{
-		if (command[*index] == '\\')
-		{
-			if (command[*index + 1] != '\0' && 
-				(command[*index + 1] == '$' || command[*index + 1] == '`' || 
-				 command[*index + 1] == '"' || command[*index + 1] == '\\'))
-				(*index)++;
-		}
-		else if (command[*index] == '"')
-		{
-			(*index)++;
-			break;
-		}
-		(*index)++;
-	}
-	return (ft_substr(command, start, *index - start));
-}
-
-static char	*handle_single_status(const char *command, int *index)
-{
-	int		start;
-	
-	start = *index;
-	(*index)++;
-	
-	while (command[*index] && command[*index] != '\0')
-	{
-		if (command[*index] == '\'')
-		{
-			(*index)++;
-			break;
-		}
-		(*index)++;
-	}
-	return (ft_substr(command, start, *index - start));
-}
-
 static char	*handle_zero_status(const char *command, int *index)
 {
 	t_token_type	type;
@@ -213,15 +250,6 @@ static char	*handle_zero_status(const char *command, int *index)
 	if (type != WORD)
 		return (handle_operator_token(command, index, type));
 	return (handle_word_token(command, index));
-}
-
-static int	define_state_status(const char *command, int pos)
-{
-	if (command[pos] == '\'')
-		return (1);
-	else if (command[pos] == '"')
-		return (2);
-	return (0);
 }
 
 static char	*filter_token_string(const char *command, int *index, int status)
@@ -235,15 +263,13 @@ static char	*filter_token_string(const char *command, int *index, int status)
 	return (NULL);
 }
 
-static char	*prepare_token(char *token, int status)
+static int	define_state_status(const char *command, int pos)
 {
-	char	*processed;
-	
-	if (!token)
-		return (NULL);
-	processed = ft_strdup(token);
-	free(token);
-	return (processed);
+	if (command[pos] == '\'')
+		return (1);
+	else if (command[pos] == '"')
+		return (2);
+	return (0);
 }
 
 t_token_list	*tokenize_command(char *command)
