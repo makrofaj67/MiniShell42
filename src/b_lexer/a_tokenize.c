@@ -12,6 +12,20 @@
 
 #include "../../inc/__minishell.h"
 
+// Forward declarations
+static char	*handle_zero_status(const char *command, int *index);
+static char	*process_quotes_in_token(char *token);
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	len;
+
+	len = 0;
+	while (s[len])
+		len++;
+	return (len);
+}
+
 char	*ft_strdup(const char *s1)
 {
 	char	*dup;
@@ -65,133 +79,43 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 }
 
 
-/**
- * Processes tokens to handle quotes correctly:
- * - For fully quoted strings (status 1,2), removes surrounding quotes
- * - For normal tokens, processes interior quotes to produce "clean" tokens
- * 
- * @param token The raw token string
- * @param status The token state (0=normal, 1=single quote, 2=double quote)
- * @return The processed token string
- */
 static char	*prepare_token(char *token, int status)
 {
 	char	*processed;
-	char	*result;
-	int		i;
-	int		j;
 	int		len;
-	int		in_squote;
-	int		in_dquote;
 	
 	if (!token)
 		return (NULL);
 	
-	// Calculate initial length
 	len = 0;
 	while (token[len])
 		len++;
 	
-	// Handle fully quoted tokens (remove outer quotes)
 	if ((status == 1 || status == 2) && len >= 2)
 	{
 		processed = ft_substr(token, 1, len - 2);
 		free(token);
-		token = processed;
-		
-		// If resulting token is empty, return it
-		if (!token[0])
-			return (token);
-		
-		// Recalculate the length after removing quotes
-		len = 0;
-		while (token[len])
-			len++;
+		return (processed);
 	}
-	
-	// Handle interior quotes in normal tokens
-	if (status == 0)
+	else
 	{
-		// Allocate buffer for processed token (same size is enough)
-		processed = (char *)malloc(len + 1);
-		if (!processed)
-		{
-			free(token);
-			return (NULL);
-		}
-		
-		// Process the token, removing interior quotes
-		i = 0;
-		j = 0;
-		in_squote = 0;
-		in_dquote = 0;
-		
-		while (i < len)
-		{
-			// Handle opening/closing quotes
-			if (token[i] == '\'' && !in_dquote)
-			{
-				in_squote = !in_squote;
-				i++;
-				continue;
-			}
-			else if (token[i] == '"' && !in_squote)
-			{
-				in_dquote = !in_dquote;
-				i++;
-				continue;
-			}
-			
-			// Handle escape sequences
-			if (token[i] == '\\' && !in_squote)
-			{
-				if (i + 1 < len)
-				{
-					// In double quotes, only specific chars can be escaped
-					if (in_dquote)
-					{
-						if (token[i+1] == '$' || token[i+1] == '`' || 
-							token[i+1] == '"' || token[i+1] == '\\')
-						{
-							processed[j++] = token[i+1];
-							i += 2;
-							continue;
-						}
-					}
-					// Outside quotes, any char can be escaped
-					else if (!in_dquote)
-					{
-						processed[j++] = token[i+1];
-						i += 2;
-						continue;
-					}
-				}
-			}
-			
-			// Copy normal character
-			processed[j++] = token[i++];
-		}
-		
-		processed[j] = '\0';
-		result = ft_strdup(processed);
-		
-		free(processed);
+		processed = ft_strdup(token);
 		free(token);
-		return (result);
+		return (processed);
 	}
-	
-	// For other cases, just return the token as is
-	return (token);
 }
 
 
 static char	*handle_double_status(const char *command, int *index)
 {
 	int		start;
+	char	*token;
+	char	*processed_token;
+	char	*next_token;
+	char	*joined_token;
 	
 	start = *index;
 	(*index)++;
-//eğer quotelar sonunda boşluk harici başka bi şey varsa joinle	
 	while (command[*index] && command[*index] != '\0')
 	{
 		if (command[*index] == '\\')
@@ -208,16 +132,40 @@ static char	*handle_double_status(const char *command, int *index)
 		}
 		(*index)++;
 	}
-	return (ft_substr(command, start, *index - start));
+	token = ft_substr(command, start, *index - start);
+	
+	// Sadece çift tırnakları kaldır, içeriğe dokunma
+	if (token && ft_strlen(token) >= 2)
+		processed_token = ft_substr(token, 1, ft_strlen(token) - 2);
+	else
+		processed_token = ft_strdup(token);
+	free(token);
+	
+	// Tırnak sonunda, boşluk gelmeden başka karakterler varsa
+	if (command[*index] && !isspace(command[*index]) && 
+		command[*index] != '|' && command[*index] != '<' && command[*index] != '>')
+	{
+		int next_start = *index;
+		next_token = handle_zero_status(command, index);
+		joined_token = ft_strjoin(processed_token, next_token);
+		free(processed_token);
+		free(next_token);
+		return (joined_token);
+	}
+	
+	return (processed_token);
 }
 
 static char	*handle_single_status(const char *command, int *index)
 {
 	int		start;
+	char	*token;
+	char	*processed_token;
+	char	*next_token;
+	char	*joined_token;
 	
 	start = *index;
 	(*index)++;
-	//eğer quotelar sonunda boşluk harici başka şeyler varsa join
 	while (command[*index] && command[*index] != '\0')
 	{
 		if (command[*index] == '\'')
@@ -227,7 +175,28 @@ static char	*handle_single_status(const char *command, int *index)
 		}
 		(*index)++;
 	}
-	return (ft_substr(command, start, *index - start));
+	token = ft_substr(command, start, *index - start);
+	
+	// Sadece tek tırnakları kaldır, içeriğe dokunma
+	if (token && ft_strlen(token) >= 2)
+		processed_token = ft_substr(token, 1, ft_strlen(token) - 2);
+	else
+		processed_token = ft_strdup(token);
+	free(token);
+	
+	// Tırnak sonunda, boşluk gelmeden başka karakterler varsa
+	if (command[*index] && !isspace(command[*index]) && 
+		command[*index] != '|' && command[*index] != '<' && command[*index] != '>')
+	{
+		int next_start = *index;
+		next_token = handle_zero_status(command, index);
+		joined_token = ft_strjoin(processed_token, next_token);
+		free(processed_token);
+		free(next_token);
+		return (joined_token);
+	}
+	
+	return (processed_token);
 }
 
 t_token_type	define_token_type(const char *command, int current_pos)
@@ -290,8 +259,10 @@ static void	handle_quotes_in_word(const char *command, int *index_ptr, int *stat
 
 char	*handle_word_token(const char *command, int *index_ptr)
 {
-	int	token_start;
-	int	state;
+	int		token_start;
+	int		state;
+	char	*token;
+	char	*processed_token;
   
 	token_start = *index_ptr;
 	state = 0;
@@ -306,7 +277,12 @@ char	*handle_word_token(const char *command, int *index_ptr)
 	}
 	if (*index_ptr == token_start)
 		return (ft_strdup(""));
-	return (ft_substr(command, token_start, (*index_ptr) - token_start));
+
+	// Kelimenin içindeki tırnakları temizleyen bir fonksiyon yazalım
+	token = ft_substr(command, token_start, (*index_ptr) - token_start);
+	processed_token = process_quotes_in_token(token);
+	free(token);
+	return (processed_token);
 } 
 
 char	*handle_operator_token(const char *command, int *index_ptr, t_token_type type)
@@ -405,6 +381,61 @@ static int	define_state_status(const char *command, int pos)
 	return (0);
 }
 
+/*
+ * Token içerisindeki tırnakları temizleyen fonksiyon
+ * 'abc' -> abc
+ * "abc" -> abc
+ * a'bc' -> abc
+ * a"bc" -> abc
+ * a'b'c'd' -> abcd
+ */
+static char	*process_quotes_in_token(char *token)
+{
+	int		i;
+	int		j;
+	int		len;
+	char	*result;
+	int		in_quote;
+	char	quote_char;
+
+	if (!token)
+		return (NULL);
+	
+	len = ft_strlen(token);
+	result = (char *)malloc(len + 1); // En kötü durumda orijinal token kadar olur
+	if (!result)
+		return (NULL);
+	
+	i = 0;
+	j = 0;
+	in_quote = 0;
+	quote_char = 0;
+	
+	while (i < len)
+	{
+		// Tırnak açılıp kapanmalarını kontrol et
+		if ((token[i] == '\'' || token[i] == '"') && !in_quote)
+		{
+			in_quote = 1;
+			quote_char = token[i];
+			i++;
+		}
+		else if (in_quote && token[i] == quote_char)
+		{
+			in_quote = 0;
+			i++;
+		}
+		else
+		{
+			// Tırnak dışındaki veya içindeki karakterleri kopyala
+			result[j++] = token[i++];
+		}
+	}
+	
+	result[j] = '\0'; // Sonlandır
+	return (result);
+}
+
 t_token_list	*tokenize_command(char *command)
 {
 	t_token_list	*token_list;
@@ -425,7 +456,13 @@ t_token_list	*tokenize_command(char *command)
 			break ;
 		status = define_state_status(command, i);
 		to_send_to_handler = filter_token_string(command, &i, status);
-		current_token_value = prepare_token(to_send_to_handler, status);
+		// handle_single_status ve handle_double_status zaten tırnakları temizlediği için
+		// prepare_token'ı sadece status=0 için kullanıyoruz
+		if (status == 0)
+			current_token_value = prepare_token(to_send_to_handler, status);
+		else
+			current_token_value = to_send_to_handler;
+			
 		if (current_token_value != NULL)
 		{
 			add_token(token_list, current_token_value);
