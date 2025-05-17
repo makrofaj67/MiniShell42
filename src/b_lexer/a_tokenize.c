@@ -79,30 +79,16 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 }
 
 
-static char	*prepare_token(char *token, int status)
+static char	*prepare_token(char *token)
 {
 	char	*processed;
-	int		len;
 	
 	if (!token)
 		return (NULL);
 	
-	len = 0;
-	while (token[len])
-		len++;
-	
-	if ((status == 1 || status == 2) && len >= 2)
-	{
-		processed = ft_substr(token, 1, len - 2);
-		free(token);
-		return (processed);
-	}
-	else
-	{
-		processed = ft_strdup(token);
-		free(token);
-		return (processed);
-	}
+	processed = ft_strdup(token);
+	free(token);
+	return (processed);
 }
 
 
@@ -459,7 +445,7 @@ t_token_list	*tokenize_command(char *command)
 		// handle_single_status ve handle_double_status zaten tırnakları temizlediği için
 		// prepare_token'ı sadece status=0 için kullanıyoruz
 		if (status == 0)
-			current_token_value = prepare_token(to_send_to_handler, status);
+			current_token_value = prepare_token(to_send_to_handler);
 		else
 			current_token_value = to_send_to_handler;
 			
