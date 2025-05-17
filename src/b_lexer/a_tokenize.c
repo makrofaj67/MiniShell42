@@ -64,40 +64,124 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (sub);
 }
 
+
 /**
- * Trims quotes from token and processes it for the token list
- * For quoted strings, remove the surrounding quotes
- *
+ * Processes tokens to handle quotes correctly:
+ * - For fully quoted strings (status 1,2), removes surrounding quotes
+ * - For normal tokens, processes interior quotes to produce "clean" tokens
+ * 
  * @param token The raw token string
  * @param status The token state (0=normal, 1=single quote, 2=double quote)
- * @return The processed token string with quotes trimmed if needed
+ * @return The processed token string
  */
 static char	*prepare_token(char *token, int status)
 {
 	char	*processed;
+	char	*result;
+	int		i;
+	int		j;
 	int		len;
+	int		in_squote;
+	int		in_dquote;
 	
 	if (!token)
 		return (NULL);
 	
+	// Calculate initial length
 	len = 0;
 	while (token[len])
 		len++;
 	
+	// Handle fully quoted tokens (remove outer quotes)
 	if ((status == 1 || status == 2) && len >= 2)
 	{
-		// For quoted strings, remove the surrounding quotes
 		processed = ft_substr(token, 1, len - 2);
 		free(token);
-		return (processed);
+		token = processed;
+		
+		// If resulting token is empty, return it
+		if (!token[0])
+			return (token);
+		
+		// Recalculate the length after removing quotes
+		len = 0;
+		while (token[len])
+			len++;
 	}
-	else
+	
+	// Handle interior quotes in normal tokens
+	if (status == 0)
 	{
-		// For normal tokens, just return as is
-		processed = ft_strdup(token);
+		// Allocate buffer for processed token (same size is enough)
+		processed = (char *)malloc(len + 1);
+		if (!processed)
+		{
+			free(token);
+			return (NULL);
+		}
+		
+		// Process the token, removing interior quotes
+		i = 0;
+		j = 0;
+		in_squote = 0;
+		in_dquote = 0;
+		
+		while (i < len)
+		{
+			// Handle opening/closing quotes
+			if (token[i] == '\'' && !in_dquote)
+			{
+				in_squote = !in_squote;
+				i++;
+				continue;
+			}
+			else if (token[i] == '"' && !in_squote)
+			{
+				in_dquote = !in_dquote;
+				i++;
+				continue;
+			}
+			
+			// Handle escape sequences
+			if (token[i] == '\\' && !in_squote)
+			{
+				if (i + 1 < len)
+				{
+					// In double quotes, only specific chars can be escaped
+					if (in_dquote)
+					{
+						if (token[i+1] == '$' || token[i+1] == '`' || 
+							token[i+1] == '"' || token[i+1] == '\\')
+						{
+							processed[j++] = token[i+1];
+							i += 2;
+							continue;
+						}
+					}
+					// Outside quotes, any char can be escaped
+					else if (!in_dquote)
+					{
+						processed[j++] = token[i+1];
+						i += 2;
+						continue;
+					}
+				}
+			}
+			
+			// Copy normal character
+			processed[j++] = token[i++];
+		}
+		
+		processed[j] = '\0';
+		result = ft_strdup(processed);
+		
+		free(processed);
 		free(token);
-		return (processed);
+		return (result);
 	}
+	
+	// For other cases, just return the token as is
+	return (token);
 }
 
 
@@ -107,7 +191,7 @@ static char	*handle_double_status(const char *command, int *index)
 	
 	start = *index;
 	(*index)++;
-	
+//eğer quotelar sonunda boşluk harici başka bi şey varsa joinle	
 	while (command[*index] && command[*index] != '\0')
 	{
 		if (command[*index] == '\\')
@@ -133,7 +217,7 @@ static char	*handle_single_status(const char *command, int *index)
 	
 	start = *index;
 	(*index)++;
-	
+	//eğer quotelar sonunda boşluk harici başka şeyler varsa join
 	while (command[*index] && command[*index] != '\0')
 	{
 		if (command[*index] == '\'')
@@ -242,18 +326,67 @@ char	*handle_operator_token(const char *command, int *index_ptr, t_token_type ty
 	return (op_value);
 }
 
+static int	check_next_token_quote(const char *command, int index)
+{
+	while (command[index] && !isspace(command[index]) &&
+		   command[index] != '|' && command[index] != '<' && command[index] != '>')
+	{
+		// Eğer tırnak bulursak, türünü belirleyip döndürüyoruz
+		if (command[index] == '\'')
+			return (1);
+		else if (command[index] == '"')
+			return (2);
+		index++;
+	}
+	return (0);  // Tırnak bulunamadı
+}
+
 static char	*handle_zero_status(const char *command, int *index)
 {
 	t_token_type	type;
-	
+	char			*token;
+	char			*next_token;
+	char			*joined_token;
+	int				next_index;
+	int				quote_type;
+
 	type = define_token_type(command, *index);
 	if (type != WORD)
-		return (handle_operator_token(command, index, type));
-	return (handle_word_token(command, index));
+	{
+		token = handle_operator_token(command, index, type);
+		return (token);
+	}
+
+	// Normal kelime tokenını al
+	token = handle_word_token(command, index);
+	
+	// Kelimeden sonra boşluk olmadan tırnak geliyorsa (örn: abc"def")
+	while ((quote_type = check_next_token_quote(command, *index)) != 0)
+	{
+		// Tırnağı işle
+		next_index = *index;
+		if (quote_type == 1)
+			next_token = handle_single_status(command, &next_index);
+		else
+			next_token = handle_double_status(command, &next_index);
+		
+		// Tokenleri birleştir
+		joined_token = ft_strjoin(token, next_token);
+		free(token);
+		free(next_token);
+		token = joined_token;
+		
+		// İndeksi güncelle
+		*index = next_index;
+	}
+	
+	return (token);
 }
 
 static char	*filter_token_string(const char *command, int *index, int status)
 {
+	char *filtered;
+
 	if (status == 0)
 		return (handle_zero_status(command, index));
 	else if (status == 1)
