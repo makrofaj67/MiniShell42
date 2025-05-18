@@ -12,6 +12,7 @@
 
 #include "../inc/__minishell.h"
 #include <readline/history.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 /* Global exit status variable to track command return values */
@@ -34,6 +35,7 @@ void shell_loop(char *prompt, char **envp) {
   ast_node *root_node;
   t_env *env_list;
   t_env *export_list;
+  int exit_status;
 
   should_exit = 0;
   env_list = NULL;
@@ -48,8 +50,7 @@ void shell_loop(char *prompt, char **envp) {
         exit(EXIT_SUCCESS);
       continue;
     }
-    add_history(command);
-    tokens = tokenize_command(command);
+    char *expanded = get_expanded(command, exit_status, env_list);
     // root_node = parse_tokens(tokens);
 
     // Display the AST structure when a command is entered
@@ -60,7 +61,7 @@ void shell_loop(char *prompt, char **envp) {
     // 	execute_ast(root_node, &exit_status, &env_list, &export_list);
     // }
     //
-    free_token_list(tokens);
+  //  free_token_list(tokens);
     // free_ast(root_node);
     free(command);
   }

@@ -59,7 +59,7 @@ void handle_two(char *command, int *index, int *state)
     }
 }
 
-int has_unclosed_quotes(char *command) 
+int quote_state(char *command) 
 {
     int i;
     int state;

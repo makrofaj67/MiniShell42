@@ -31,13 +31,13 @@ static char	*validate_command(char *command)
 		free(command);
 		return(NULL);
 	}
-	else if (has_unclosed_quotes(command) == 1)
+	else if (quote_state(command) == 1)
 	{
 		printf("There is unclosed single quote on your command --> '\n");
 		free(command);
 		return (NULL);
 	}
-	else if (has_unclosed_quotes(command) == 2)
+	else if (quote_state(command) == 2)
 	{
 		printf("There is unclosed double quote on your command --> '\n");
 		free(command);

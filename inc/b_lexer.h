@@ -13,8 +13,9 @@
 #ifndef B_LEXER_H
 # define B_LEXER_H
 
+#include "f_builtins.h"
 /**
-** Token types for the lexical analyzer
+** Token tnpes for the lexical analyzer
 */
 typedef enum e_token_type
 {
@@ -23,7 +24,9 @@ typedef enum e_token_type
 	RDRT_IN,
 	RDRT_OUT,
 	APPEND,
-	HEREDOC
+	HEREDOC,
+	TOKEN_ERROR,
+	TOKEN_UNKNOWN,
 }	t_token_type;
 
 /**
@@ -63,43 +66,14 @@ typedef struct s_token_list
 /**
 ** Main tokenization function
 */
-t_token_list	*tokenize_command(char *command);
 
-/**
-** Token type classification
-*/
-t_token_type	get_token_type(char *token_str);
-int				is_whitespace(char c);
-int				get_operator_len(const char *str);
-
-/**
-** Quote and variable handling
-*/
-int				is_quote(char c);
-int				update_quote_state(char c, char *quote_state);
-char			*process_token(char *token, int exit_status);
-t_token_state	init_token_state(char *token, int exit_status);
-void			handle_quotes(t_token_state *state);
-
-/**
-** Token expansion functions
-*/
-char			*expand_token_variables(const char *token, int state);
-char			*process_and_expand_for_zero(char *token);
-char			*process_and_expand_for_single(char *token);
-char			*process_and_expand_for_double(char *token);
-
-/**
-** Token list management
-*/
+char *get_expanded(char *command, int exit_status, t_env *env_list);
+t_token_type    get_token_type(char *token_str);
 t_token_list	*create_token_list(void);
 t_token_node	*create_token(char *value, t_token_type type);
 void			add_token(t_token_list *list, char *value);
 void			free_token_list(t_token_list *list);
 
-/**
-** Debugging utility
-*/
 void			print_tokens(t_token_list *list);
 
 #endif

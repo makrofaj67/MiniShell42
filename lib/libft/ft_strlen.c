@@ -1,15 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/30 23:21:44 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 23:26:35 by rakman           ###   ########.fr       */
+/*   Created: 2025/05/15 10:00:00 by rakman            #+#    #+#             */
+/*   Updated: 2025/05/15 10:00:00 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <string.h>
+#include <stddef.h>
 
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	if (!s)
+		return (0);
+	while (s[i])
+		i++;
+	return (i);
+}

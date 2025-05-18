@@ -35,7 +35,7 @@ typedef struct s_pstack
 */
 char		*get_command(char *prompt, int *should_exit);
 int			is_command_blank(char *command);
-int			has_unclosed_quotes(char *command);
+int			quote_state(char *command);
 void		free_pstack(t_pstack *stack);
 void		pop_pstack(t_pstack *stack);
 void		push_pstack(t_pstack *stack);
