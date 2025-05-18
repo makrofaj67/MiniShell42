@@ -432,99 +432,88 @@ static char	*get_env_value(const char *var_name)
 	return (ft_strdup("")); // Tanımlı değilse boş string döndür
 }
 
+
+
 char	*expand_token_variables(const char *token, int state)
 {
 	int		i;
 	int		j;
 	char	*result;
-	char	var_name[256]; // Değişken adını tutmak için buffer
+	char	var_name_buffer[256];
 	char	*var_value;
-	int		max_result_size; // İsim değişikliği, daha anlaşılır
+	size_t	token_len;
+	size_t	max_result_size;
 
 	if (!token)
 		return (NULL);
-
-	if (state == 1) // Tek tırnak içinde genişletme yapma
+	if (state == 1) // Tek tırnak içinde değişken genişletme olmaz
 		return (ft_strdup(token));
 
-	max_result_size = ft_strlen(token) * 10 + 256; // Biraz daha pay ekleyelim
+	token_len = ft_strlen(token);
+	max_result_size = token_len * 10 + 256;
+	if (max_result_size <= token_len)
+		max_result_size = token_len + 256;
 	result = (char *)malloc(max_result_size);
 	if (!result)
 		return (NULL);
 
-	i = 0; // 'token' string'i üzerinde ilerleyen ana indeks
-	j = 0; // 'result' string'i üzerinde ilerleyen yazma indeksi
-
+	i = 0;
+	j = 0;
 	while (token[i] != '\0' && j < max_result_size - 1)
 	{
-		// Kaçış karakteri kontrolü (sadece çift tırnak içinde ve destekleniyorsa)
-		if (state == 2 && token[i] == '\\' && token[i + 1] != '\0')
+		if (token[i] == '$' && token[i + 1] != '\0') // $ ve ardından en az bir karakter var
 		{
-			// Proje \ istemiyorsa bu blok kaldırılmalı.
-			// Eğer kalacaksa, sadece kaçırılabilen karakterleri kontrol et.
-			if (token[i+1] == '$' || token[i+1] == '`' || 
-				token[i+1] == '"' || token[i+1] == '\\')
-			{
-				result[j++] = token[i + 1]; // Kaçırılan karakteri al
-				i += 2;                     // İki karakter atla
-				continue;
-			}
-			// Eğer kaçırılamayan bir karakterse, \ olduğu gibi kalır (veya proje ne diyorsa)
-			// Şimdilik, \ olduğu gibi kalsın diyelim:
-			// result[j++] = token[i++]; // Sadece \ ekle, sonraki karakter normal işlenecek
-			// VEYA projenin \ istemediğini varsayarak bu tüm if bloğunu kaldır.
-			// ŞİMDİLİK \ İŞLEMESİNİ DEVRE DIŞI BIRAKIYORUM (PROJE İSTEMİYORSA)
-		}
+			int k = 0;
+			int var_char_idx = i + 1; // $ işaretinden sonraki ilk karakterin indeksi
 
-		// Değişken genişletme
-		// Geçerli bir değişken başlangıcı mı diye bak: $(harf|_|?)
-		if (token[i] == '$' && 
-		    (isalpha(token[i + 1]) || token[i + 1] == '_' || token[i + 1] == '?'))
-		{
-			int k = 0; // var_name için indeks
-			i++;       // $ işaretini atla
-
-			// Değişken adını al
-			// (Sadece $? ise, '?' yeterli. Diğerleri için alfanumerik + _)
-			if (token[i] == '?')
+			// $? özel durumu
+			if (token[var_char_idx] == '?') 
 			{
-				var_name[k++] = token[i++];
+				var_name_buffer[k++] = token[var_char_idx++];
+				var_name_buffer[k] = '\0';
 			}
-			else
+			// Değişken adı harf veya _ ile başlamalı
+			else if (isalpha(token[var_char_idx]) || token[var_char_idx] == '_') 
 			{
-				while ((isalnum(token[i]) || token[i] == '_') && k < 255)
+				var_name_buffer[k++] = token[var_char_idx++]; // İlk karakteri al
+				// Sonraki karakterler alfanumerik veya _ olabilir
+				while ((isalnum(token[var_char_idx]) || token[var_char_idx] == '_') && k < 255)
 				{
-					var_name[k++] = token[i++];
+					var_name_buffer[k++] = token[var_char_idx++];
 				}
+				var_name_buffer[k] = '\0';
 			}
-			var_name[k] = '\0';
-
-			// Değişken adının boş olmaması lazım (aslında yukarıdaki isalpha/_/? kontrolü bunu sağlar)
-			// if (k == 0) { Bu durum artık oluşmamalı }
-
-			var_value = get_env_value(var_name);
-			if (var_value)
+			else // $ sonrası '?' veya (harf|_) değilse, bu geçerli bir değişken değil
 			{
-				int v = 0;
-				while (var_value[v] != '\0' && j < max_result_size - 1)
+				// Sadece '$' karakterini result'a ekle ve devam et
+				if (j < max_result_size - 1) 
+					result[j++] = token[i++];
+				else 
+					break; // Buffer dolu
+				continue; 
+			}
+
+			// Eğer var_name_buffer'a bir şey yazıldıysa (k > 0), genişletmeyi yap
+			if (k > 0) {
+				var_value = get_env_value(var_name_buffer);
+				if (var_value)
 				{
-					result[j++] = var_value[v++];
+					int v_idx = 0;
+					while (var_value[v_idx] != '\0' && j < max_result_size - 1)
+					{
+						result[j++] = var_value[v_idx++];
+					}
+					free(var_value);
 				}
-				free(var_value);
+				i = var_char_idx; // Ana 'i'yi, değişken adının okunduğu son pozisyona ayarla
 			}
-			// 'i' zaten değişken adının SONUNDAKİ karaktere geldi (döngüden dolayı).
-			// Bu yüzden ekstra bir i ilerletmesine gerek yok. Döngünün başına dönecek.
 		}
-		else // Normal karakter veya tek başına $ (geçerli bir değişken adı izlemiyorsa)
+		else // Normal karakter veya tek başına '$' (satır sonu veya $ sonrası geçersiz)
 		{
-			if (j < max_result_size - 1) // Buffer taşmasını engelle
-			{
+			if (j < max_result_size - 1) 
 				result[j++] = token[i++];
-			}
-			else // Buffer doluysa döngüden çık
-			{
+			else 
 				break;
-			}
 		}
 	}
 	result[j] = '\0';
@@ -537,65 +526,6 @@ char	*expand_token_variables(const char *token, int state)
 ** @param state: 0=tırnaksız, 1=tek tırnak, 2=çift tırnak
 ** @return: Genişletilmiş token
 */
-/*
-** Processes and expands a token without quotes (state 0).
-** In this state, all variables are expanded.
-**
-** @param token: The token to be processed
-** @return: The processed token with all variables expanded
-*/
-char	*process_and_expand_for_zero(char *token)
-{
-	char	*expanded;
-
-	if (token == NULL)
-		return (NULL);
-		
-	// For zero state (no quotes), expand all variables
-	expanded = expand_token_variables(token, 0);
-	free(token);
-	return (expanded);
-}
-
-/*
-** Processes a token within single quotes (state 1).
-** In this state, no variable expansion occurs - literal values are preserved.
-**
-** @param token: The token to be processed
-** @return: The processed token with literal values preserved
-*/
-char	*process_and_expand_for_single(char *token)
-{
-	char	*expanded;
-
-	if (token == NULL)
-		return (NULL);
-		
-	// For single quote state, don't expand variables
-	expanded = expand_token_variables(token, 1);
-	free(token);
-	return (expanded);
-}
-
-/*
-** Processes and expands a token within double quotes (state 2).
-** In this state, variables are expanded but some escape sequences are processed.
-**
-** @param token: The token to be processed
-** @return: The processed token with variables expanded and escapes processed
-*/
-char	*process_and_expand_for_double(char *token)
-{
-	char	*expanded;
-
-	if (token == NULL)
-		return (NULL);
-		
-	// For double quote state, expand variables but handle escape sequences
-	expanded = expand_token_variables(token, 2);
-	free(token);
-	return (expanded);
-}
 
 
 t_token_list	*tokenize_command(char *command)
