@@ -294,26 +294,35 @@ static char *add_str_to_result(char *result, char *str)
 
 static char *get_varname(char *raw_command, int *i)
 {
-    int start;
-    int len;
+    int dollar_pos = *i; // Original position of '$'
+    int start_of_name;   // Index of the first character of the variable name (after '$')
+    int len_of_name;     // Length of the variable name part (e.g., 1 for '?', N for 'VAR')
 
-    start = *i + 1;
-    len = 0;
-    if (raw_command[start] == '?')
+    start_of_name = dollar_pos + 1;
+    len_of_name = 0;
+
+    if (raw_command[start_of_name] == '?')
     {
-        (*i)++;
+        len_of_name = 1;
+        // Update *i to point to the character AFTER '?'
+        *i = start_of_name + len_of_name; 
         return (ft_strdup("?"));
     }
-    while (raw_command[start + len] && 
-        ((raw_command[start + len] >= 'a' && raw_command[start + len] <= 'z') ||
-        (raw_command[start + len] >= 'A' && raw_command[start + len] <= 'Z') ||
-        (raw_command[start + len] >= '0' && raw_command[start + len] <= '9') ||
-        raw_command[start + len] == '_'))
+    
+    // For regular variable names
+    while (raw_command[start_of_name + len_of_name] && 
+           ((raw_command[start_of_name + len_of_name] >= 'a' && raw_command[start_of_name + len_of_name] <= 'z') ||
+            (raw_command[start_of_name + len_of_name] >= 'A' && raw_command[start_of_name + len_of_name] <= 'Z') ||
+            (raw_command[start_of_name + len_of_name] >= '0' && raw_command[start_of_name + len_of_name] <= '9') ||
+            raw_command[start_of_name + len_of_name] == '_'))
     {
-        len++;
+        len_of_name++;
     }
-    *i += len;
-    return (ft_substr(raw_command, start, len));
+    
+    // Update *i to point to the character AFTER the variable name
+    *i = start_of_name + len_of_name; 
+    
+    return (ft_substr(raw_command, start_of_name, len_of_name));
 }
 
 static char *get_var_value(char *varname, int exit_status, t_env *env_list)
@@ -359,19 +368,40 @@ char *get_expanded(char *raw_command, int exit_status, t_env *env_list)
     {
         if (raw_command[i] == '$' && is_need_for_expanding(raw_command, i))
         {
-            varname = get_varname(raw_command, &i);
+            varname = get_varname(raw_command, &i); // get_varname now correctly advances i
+            if (!varname)
+            {
+                free(result);
+                return (NULL);
+            }
             value = get_var_value(varname, exit_status, env_list);
+            if (!value) // Should also check if get_var_value failed (e.g. ft_strdup failed)
+            {
+                free(varname);
+                free(result);
+                return (NULL);
+            }
             result = add_str_to_result(result, value);
             free(varname);
             free(value);
+            if (!result) 
+            {
+                return (NULL); 
+            }
         }
         else
         {
             result = add_char_to_result(result, raw_command[i]);
+            if (!result) 
+            {
+                return (NULL);
+            }
             i++;
         }
     }
-	printf("%s", result);
+    // The printf below is likely for debugging.
+    // You might want to remove it if this function is part of a larger system.
+    printf("%s\n", result); // Consider removing for final version
     return (result);
 }
 
