@@ -69,11 +69,37 @@ typedef struct s_token_list
 
 char *get_expanded(char *command, int exit_status, t_env *env_list);
 char *get_concated(char *command);
+
+char *init_expanded_str(void);
+char *get_var_value(char *varname, int exit_status, t_env *env_list);
+char *init_expanded_str(void);
+
+char *handle_backslash_expansion(char *raw_command, int *i_ptr, char *current_result);
+
 t_token_type    get_token_type(char *token_str);
 t_token_list	*create_token_list(void);
 t_token_node	*create_token(char *value, t_token_type type);
 void			add_token(t_token_list *list, char *value);
 void			free_token_list(t_token_list *list);
+
+size_t ft_strlen(const char *s);
+char *ft_strdup(const char *s1);
+char *ft_strcpy(char *dst, const char *src);
+char *ft_substr(char const *s, unsigned int start, size_t len);
+int is_need_for_expanding(char *raw_command, int i);
+int get_quote_state_at_position(char *command, int pos);
+void xhandle_two(char *command, int *index, int *state);
+void xhandle_one(char *command, int *index, int *state);
+void xhandle_zero(char *command, int *index, int *state);
+char *ft_itoa(int n);
+int count_digits(long n);
+int ft_strcmp(const char *s1, const char *s2);
+char *ft_strjoin(char const *s1, char const *s2);
+
+char *get_varname(char *raw_command, int *i);
+char *add_str_to_result(char *result, char *str);
+char *add_char_to_result(char *result, char c);
+char *init_expanded_str(void);
 
 void			print_tokens(t_token_list *list);
 
