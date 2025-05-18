@@ -32,7 +32,8 @@
 # include "f_libft.h"
 # include "f_builtins.h"
 
-/* Global signal flag */
-extern volatile sig_atomic_t	g_signal_received;
+/* Global variables */
+extern volatile sig_atomic_t	g_signal_received;  /* Signal handling flag */
+extern int                     g_exit_status;     /* Exit status of last command */
 
 #endif

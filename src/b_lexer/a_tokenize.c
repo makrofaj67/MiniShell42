@@ -413,6 +413,175 @@ static char	*process_quotes_in_token(char *token)
 	return (result);
 }
 
+
+static char	*get_env_value(const char *var_name)
+{
+	char	*value;
+	
+	if (var_name[0] == '?' && var_name[1] == '\0')
+	{
+		// $? için exit status değerini string olarak dön
+		char buffer[12]; // Yeterince büyük: int değeri için
+		sprintf(buffer, "%d", g_exit_status);
+		return (ft_strdup(buffer));
+	}
+	
+	value = getenv(var_name);
+	if (value)
+		return (ft_strdup(value));
+	return (ft_strdup("")); // Tanımlı değilse boş string döndür
+}
+
+/*
+** Bir token içindeki $ işareti ile başlayan çevre değişkenlerini genişletir
+** @param token: Genişletilecek token
+** @param state: 0=tırnaksız, 1=tek tırnak, 2=çift tırnak
+** @return: Genişletilmiş token
+*/
+char	*expand_token_variables(const char *token, int state)
+{
+	int		i;
+	int		j;
+	char	*result;
+	char	var_name[256];
+	char	*var_value;
+	int		max_size;
+	
+	if (!token)
+		return (NULL);
+		
+	// Tek tırnak içinde genişletme yapma (state=1)
+	if (state == 1)
+		return (ft_strdup(token));
+		
+	// Maksimum sonuç boyutunu tahmin et (kabaca)
+	max_size = ft_strlen(token) * 10; // Bazı değişkenler uzun olabilir
+	result = (char *)malloc(max_size); 
+	if (!result)
+		return (NULL);
+		
+	i = 0;
+	j = 0;
+	
+	while (token[i] && j < max_size - 1)
+	{
+		// Kaçış karakteri kontrolü (sadece çift tırnak içinde ve destekleniyorsa)
+		if (state == 2 && token[i] == '\\' && token[i+1] != '\0')
+		{
+			// $ ` " \ karakterlerini kaçırır 
+			if (token[i+1] == '$' || token[i+1] == '`' || 
+				token[i+1] == '"' || token[i+1] == '\\')
+			{
+				result[j++] = token[i+1]; // Kaçırılan karakteri al
+				i += 2; // İki karakter atla (\ ve kaçırılan karakter)
+				continue;
+			}
+		}
+		
+		// Değişken genişletme
+		if (token[i] == '$' && token[i+1] != '\0')
+		{
+			int k = 0;
+			i++; // $ işaretini atla
+			
+			// Değişken adını al (alfanumerik + _)
+			while ((isalnum(token[i]) || token[i] == '_' || token[i] == '?') 
+				  && k < 255)
+			{
+				var_name[k++] = token[i++];
+				// $? özel durumu için hemen çık
+				if (var_name[0] == '?' && k == 1)
+					break;
+			}
+			var_name[k] = '\0';
+			
+			// Boş değişken adı kontrolü
+			if (k == 0)
+			{
+				result[j++] = '$'; // Tek $ işareti
+				continue;
+			}
+			
+			// Değişkeni genişlet ve sonuca ekle
+			var_value = get_env_value(var_name);
+			if (var_value)
+			{
+				int v = 0;
+				while (var_value[v] && j < max_size - 1)
+					result[j++] = var_value[v++];
+				free(var_value);
+			}
+		}
+		else
+		{
+			result[j++] = token[i++];
+		}
+	}
+	
+	result[j] = '\0';
+	return (result);
+}
+/*
+** Processes and expands a token without quotes (state 0).
+** In this state, all variables are expanded.
+**
+** @param token: The token to be processed
+** @return: The processed token with all variables expanded
+*/
+char	*process_and_expand_for_zero(char *token)
+{
+	char	*expanded;
+
+	if (token == NULL)
+		return (NULL);
+		
+	// For zero state (no quotes), expand all variables
+	expanded = expand_token_variables(token, 0);
+	free(token);
+	return (expanded);
+}
+
+/*
+** Processes a token within single quotes (state 1).
+** In this state, no variable expansion occurs - literal values are preserved.
+**
+** @param token: The token to be processed
+** @return: The processed token with literal values preserved
+*/
+char	*process_and_expand_for_single(char *token)
+{
+	char	*expanded;
+
+	if (token == NULL)
+		return (NULL);
+		
+	// For single quote state, don't expand variables
+	expanded = expand_token_variables(token, 1);
+	free(token);
+	return (expanded);
+}
+
+/*
+** Processes and expands a token within double quotes (state 2).
+** In this state, variables are expanded but some escape sequences are processed.
+**
+** @param token: The token to be processed
+** @return: The processed token with variables expanded and escapes processed
+*/
+char	*process_and_expand_for_double(char *token)
+{
+	char	*expanded;
+
+	if (token == NULL)
+		return (NULL);
+		
+	// For double quote state, expand variables but handle escape sequences
+	expanded = expand_token_variables(token, 2);
+	free(token);
+	return (expanded);
+}
+
+
 t_token_list	*tokenize_command(char *command)
 {
 	t_token_list	*token_list;
@@ -438,7 +607,7 @@ t_token_list	*tokenize_command(char *command)
 		else if (status == 1)
 			raw_token = process_and_expand_for_single(filtered_token);
 		else if (status == 2)
-			raw_token = prepare_for_double_for_double(filtered_token);
+			raw_token = process_and_expand_for_double(filtered_token);
 		if (raw_token != NULL)
 		{
 			add_token(token_list, raw_token);

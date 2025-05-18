@@ -82,6 +82,14 @@ t_token_state	init_token_state(char *token, int exit_status);
 void			handle_quotes(t_token_state *state);
 
 /**
+** Token expansion functions
+*/
+char			*expand_token_variables(const char *token, int state);
+char			*process_and_expand_for_zero(char *token);
+char			*process_and_expand_for_single(char *token);
+char			*process_and_expand_for_double(char *token);
+
+/**
 ** Token list management
 */
 t_token_list	*create_token_list(void);
