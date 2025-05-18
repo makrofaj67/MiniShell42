@@ -253,6 +253,7 @@ int is_need_for_expanding(char *raw_command, int i)
         return (1);
     return (0);
 }
+
 static char *init_expanded_str(void)
 {
     char *result;

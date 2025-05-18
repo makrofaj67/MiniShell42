@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/03 20:24:42 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/18 15:47:53 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void shell_loop(char *prompt, char **envp) {
       continue;
     }
     char *expanded = get_expanded(command, exit_status, env_list);
+	char *concated = get_concated(expanded);
     // root_node = parse_tokens(tokens);
 
     // Display the AST structure when a command is entered
@@ -63,6 +64,8 @@ void shell_loop(char *prompt, char **envp) {
     //
   //  free_token_list(tokens);
     // free_ast(root_node);
+	free(concated);
+	free(expanded);
     free(command);
   }
 }
