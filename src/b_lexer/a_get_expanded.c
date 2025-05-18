@@ -354,6 +354,67 @@ static char *get_var_value(char *varname, int exit_status, t_env *env_list)
     return (ft_strdup(""));
 }
 
+// (ft_strlen, ft_strcpy, ft_strdup, ft_substr, ft_strjoin, ft_strcmp, count_digits, ft_itoa)
+// (handle_zero, handle_one, handle_two, get_quote_state_at_position)
+// (is_need_for_expanding, init_expanded_str, add_char_to_result, add_str_to_result)
+// (get_varname, get_var_value)
+
+static char *handle_backslash_expansion(char *raw_command, int *i_ptr, char *current_result)
+{
+    char *new_result = current_result;
+    int current_i = *i_ptr;
+    int quote_state_at_backslash;
+
+    quote_state_at_backslash = get_quote_state_at_position(raw_command, current_i);
+    current_i++; // Move past the backslash itself
+
+    if (quote_state_at_backslash == 0) // General State (Unquoted)
+    {
+        if (raw_command[current_i]) // If there's a character after backslash
+        {
+            new_result = add_char_to_result(new_result, raw_command[current_i]);
+            if (!new_result) return (NULL);
+            current_i++; // Move past the escaped character
+        }
+        // If backslash is at the end of the string, it's consumed.
+    }
+    else if (quote_state_at_backslash == 1) // Inside Single Quotes ('...')
+    {
+        // Backslash is literal. Add the original backslash.
+        new_result = add_char_to_result(new_result, '\\');
+        if (!new_result) return (NULL);
+        // The character raw_command[current_i] (that was after the backslash)
+        // will be processed in the next iteration of the main loop in get_expanded.
+    }
+    else if (quote_state_at_backslash == 2) // Inside Double Quotes ("...")
+    {
+        if (raw_command[current_i] == '$' || raw_command[current_i] == '"' ||
+            raw_command[current_i] == '\\' || raw_command[current_i] == '`')
+        {
+            // Backslash is skipped, the special char is written literally.
+            new_result = add_char_to_result(new_result, raw_command[current_i]);
+            if (!new_result) return (NULL);
+            current_i++; // Move past the escaped character
+        }
+        else if (raw_command[current_i]) // Backslash followed by a non-special character
+        {
+            // Treat backslash as literal.
+            new_result = add_char_to_result(new_result, '\\');
+            if (!new_result) return (NULL);
+            // The character raw_command[current_i] (that was after the backslash)
+            // will be processed in the next iteration.
+        }
+        else // Backslash is the last character within double quotes (e.g., "abc\")
+        {
+            // Add literal backslash
+            new_result = add_char_to_result(new_result, '\\');
+            if (!new_result) return (NULL);
+        }
+    }
+    *i_ptr = current_i; // Update the original index
+    return new_result;
+}
+
 char *get_expanded(char *raw_command, int exit_status, t_env *env_list)
 {
     int i;
@@ -365,18 +426,28 @@ char *get_expanded(char *raw_command, int exit_status, t_env *env_list)
     result = init_expanded_str();
     if (!result)
         return (NULL);
+
     while (raw_command[i])
     {
-        if (raw_command[i] == '$' && is_need_for_expanding(raw_command, i))
+        if (raw_command[i] == '\\')
         {
-            varname = get_varname(raw_command, &i); // get_varname now correctly advances i
+            result = handle_backslash_expansion(raw_command, &i, result);
+            if (!result)
+            {
+                return (NULL); // Error occurred in backslash handling
+            }
+            continue; // Index 'i' and result are updated, continue loop
+        }
+        else if (raw_command[i] == '$' && is_need_for_expanding(raw_command, i))
+        {
+            varname = get_varname(raw_command, &i); // get_varname advances i
             if (!varname)
             {
                 free(result);
                 return (NULL);
             }
             value = get_var_value(varname, exit_status, env_list);
-            if (!value) // Should also check if get_var_value failed (e.g. ft_strdup failed)
+            if (!value) 
             {
                 free(varname);
                 free(result);
@@ -402,7 +473,7 @@ char *get_expanded(char *raw_command, int exit_status, t_env *env_list)
     }
     // The printf below is likely for debugging.
     // You might want to remove it if this function is part of a larger system.
-    printf("%s\n", result); // Consider removing for final version
+   // printf("%s\n", result); // Consider removing for final version
     return (result);
 }
 
