@@ -6,14 +6,14 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:18:09 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/18 15:37:40 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/19 01:44:38 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef B_LEXER_H
 # define B_LEXER_H
 
-#include "f_builtins.h"
+# include "f_builtins.h"
 /**
 ** Token tnpes for the lexical analyzer
 */
@@ -32,20 +32,18 @@ typedef enum e_token_type
 /**
 ** State tracking for token processing
 */
-typedef struct s_token_state
-{
-	char	*token;
-	char	*result;
-	int		i;
-	int		j;
-	int		max_len;
-	int		exit_status;
-	char	quote_state;
-}	t_token_state;
-
 /**
 ** Node in the token linked list
 */
+
+
+typedef struct s_env_and_exit
+{
+	int exit_status;
+	t_env *env_list;
+	t_env *export_list;
+}	t_env_and_exit;
+
 typedef struct s_token_node
 {
 	char				*value;
