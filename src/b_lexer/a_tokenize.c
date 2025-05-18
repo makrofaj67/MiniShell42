@@ -432,95 +432,111 @@ static char	*get_env_value(const char *var_name)
 	return (ft_strdup("")); // Tanımlı değilse boş string döndür
 }
 
+char	*expand_token_variables(const char *token, int state)
+{
+	int		i;
+	int		j;
+	char	*result;
+	char	var_name[256]; // Değişken adını tutmak için buffer
+	char	*var_value;
+	int		max_result_size; // İsim değişikliği, daha anlaşılır
+
+	if (!token)
+		return (NULL);
+
+	if (state == 1) // Tek tırnak içinde genişletme yapma
+		return (ft_strdup(token));
+
+	max_result_size = ft_strlen(token) * 10 + 256; // Biraz daha pay ekleyelim
+	result = (char *)malloc(max_result_size);
+	if (!result)
+		return (NULL);
+
+	i = 0; // 'token' string'i üzerinde ilerleyen ana indeks
+	j = 0; // 'result' string'i üzerinde ilerleyen yazma indeksi
+
+	while (token[i] != '\0' && j < max_result_size - 1)
+	{
+		// Kaçış karakteri kontrolü (sadece çift tırnak içinde ve destekleniyorsa)
+		if (state == 2 && token[i] == '\\' && token[i + 1] != '\0')
+		{
+			// Proje \ istemiyorsa bu blok kaldırılmalı.
+			// Eğer kalacaksa, sadece kaçırılabilen karakterleri kontrol et.
+			if (token[i+1] == '$' || token[i+1] == '`' || 
+				token[i+1] == '"' || token[i+1] == '\\')
+			{
+				result[j++] = token[i + 1]; // Kaçırılan karakteri al
+				i += 2;                     // İki karakter atla
+				continue;
+			}
+			// Eğer kaçırılamayan bir karakterse, \ olduğu gibi kalır (veya proje ne diyorsa)
+			// Şimdilik, \ olduğu gibi kalsın diyelim:
+			// result[j++] = token[i++]; // Sadece \ ekle, sonraki karakter normal işlenecek
+			// VEYA projenin \ istemediğini varsayarak bu tüm if bloğunu kaldır.
+			// ŞİMDİLİK \ İŞLEMESİNİ DEVRE DIŞI BIRAKIYORUM (PROJE İSTEMİYORSA)
+		}
+
+		// Değişken genişletme
+		// Geçerli bir değişken başlangıcı mı diye bak: $(harf|_|?)
+		if (token[i] == '$' && 
+		    (isalpha(token[i + 1]) || token[i + 1] == '_' || token[i + 1] == '?'))
+		{
+			int k = 0; // var_name için indeks
+			i++;       // $ işaretini atla
+
+			// Değişken adını al
+			// (Sadece $? ise, '?' yeterli. Diğerleri için alfanumerik + _)
+			if (token[i] == '?')
+			{
+				var_name[k++] = token[i++];
+			}
+			else
+			{
+				while ((isalnum(token[i]) || token[i] == '_') && k < 255)
+				{
+					var_name[k++] = token[i++];
+				}
+			}
+			var_name[k] = '\0';
+
+			// Değişken adının boş olmaması lazım (aslında yukarıdaki isalpha/_/? kontrolü bunu sağlar)
+			// if (k == 0) { Bu durum artık oluşmamalı }
+
+			var_value = get_env_value(var_name);
+			if (var_value)
+			{
+				int v = 0;
+				while (var_value[v] != '\0' && j < max_result_size - 1)
+				{
+					result[j++] = var_value[v++];
+				}
+				free(var_value);
+			}
+			// 'i' zaten değişken adının SONUNDAKİ karaktere geldi (döngüden dolayı).
+			// Bu yüzden ekstra bir i ilerletmesine gerek yok. Döngünün başına dönecek.
+		}
+		else // Normal karakter veya tek başına $ (geçerli bir değişken adı izlemiyorsa)
+		{
+			if (j < max_result_size - 1) // Buffer taşmasını engelle
+			{
+				result[j++] = token[i++];
+			}
+			else // Buffer doluysa döngüden çık
+			{
+				break;
+			}
+		}
+	}
+	result[j] = '\0';
+	return (result);
+}
+
 /*
 ** Bir token içindeki $ işareti ile başlayan çevre değişkenlerini genişletir
 ** @param token: Genişletilecek token
 ** @param state: 0=tırnaksız, 1=tek tırnak, 2=çift tırnak
 ** @return: Genişletilmiş token
 */
-char	*expand_token_variables(const char *token, int state)
-{
-	int		i;
-	int		j;
-	char	*result;
-	char	var_name[256];
-	char	*var_value;
-	int		max_size;
-	
-	if (!token)
-		return (NULL);
-		
-	// Tek tırnak içinde genişletme yapma (state=1)
-	if (state == 1)
-		return (ft_strdup(token));
-		
-	// Maksimum sonuç boyutunu tahmin et (kabaca)
-	max_size = ft_strlen(token) * 10; // Bazı değişkenler uzun olabilir
-	result = (char *)malloc(max_size); 
-	if (!result)
-		return (NULL);
-		
-	i = 0;
-	j = 0;
-	
-	while (token[i] && j < max_size - 1)
-	{
-		// Kaçış karakteri kontrolü (sadece çift tırnak içinde ve destekleniyorsa)
-		if (state == 2 && token[i] == '\\' && token[i+1] != '\0')
-		{
-			// $ ` " \ karakterlerini kaçırır 
-			if (token[i+1] == '$' || token[i+1] == '`' || 
-				token[i+1] == '"' || token[i+1] == '\\')
-			{
-				result[j++] = token[i+1]; // Kaçırılan karakteri al
-				i += 2; // İki karakter atla (\ ve kaçırılan karakter)
-				continue;
-			}
-		}
-		
-		// Değişken genişletme
-		if (token[i] == '$' && token[i+1] != '\0')
-		{
-			int k = 0;
-			i++; // $ işaretini atla
-			
-			// Değişken adını al (alfanumerik + _)
-			while ((isalnum(token[i]) || token[i] == '_' || token[i] == '?') 
-				  && k < 255)
-			{
-				var_name[k++] = token[i++];
-				// $? özel durumu için hemen çık
-				if (var_name[0] == '?' && k == 1)
-					break;
-			}
-			var_name[k] = '\0';
-			
-			// Boş değişken adı kontrolü
-			if (k == 0)
-			{
-				result[j++] = '$'; // Tek $ işareti
-				continue;
-			}
-			
-			// Değişkeni genişlet ve sonuca ekle
-			var_value = get_env_value(var_name);
-			if (var_value)
-			{
-				int v = 0;
-				while (var_value[v] && j < max_size - 1)
-					result[j++] = var_value[v++];
-				free(var_value);
-			}
-		}
-		else
-		{
-			result[j++] = token[i++];
-		}
-	}
-	
-	result[j] = '\0';
-	return (result);
-}
 /*
 ** Processes and expands a token without quotes (state 0).
 ** In this state, all variables are expanded.
