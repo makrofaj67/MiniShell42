@@ -367,14 +367,6 @@ static int	define_state_status(const char *command, int pos)
 	return (0);
 }
 
-/*
- * Token içerisindeki tırnakları temizleyen fonksiyon
- * 'abc' -> abc
- * "abc" -> abc
- * a'bc' -> abc
- * a"bc" -> abc
- * a'b'c'd' -> abcd
- */
 static char	*process_quotes_in_token(char *token)
 {
 	int		i;
@@ -388,7 +380,7 @@ static char	*process_quotes_in_token(char *token)
 		return (NULL);
 	
 	len = ft_strlen(token);
-	result = (char *)malloc(len + 1); // En kötü durumda orijinal token kadar olur
+	result = (char *)malloc(len + 1); 
 	if (!result)
 		return (NULL);
 	
@@ -399,7 +391,7 @@ static char	*process_quotes_in_token(char *token)
 	
 	while (i < len)
 	{
-		// Tırnak açılıp kapanmalarını kontrol et
+
 		if ((token[i] == '\'' || token[i] == '"') && !in_quote)
 		{
 			in_quote = 1;
@@ -413,20 +405,19 @@ static char	*process_quotes_in_token(char *token)
 		}
 		else
 		{
-			// Tırnak dışındaki veya içindeki karakterleri kopyala
 			result[j++] = token[i++];
 		}
 	}
 	
-	result[j] = '\0'; // Sonlandır
+	result[j] = '\0'; 
 	return (result);
 }
 
 t_token_list	*tokenize_command(char *command)
 {
 	t_token_list	*token_list;
-	char			*to_send_to_handler;
-	char			*current_token_value;
+	char			*filtered_token;
+	char			*raw_token;
 	int				i;
 	int				status;
 
@@ -441,18 +432,17 @@ t_token_list	*tokenize_command(char *command)
 		if (command[i] == '\0')
 			break ;
 		status = define_state_status(command, i);
-		to_send_to_handler = filter_token_string(command, &i, status);
-		// handle_single_status ve handle_double_status zaten tırnakları temizlediği için
-		// prepare_token'ı sadece status=0 için kullanıyoruz
+		filtered_token = filter_token_string(command, &i, status);
 		if (status == 0)
-			current_token_value = prepare_token(to_send_to_handler);
-		else
-			current_token_value = to_send_to_handler;
-			
-		if (current_token_value != NULL)
+			raw_token = process_and_expand_for_zero(filtered_token);
+		else if (status == 1)
+			raw_token = process_and_expand_for_single(filtered_token);
+		else if (status == 2)
+			raw_token = prepare_for_double_for_double(filtered_token);
+		if (raw_token != NULL)
 		{
-			add_token(token_list, current_token_value);
-			free(current_token_value);
+			add_token(token_list, raw_token);
+			free(raw_token);
 		}
 	}
 	print_tokens(token_list);

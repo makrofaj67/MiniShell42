@@ -15,6 +15,11 @@
 // Exit status tutmak için global değişken
 extern int g_exit_status;
 
+/*
+** Çevre değişken ismini işleyip değerini döndürür
+** @param var_name: Değişken adı (başında $ olmadan)
+** @return: Değişken değeri veya NULL (değişken tanımlı değilse)
+*/
 static char	*get_env_value(const char *var_name)
 {
 	char	*value;
@@ -33,7 +38,12 @@ static char	*get_env_value(const char *var_name)
 	return (ft_strdup("")); // Tanımlı değilse boş string döndür
 }
 
-
+/*
+** Bir token içindeki $ işareti ile başlayan çevre değişkenlerini genişletir
+** @param token: Genişletilecek token
+** @param state: 0=tırnaksız, 1=tek tırnak, 2=çift tırnak
+** @return: Genişletilmiş token
+*/
 char	*expand_token_variables(const char *token, int state)
 {
 	int		i;
@@ -61,29 +71,37 @@ char	*expand_token_variables(const char *token, int state)
 	
 	while (token[i] && j < max_size - 1)
 	{
+		// Kaçış karakteri kontrolü (sadece çift tırnak içinde ve destekleniyorsa)
 		if (state == 2 && token[i] == '\\' && token[i+1] != '\0')
 		{
+			// $ ` " \ karakterlerini kaçırır 
 			if (token[i+1] == '$' || token[i+1] == '`' || 
 				token[i+1] == '"' || token[i+1] == '\\')
 			{
-				result[j++] = token[i+1];
-				i += 2;
+				result[j++] = token[i+1]; // Kaçırılan karakteri al
+				i += 2; // İki karakter atla (\ ve kaçırılan karakter)
 				continue;
 			}
 		}
+		
+		// Değişken genişletme
 		if (token[i] == '$' && token[i+1] != '\0')
 		{
 			int k = 0;
-			int dollar_pos = i;
-			i++;
+			i++; // $ işaretini atla
+			
+			// Değişken adını al (alfanumerik + _)
 			while ((isalnum(token[i]) || token[i] == '_' || token[i] == '?') 
 				  && k < 255)
 			{
 				var_name[k++] = token[i++];
+				// $? özel durumu için hemen çık
 				if (var_name[0] == '?' && k == 1)
 					break;
 			}
 			var_name[k] = '\0';
+			
+			// Boş değişken adı kontrolü
 			if (k == 0)
 			{
 				result[j++] = '$'; // Tek $ işareti
@@ -99,8 +117,6 @@ char	*expand_token_variables(const char *token, int state)
 					result[j++] = var_value[v++];
 				free(var_value);
 			}
-			// NOT: i zaten doğru pozisyonda, değişken adı sonrasında devam ediyor
-			// Bu şekilde $USERa gibi ifadelerde a karakteri korunmuş olacak
 		}
 		else
 		{
