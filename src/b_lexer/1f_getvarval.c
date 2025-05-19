@@ -64,7 +64,7 @@ char *get_var_value(char *varname, int exit_status, t_env *env_list)
 
         exit_status_str = ft_itoa(exit_status); 
         if (!exit_status_str)
-            return (ft_strdup(""));
+            return (ft_strdup("0"));
         char *result = ft_strdup(exit_status_str); 
         free(exit_status_str);
         return (result);

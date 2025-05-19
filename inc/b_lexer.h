@@ -72,7 +72,7 @@ char *init_expanded_str(void);
 char *get_var_value(char *varname, int exit_status, t_env *env_list);
 char *init_expanded_str(void);
 
-char *handle_backslash_expansion(char *raw_command, int *i_ptr, char *current_result);
+char *handle_backslash(char *raw_command, int *i_ptr, char *current_result);
 
 t_token_type    get_token_type(char *token_str);
 t_token_list	*create_token_list(void);

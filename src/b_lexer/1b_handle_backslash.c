@@ -3,21 +3,17 @@
 static char	*handle_backslash_no_quotes(char *raw_command, int *i_ptr, 
                                       char *current_result)
 {
-    char	*new_result;
-    int		current_i;
+	char *new_result;
 
-    new_result = current_result;
-    current_i = *i_ptr;
-    current_i++;
-    if (raw_command[current_i])
-    {
-        new_result = add_char_to_result(new_result, raw_command[current_i]);
-        if (!new_result)
-            return (NULL);
-        current_i++;
-    }
-    *i_ptr = current_i;
-    return (new_result);
+	if (raw_command[*i_ptr + 1])
+	{
+		new_result = add_char_to_result(current_result, raw_command[*i_ptr + 1]);
+		if (new_result == NULL)
+			return (NULL);
+		*i_ptr = *i_ptr + 1;
+	}
+	*i_ptr = *i_ptr + 1;
+	return (new_result);
 }
 
 static char	*handle_backslash_single_quotes(int *i_ptr, char *current_result)
@@ -25,40 +21,38 @@ static char	*handle_backslash_single_quotes(int *i_ptr, char *current_result)
     char	*new_result;
 
     new_result = add_char_to_result(current_result, '\\');
-    if (!new_result)
+    if (new_result == NULL)
         return (NULL);
-    (*i_ptr)++;
+	*i_ptr = *i_ptr + 1;
     return (new_result);
 }
-
 static char	*handle_backslash_double_quotes(char *raw_command, int *i_ptr,
                                          char *current_result)
 {
-    char	*new_result;
-    int		current_i;
+	char *new_result;
+	char char_after_backslash; 
 
-    new_result = current_result;
-    current_i = *i_ptr;
-    current_i++;
-    if (raw_command[current_i] == '$' || raw_command[current_i] == '"' ||
-        raw_command[current_i] == '\\' || raw_command[current_i] == '`')
-    {
-        new_result = add_char_to_result(new_result, raw_command[current_i]);
-        if (!new_result)
-            return (NULL);
-        current_i++;
-    }
-    else
-    {
-        new_result = add_char_to_result(new_result, '\\');
-        if (!new_result)
-            return (NULL);
-    }
-    *i_ptr = current_i;
-    return (new_result);
+	new_result = current_result;
+	char_after_backslash = raw_command[*i_ptr + 1];
+	if (char_after_backslash == '$' || char_after_backslash == '"' ||
+		char_after_backslash == '\\' || char_after_backslash == '`')
+	{
+		new_result = add_char_to_result(new_result, char_after_backslash);
+		if (new_result == NULL)
+			return (NULL);
+		*i_ptr = *i_ptr + 1;
+	}
+	else
+	{
+		new_result = add_char_to_result(new_result, '\\');
+		if (new_result == NULL)
+			return (NULL);
+	}
+	*i_ptr = *i_ptr + 1;
+	return (new_result);
 }
 
-char	*handle_backslash_expansion(char *raw_command, int *i_ptr,
+char	*handle_backslash(char *raw_command, int *i_ptr,
                                  char *current_result)
 {
     int	quote_state_at_backslash;

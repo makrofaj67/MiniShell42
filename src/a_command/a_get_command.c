@@ -39,7 +39,7 @@ static char	*validate_command(char *command)
 	}
 	else if (quote_state(command) == 2)
 	{
-		printf("There is unclosed double quote on your command --> '\n");
+		printf("There is unclosed double quote on your command --> \"\n");
 		free(command);
 		return (NULL);
 	}

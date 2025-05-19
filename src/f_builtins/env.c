@@ -93,7 +93,9 @@ void	create_env(t_env **env)
         	last->next = new_node;
     	}
     	else
+		{
         	add_variable_2(env_var[i], env);
+		}
 		i++;
 	}
 }

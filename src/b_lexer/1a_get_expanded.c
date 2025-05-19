@@ -16,7 +16,7 @@ char *init_expanded_str(void)
 {
     char *result;
 
-    result = (char *)malloc(sizeof(char) * 1);
+    result = (char *)malloc(sizeof(char));
     if (result == NULL)
         return (NULL);
     result[0] = '\0';
@@ -73,14 +73,15 @@ char	*get_expanded(char *raw_command, int *exit_status, t_env *env_list)
     while (raw_command[i])
     {
         if (raw_command[i] == '\\')
-            result = handle_backslash_expansion(raw_command, &i, result);
+            result = handle_backslash(raw_command, &i, result);
         else if (raw_command[i] == '$' && is_need_for_expanding(raw_command, i))
             result = handle_variable_expansion(raw_command, &i, &envx, result);
         else
             result = handle_regular_char(raw_command, &i, result);
-        if (!result)
+        if (result == NULL)
             return (NULL);
     }
     *exit_status = envx.exit_status;
+	printf("Expanded string = %s\n", result);
     return (result);
 }

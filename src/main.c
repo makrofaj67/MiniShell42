@@ -54,11 +54,12 @@ void shell_loop(char *prompt, char **envp)
         if (command == NULL)
         {
             if (should_exit == 1)
-            {
-                free(envvarexit);
+			{	
+				free(envvarexit);
                 exit(EXIT_SUCCESS);
             }
-            continue;
+			else
+				continue;
         }
         expanded = get_expanded(command, &envvarexit->exit_status, envvarexit->env_list);
         concated = get_concated(expanded);
@@ -73,6 +74,7 @@ void shell_loop(char *prompt, char **envp)
         // }
         // free_token_list(tokens);
         // free_ast(root_node);
+
         free(concated);
         free(expanded);
         free(command);
