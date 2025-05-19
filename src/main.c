@@ -70,11 +70,11 @@ void shell_loop(char *prompt, char **envp)
         expanded = get_expanded(command, &envvarexit->exit_status, envvarexit->env_list);
         concated = get_quote_trimmed(expanded);
         tokens = create_tokens(concated);
-		print_tokens(tokens);
+		//print_tokens(tokens);
         root_node = parse_tokens(tokens);
         if (root_node)
         {
-             visualize_ast(root_node);
+             //visualize_ast(root_node);
              execute_ast(root_node, &envvarexit->exit_status, 
                          &envvarexit->env_list, &envvarexit->export_list);
         }
@@ -107,7 +107,6 @@ int main(int argc, char **argv, char **envp) {
   
   // Register cleanup function
 
-  
   clear_screen();
   setup_interactive_signals();
   prompt = prepare_prompt(envp);

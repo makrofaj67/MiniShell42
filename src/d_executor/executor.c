@@ -322,13 +322,17 @@ static int execute_pipeline(ast_node *node, int *exit_status,
 	close(pipe_fds[0]);
 	close(pipe_fds[1]);
 	
-	waitpid(left_pid, &status, 0);
-	waitpid(right_pid, &status, 0);
+	int left_status;
+	int right_status;
 	
-	if (WIFEXITED(status))
-		*exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		*exit_status = 128 + WTERMSIG(status);
+	waitpid(left_pid, &left_status, 0);
+	waitpid(right_pid, &right_status, 0);
+	
+	// In pipes, we generally want the exit status of the rightmost command
+	if (WIFEXITED(right_status))
+		*exit_status = WEXITSTATUS(right_status);
+	else if (WIFSIGNALED(right_status))
+		*exit_status = 128 + WTERMSIG(right_status);
 	
 	return (*exit_status);
 }
@@ -406,3 +410,4 @@ int execute_ast(ast_node *root_node, int *exit_status,
 	
 	return (result);
 }
+
