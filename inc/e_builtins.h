@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   f_builtins.h                                       :+:      :+:    :+:   */
+/*   e_builtins.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 18:00:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/13 18:00:00 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/20 04:00:00 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef F_BUILTINS_H
-# define F_BUILTINS_H
+#ifndef E_BUILTINS_H
+# define E_BUILTINS_H
 
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+# include <limits.h>
 
 /*
 ** Environment variable structure
@@ -55,15 +56,23 @@ void	add_env_var(char *key, char *value, t_env **env);
 ** Built-in commands
 */
 void	pwd_cmd(void);
-void	cd_cmd(char **args);
-void	echo_cmd(char **args, t_env **env);
+int     cd_cmd(char **args);
+int     echo_cmd(char **args, t_env **env);
 void	export_cmd(char *arg, t_env **env, t_env **env_var);
 void	unset_cmd(char *args, t_env **env);
 int		builtin_selector(char **args, t_env **env, t_env **env_var);
+int		exit_cmd(char **args);
 
 /*
 ** Path utilities
 */
 char	*get_path_home(void);
+
+/*
+** String utilities
+*/
+char	*ft_strchr(const char *s, int c);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_strdup(const char *s1);
 
 #endif

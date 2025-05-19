@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 18:00:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/13 18:00:00 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/20 04:00:00 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,26 +16,33 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/wait.h>
+# include <fcntl.h>
+# include <limits.h>
+# include <errno.h>
+# include <string.h>
 # include "c_parser.h"
-# include "f_builtins.h"
+# include "e_builtins.h"
 
 /*
-** Execution functions for commands
+** Main execution functions
 */
-void	execute_path(char *path, char **args);
-char	*find_pathx(char *cmd);
-char	*prepare_path(char *env_path, char *cmd);
-void	execute_command(char **args, t_env **env_list, t_env **export_list);
-char	*find_command_path(char *command, t_env *env_list);
-void	execute_external_command(char **args, t_env *env_list);
+int execute_ast(ast_node *root_node, int *exit_status, 
+	t_env **env_list, t_env **export_list);
+int execute_ast_node(ast_node *node, int *exit_status,
+	t_env **env_list, t_env **export_list);
 
 /*
-** AST execution functions
+** Utility functions
 */
-int	execute_ast(ast_node *node, int *exit_status, t_env **env, t_env **env_var);
-void	execute_pipe(ast_node *node, t_env **env_list, t_env **export_list);
-int	execute_command_node(ast_node *node, int *exit_status, t_env **env, t_env **env_var);
-void	execute_redirection(ast_node *node, t_env **env_list, t_env **export_list);
-void	handle_redirection(char **args);
+int is_builtin(char *cmd);
+int execute_builtin(char **args, t_env **env_list, t_env **export_list);
+char **env_to_array(t_env *env_list);
+char *find_command_in_path(char *cmd, t_env *env_list);
+char *path_join(char *dir, char *file);
+void free_array(char **array);
+char **split_by_char(char *str, char c);
+int is_numeric(char *str);
+int exit_cmd(char **args);
+int ft_atoi(const char *str);
 
 #endif

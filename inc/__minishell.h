@@ -29,11 +29,14 @@
 # include "c_parser.h"
 # include "d_executor.h"
 # include "e_utils.h"
+# include "g_utils.h"
 # include "f_libft.h"
-# include "f_builtins.h"
+# include "e_builtins.h"
 
 /* Global variables */
 extern volatile sig_atomic_t	g_signal_received;  /* Signal handling flag */
 extern int                     g_exit_status;     /* Exit status of last command */
+extern t_env                   *g_env_list;       /* Global environment list */
+extern char                    **environ;         /* System environment variable */
 
 #endif

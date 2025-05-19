@@ -6,11 +6,14 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 18:14:55 by rakman            #+#    #+#             */
-/*   Updated: 2025/04/30 23:26:32 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/20 05:15:00 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+
+/* Global environment list for easy access across files */
+t_env	*g_env_list = NULL;
 
 void	clear_screen(void)
 {

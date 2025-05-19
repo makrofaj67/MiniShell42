@@ -66,12 +66,12 @@ void shell_loop(char *prompt, char **envp)
         tokens = create_tokens(concated);
 		print_tokens(tokens);
         root_node = parse_tokens(tokens);
-        // if (root_node)
-        // {
-        //     visualize_ast(root_node);
-        //     execute_ast(root_node, &envvarexit->exit_status, 
-        //                 &envvarexit->env_list, &envvarexit->export_list);
-        // }
+        if (root_node)
+        {
+             visualize_ast(root_node);
+             execute_ast(root_node, &envvarexit->exit_status, 
+                         &envvarexit->env_list, &envvarexit->export_list);
+        }
         free_ast(root_node);
 		free_token_list(tokens);
         free(concated);

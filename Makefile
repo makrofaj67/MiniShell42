@@ -20,15 +20,18 @@ SRC_DIRS = a_command \
         b_lexer \
         c_parser \
         d_executor \
-        e_utils \
-        f_builtins
+        e_builtins \
+        f_utils
 
 # Libft source files
 LIBFT_SRCS = $(wildcard lib/libft/*.c)
 
 # Collect all source files
-SRC_FILES = $(SRC_MAIN) \
+SRC_BASE = $(SRC_MAIN) \
         $(foreach dir,$(SRC_DIRS),$(wildcard src/$(dir)/*.c))
+
+# Filter out duplicate signal handler files
+SRC_FILES = $(filter-out src/f_utils/handle_signals.c src/f_utils/signal_handlers.c, $(SRC_BASE))
 
 # Test source files
 TEST_SRCS = src/f_tests/test_framework.c \

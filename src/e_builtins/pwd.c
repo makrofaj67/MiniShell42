@@ -3,18 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
+/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/12 12:00:54 by nakbas            #+#    #+#             */
-/*   Updated: 2025/05/12 12:00:54 by nakbas           ###   ########.fr       */
+/*   Created: 2025/05/20 03:25:00 by rakman            #+#    #+#             */
+/*   Updated: 2025/05/20 03:25:00 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/f_builtins.h"
+#include "../../inc/__minishell.h"
 
-void	pwd_cmd()
+/*
+** PWD built-in command implementation
+** Prints the current working directory
+*/
+void pwd_cmd(void)
 {
-	char	pwd[256];
-	getcwd(pwd, sizeof(pwd));
-	printf("%s\n", pwd);
+	char	cwd[PATH_MAX];
+
+	if (getcwd(cwd, PATH_MAX) != NULL)
+		printf("%s\n", cwd);
+	else
+		perror("pwd");
 }
