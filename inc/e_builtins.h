@@ -51,6 +51,7 @@ void	create_env(t_env **env);
 void	add_variable_2(char *args, t_env **env);
 void	env_lengths_2(t_env **len, char *args);
 void	add_env_var(char *key, char *value, t_env **env);
+void	free_env_list(t_env *env_list);
 
 /*
 ** Built-in commands

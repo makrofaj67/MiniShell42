@@ -90,3 +90,24 @@ void add_env_var(char *key, char *value, t_env **env)
 		last->next = new_env;
 	}
 }
+
+/*
+** Free environment list and all memory associated with it
+*/
+void free_env_list(t_env *env_list)
+{
+	t_env	*current;
+	t_env	*next;
+
+	current = env_list;
+	while (current)
+	{
+		next = current->next;
+		if (current->key)
+			free(current->key);
+		if (current->value)
+			free(current->value);
+		free(current);
+		current = next;
+	}
+}
