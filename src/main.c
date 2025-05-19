@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:30:36 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/19 01:52:25 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/19 02:02:08 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,49 +30,53 @@ int g_exit_status = 0;
 
 void shell_loop(char *prompt, char **envp)
 {
-	char			*command;
-	int				should_exit;
-	t_token_list	*tokens;
-	ast_node		*root_node;
-	t_env			*env_list;
-	t_env			*export_list;
-	int				exit_status;
-	t_env_and_exit  *envvarexit;
-	envvarexit = (t_env_and_exit *)malloc(sizeof(t_env_and_exit));
-	
+    char			*command;
+    int				should_exit;
+    t_token_list	*tokens;
+    ast_node		*root_node;
+    t_env_and_exit	*envvarexit;
+    char			*expanded;
+    char			*concated;
 
-	should_exit = 0;
-	env_list = NULL;
-	export_list = NULL;
-	create_env(&env_list);    // Çevre değişkenlerini liste olarak yükle
-	create_env(&export_list); // Export listesini de oluştur
+    should_exit = 0;
+    envvarexit = (t_env_and_exit *)malloc(sizeof(t_env_and_exit));
+    if (!envvarexit)
+        return ;
+    envvarexit->exit_status = 0;
+    envvarexit->env_list = NULL;
+    envvarexit->export_list = NULL;
+    create_env(&envvarexit->env_list);    // Çevre değişkenlerini liste olarak yükle
+    create_env(&envvarexit->export_list); // Export listesini de oluştur
 
-	while (true) 
-	{
-		command = get_command(prompt, &should_exit);
-		if (command == NULL) {
-		if (should_exit == 1)
-			exit(EXIT_SUCCESS);
-		continue;
+    while (true)
+    {
+        command = get_command(prompt, &should_exit);
+        if (command == NULL)
+        {
+            if (should_exit == 1)
+            {
+                free(envvarexit);
+                exit(EXIT_SUCCESS);
+            }
+            continue;
+        }
+        expanded = get_expanded(command, &envvarexit->exit_status, envvarexit->env_list);
+        concated = get_concated(expanded);
+        // tokens = create_tokens(concated);
+        // root_node = parse_tokens(tokens);
+
+        // if (root_node)
+        // {
+        //     visualize_ast(root_node);
+        //     execute_ast(root_node, &envvarexit->exit_status, 
+        //                 &envvarexit->env_list, &envvarexit->export_list);
+        // }
+        // free_token_list(tokens);
+        // free_ast(root_node);
+        free(concated);
+        free(expanded);
+        free(command);
     }
-    char *expanded = get_expanded(command, exit_status, env_list);
-	char *concated = get_concated(expanded);
-    // root_node = parse_tokens(tokens);
-
-    // Display the AST structure when a command is entered
-    // if (root_node)
-    // {
-    // 	visualize_ast(root_node);
-    // 	// AST ağacını kullanarak komutu yürüt
-    // 	execute_ast(root_node, &exit_status, &env_list, &export_list);
-    // }
-    //
-	//  free_token_list(tokens);
-    // free_ast(root_node);
-	free(concated);
-	free(expanded);
-    free(command);
-  }
 }
 
 /*

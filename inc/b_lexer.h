@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:18:09 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/19 01:44:38 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/19 01:59:34 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ typedef struct s_token_list
 ** Main tokenization function
 */
 
-char *get_expanded(char *command, int exit_status, t_env *env_list);
+char *get_expanded(char *command, int *exit_status, t_env *env_list);
 char *get_concated(char *command);
 
 char *init_expanded_str(void);
