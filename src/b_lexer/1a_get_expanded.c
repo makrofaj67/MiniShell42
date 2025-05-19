@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   a_get_expanded.c                                   :+:      :+:    :+:   */
+/*   1a_get_expanded.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 01:35:50 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/19 01:35:50 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/19 03:24:43 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,6 @@ char	*get_expanded(char *raw_command, int *exit_status, t_env *env_list)
         if (!result)
             return (NULL);
     }
-    *exit_status = envx.exit_status;  // Make sure to update the exit status
+    *exit_status = envx.exit_status;
     return (result);
 }

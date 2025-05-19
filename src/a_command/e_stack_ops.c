@@ -77,13 +77,6 @@ void	pop_pstack(t_pstack *stack)
 	stack->size--;
 }
 
-/*
-** Deallocates all memory used by the parenthesis stack
-** Frees each node in the stack and then the stack itself
-** Called after parenthesis checking is complete to prevent memory leaks
-** 
-** @param stack: The stack to be deallocated
-*/
 void	free_pstack(t_pstack *stack)
 {
 	t_pnode	*current;
