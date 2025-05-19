@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   b_get_quote_trimmed.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/19 23:19:54 by rakman            #+#    #+#             */
+/*   Updated: 2025/05/19 23:19:55 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/__minishell.h"
 
 static int	handle_quote_state(char *command, int *i, int *quote_state)

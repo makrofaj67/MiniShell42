@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   1b_handle_backslash.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/19 23:18:16 by rakman            #+#    #+#             */
+/*   Updated: 2025/05/19 23:41:05 by rakman           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/__minishell.h"
 
-static char	*handle_backslash_no_quotes(char *raw_command, int *i_ptr, 
+char	*handle_backslash_no_quotes(char *raw_command, int *i_ptr, 
                                       char *current_result)
 {
 	char *new_result;
@@ -16,7 +28,7 @@ static char	*handle_backslash_no_quotes(char *raw_command, int *i_ptr,
 	return (new_result);
 }
 
-static char	*handle_backslash_single_quotes(int *i_ptr, char *current_result)
+char	*handle_backslash_single_quotes(int *i_ptr, char *current_result)
 {
     char	*new_result;
 
@@ -26,7 +38,7 @@ static char	*handle_backslash_single_quotes(int *i_ptr, char *current_result)
 	*i_ptr = *i_ptr + 1;
     return (new_result);
 }
-static char	*handle_backslash_double_quotes(char *raw_command, int *i_ptr,
+char	*handle_backslash_double_quotes(char *raw_command, int *i_ptr,
                                          char *current_result)
 {
 	char *new_result;
@@ -50,21 +62,6 @@ static char	*handle_backslash_double_quotes(char *raw_command, int *i_ptr,
 	}
 	*i_ptr = *i_ptr + 1;
 	return (new_result);
-}
-
-char	*handle_backslash(char *raw_command, int *i_ptr,
-                                 char *current_result)
-{
-    int	quote_state_at_backslash;
-
-    quote_state_at_backslash = get_quote_state_at_position(raw_command, *i_ptr);
-    if (quote_state_at_backslash == 0)
-        return (handle_backslash_no_quotes(raw_command, i_ptr, current_result));
-    else if (quote_state_at_backslash == 1)
-        return (handle_backslash_single_quotes(i_ptr, current_result));
-    else if (quote_state_at_backslash == 2)
-        return (handle_backslash_double_quotes(raw_command, i_ptr, current_result));
-    return (current_result);
 }
 
 

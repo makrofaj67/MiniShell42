@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   1a_get_expanded.c                                  :+:      :+:    :+:   */
+/*   a_get_expanded.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 01:35:50 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/19 03:24:43 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/19 23:38:44 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,16 @@ char *init_expanded_str(void)
     return (result);
 }
 
-static char	*handle_variable_expansion(char *raw_command, int *i,
+static char	*handle_regular_char(char *raw_command, int *i, char *result)
+{
+    result = add_char_to_result(result, raw_command[*i]);
+    if (!result)
+        return (NULL);
+    (*i)++;
+    return (result);
+}
+
+char	*handle_variable_expansion(char *raw_command, int *i,
     t_env_and_exit *envx, char *result)
 {
     char	*varname;
@@ -48,13 +57,19 @@ static char	*handle_variable_expansion(char *raw_command, int *i,
     return (result);
 }
 
-static char	*handle_regular_char(char *raw_command, int *i, char *result)
+char	*handle_backslash(char *raw_command, int *i_ptr,
+                                 char *current_result)
 {
-    result = add_char_to_result(result, raw_command[*i]);
-    if (!result)
-        return (NULL);
-    (*i)++;
-    return (result);
+    int	quote_state_at_backslash;
+
+    quote_state_at_backslash = get_quote_state_at_position(raw_command, *i_ptr);
+    if (quote_state_at_backslash == 0)
+        return (handle_backslash_no_quotes(raw_command, i_ptr, current_result));
+    else if (quote_state_at_backslash == 1)
+        return (handle_backslash_single_quotes(i_ptr, current_result));
+    else if (quote_state_at_backslash == 2)
+        return (handle_backslash_double_quotes(raw_command, i_ptr, current_result));
+    return (current_result);
 }
 
 char	*get_expanded(char *raw_command, int *exit_status, t_env *env_list)

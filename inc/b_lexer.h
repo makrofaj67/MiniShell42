@@ -6,7 +6,7 @@
 /*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 19:18:09 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/19 01:59:34 by rakman           ###   ########.fr       */
+/*   Updated: 2025/05/19 23:40:56 by rakman           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,13 @@ typedef struct s_token_list
 /**
 ** Main tokenization function
 */
-
+char	*handle_backslash_double_quotes(char *raw_command, int *i_ptr, char *current_result);;
+char	*handle_backslash_single_quotes(int *i_ptr, char *current_result);
+char	*handle_backslash_no_quotes(char *raw_command, int *i_ptr, char *current_result);
 char *get_expanded(char *command, int *exit_status, t_env *env_list);
 char *get_quote_trimmed(char *command);
-
+char	*handle_variable_expansion(char *raw_command, int *i,
+    t_env_and_exit *envx, char *result);
 char *init_expanded_str(void);
 char *get_var_value(char *varname, int exit_status, t_env *env_list);
 char *init_expanded_str(void);
