@@ -68,6 +68,7 @@ typedef struct t_command_value
 {
 	char			**arg_array;
 	t_redirection	**redirections;
+	int             stdin_backup;  // To store the original stdin file descriptor
 }	command_value;
 
 /**

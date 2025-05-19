@@ -40,7 +40,8 @@ void	sig_int_heredoc_handler(int sig)
 	g_signal_received = sig;
 	g_exit_status = 130;
 	write(STDOUT_FILENO, "\n", 1);
-	close(STDIN_FILENO);
+	// We should NOT close STDIN, as this prevents the shell from reading further input
+	// Instead, we'll set a flag that the heredoc processing can check
 }
 
 /*

@@ -28,6 +28,10 @@ static int	init_args_array(command_value *cmd, t_cmdval_list *word_list)
 		current = current->next;
 	}
 	cmd->arg_array[i] = NULL;
+	
+	// Initialize the stdin backup field to -1 (not set)
+	cmd->stdin_backup = -1;
+	
 	return (1);
 }
 

@@ -47,6 +47,9 @@ void shell_loop(char *prompt, char **envp)
     envvarexit->export_list = NULL;
     create_env(&envvarexit->env_list);
     create_env(&envvarexit->export_list);
+    
+    // Set global environment list for easy access
+    g_env_list = envvarexit->env_list;
 
     while (true)
     {
@@ -101,12 +104,19 @@ int main(int argc, char **argv, char **envp) {
 
   (void)argc;
   (void)argv;
+  
+  // Register cleanup function
+
+  
   clear_screen();
   setup_interactive_signals();
   prompt = prepare_prompt(envp);
   shell_loop(prompt, envp);
+  
+  // Clean up resources
   free(prompt);
   rl_clear_history();
+  
   return (0);
 }
 

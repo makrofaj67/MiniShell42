@@ -166,9 +166,10 @@ static int execute_heredoc(t_redirection *redir)
 {
 	char	*line;
 	int		fd;
-	char	*tmp_file;
+	char	tmp_file[32];
 	
-	tmp_file = "/tmp/minishell_heredoc_XXXXXX";
+	// Create a template for mkstemp
+	strcpy(tmp_file, "/tmp/minishell_heredoc_XXXXXX");
 	fd = mkstemp(tmp_file);
 	if (fd < 0)
 	{
@@ -179,11 +180,31 @@ static int execute_heredoc(t_redirection *redir)
 	// Unlink temp file so it will be automatically deleted
 	unlink(tmp_file);
 	
+	// Set up signal handlers for heredoc
+	setup_heredoc_signals();
+	
+	// Reset the signal flag
+	reset_signal_flag();
+	
 	// Read lines until delimiter is found
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || !strcmp(line, redir->filename))
+		
+		// Check if we got interrupted by a signal 
+		if (g_signal_received == SIGINT)
+		{
+			free(line);
+			close(fd);
+			reset_signal_flag();
+			// Restore normal signal handling
+			setup_interactive_signals();
+			// Return error to abort heredoc processing
+			return (-1);
+		}
+		
+		// Check if EOF or delimiter found
+		if (!line || (redir->filename && !strcmp(line, redir->filename)))
 		{
 			free(line);
 			break;
@@ -192,6 +213,9 @@ static int execute_heredoc(t_redirection *redir)
 		write(fd, "\n", 1);
 		free(line);
 	}
+	
+	// Restore normal signal handling
+	setup_interactive_signals();
 	
 	// Reset file position to beginning for reading
 	lseek(fd, 0, SEEK_SET);
@@ -206,7 +230,16 @@ static int process_heredocs(command_value *cmd_details)
 {
 	int	i;
 	int	fd;
+	int	stdin_copy;
 
+	// Save original stdin
+	stdin_copy = dup(STDIN_FILENO);
+	if (stdin_copy < 0)
+	{
+		perror("dup");
+		return (-1);
+	}
+	
 	i = 0;
 	while (cmd_details->redirections && cmd_details->redirections[i])
 	{
@@ -214,14 +247,22 @@ static int process_heredocs(command_value *cmd_details)
 		{
 			fd = execute_heredoc(cmd_details->redirections[i]);
 			if (fd < 0)
+			{
+				// Restore original stdin and return error
+				dup2(stdin_copy, STDIN_FILENO);
+				close(stdin_copy);
 				return (-1);
+			}
 			
-			// Replace stdin with heredoc
+			// Replace stdin with heredoc for this command
 			dup2(fd, STDIN_FILENO);
 			close(fd);
 		}
 		i++;
 	}
+	
+	// Store the stdin_copy in cmd_details so we can restore it after execution
+	cmd_details->stdin_backup = stdin_copy;
 	return (0);
 }
 
@@ -300,15 +341,29 @@ static int execute_pipeline(ast_node *node, int *exit_status,
 int execute_ast_node(ast_node *node, int *exit_status,
 	t_env **env_list, t_env **export_list)
 {
+	int result;
+	
 	if (!node)
 		return (0);
 
+	// Execute the appropriate command type
 	if (node->type == COMMAND_NODE)
-		return (execute_simple_command(node, exit_status, env_list, export_list));
+		result = execute_simple_command(node, exit_status, env_list, export_list);
 	else if (node->type == PIPE_NODE)
-		return (execute_pipeline(node, exit_status, env_list, export_list));
+		result = execute_pipeline(node, exit_status, env_list, export_list);
+	else
+		result = 0;
 	
-	return (0);
+	// Restore the original stdin if it was saved during heredoc processing
+	if (node->type == COMMAND_NODE && node->value && node->value->stdin_backup > 0)
+	{
+		// Restore the original stdin
+		dup2(node->value->stdin_backup, STDIN_FILENO);
+		close(node->value->stdin_backup);
+		node->value->stdin_backup = -1;  // Mark as restored
+	}
+	
+	return (result);
 }
 
 /*
