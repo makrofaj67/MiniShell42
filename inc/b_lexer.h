@@ -66,7 +66,7 @@ typedef struct s_token_list
 */
 
 char *get_expanded(char *command, int *exit_status, t_env *env_list);
-char *get_concated(char *command);
+char *get_quote_trimmed(char *command);
 
 char *init_expanded_str(void);
 char *get_var_value(char *varname, int exit_status, t_env *env_list);

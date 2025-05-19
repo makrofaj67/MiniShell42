@@ -62,7 +62,7 @@ void shell_loop(char *prompt, char **envp)
 				continue;
         }
         expanded = get_expanded(command, &envvarexit->exit_status, envvarexit->env_list);
-        concated = get_concated(expanded);
+        concated = get_quote_trimmed(expanded);
         // tokens = create_tokens(concated);
         // root_node = parse_tokens(tokens);
 
