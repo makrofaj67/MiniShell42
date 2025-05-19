@@ -40,8 +40,6 @@ char *add_str_to_result(char *result, char *str)
     return (new_result);
 }
 
-
-
 char *get_var_value(char *varname, int exit_status, t_env *env_list)
 {
     t_env *current;
@@ -92,3 +90,4 @@ char *get_varname(char *raw_command, int *i)
     *i = start_of_name + len_of_name; 
     return (ft_substr(raw_command, start_of_name, len_of_name));
 }
+

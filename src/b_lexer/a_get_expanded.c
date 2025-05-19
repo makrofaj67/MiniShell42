@@ -97,6 +97,5 @@ char	*get_expanded(char *raw_command, int *exit_status, t_env *env_list)
             return (NULL);
     }
     *exit_status = envx.exit_status;
-	printf("Expanded string = %s\n", result);
     return (result);
 }

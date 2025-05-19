@@ -74,7 +74,7 @@ char	*handle_variable_expansion(char *raw_command, int *i,
 char *init_expanded_str(void);
 char *get_var_value(char *varname, int exit_status, t_env *env_list);
 char *init_expanded_str(void);
-
+t_token_list	*create_tokens(char *input);
 char *handle_backslash(char *raw_command, int *i_ptr, char *current_result);
 
 t_token_type    get_token_type(char *token_str);

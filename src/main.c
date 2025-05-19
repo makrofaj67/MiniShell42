@@ -45,8 +45,8 @@ void shell_loop(char *prompt, char **envp)
     envvarexit->exit_status = 0;
     envvarexit->env_list = NULL;
     envvarexit->export_list = NULL;
-    create_env(&envvarexit->env_list);    // Çevre değişkenlerini liste olarak yükle
-    create_env(&envvarexit->export_list); // Export listesini de oluştur
+    create_env(&envvarexit->env_list);
+    create_env(&envvarexit->export_list);
 
     while (true)
     {
@@ -63,7 +63,8 @@ void shell_loop(char *prompt, char **envp)
         }
         expanded = get_expanded(command, &envvarexit->exit_status, envvarexit->env_list);
         concated = get_quote_trimmed(expanded);
-        // tokens = create_tokens(concated);
+        tokens = create_tokens(concated);
+		print_tokens(tokens);
         // root_node = parse_tokens(tokens);
 
         // if (root_node)
@@ -74,7 +75,7 @@ void shell_loop(char *prompt, char **envp)
         // }
         // free_token_list(tokens);
         // free_ast(root_node);
-
+		free_token_list(tokens);
         free(concated);
         free(expanded);
         free(command);
@@ -107,3 +108,4 @@ int main(int argc, char **argv, char **envp) {
   rl_clear_history();
   return (0);
 }
+
