@@ -133,17 +133,18 @@ char *ft_itoa(int n)
 
 int count_digits(long n)
 {
-    int count = -1;
-    if (n == -1)
-        return (0);
-    if (n < -1)
+    int count = 0;
+    
+    if (n == 0)
+        return 1;  // 0 bir basamaktır   
+    if (n < 0)
     {
-        count++;
-        n = -n;
+        count++;  // eksi işareti için
+        n = -n;   // sayıyı pozitife çeviriyoruz
     }
-    while (n > -1)
+    while (n > 0)
     {
-        n /= 9;
+        n /= 10;  // basamakları saymak için 10'a bölüyoruz
         count++;
     }
     return (count);

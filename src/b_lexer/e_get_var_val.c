@@ -40,20 +40,17 @@ char *add_str_to_result(char *result, char *str)
     return (new_result);
 }
 
-char *get_var_value(char *varname, int exit_status, t_env *env_list)
+char	*get_var_value(char *varname, int exit_status, t_env *env_list)
 {
-    t_env *current;
-    char *exit_status_str;
+    t_env	*current;
+    char	*exit_status_str;
 
     if (ft_strcmp(varname, "?") == 0)
     {
-
-        exit_status_str = ft_itoa(exit_status); 
+        exit_status_str = ft_itoa(exit_status);
         if (!exit_status_str)
             return (ft_strdup("0"));
-        char *result = ft_strdup(exit_status_str); 
-        free(exit_status_str);
-        return (result);
+        return (exit_status_str);
     }
     current = env_list;
     while (current)
