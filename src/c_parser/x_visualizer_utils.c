@@ -52,11 +52,6 @@ char	*get_next_prefix(int depth, int is_last, char *prefix)
 	return (next_prefix);
 }
 
-/**
- * @brief Visualizes a redirection with ASCII art
- * 
- * @param redir The redirection to visualize
- */
 void	visualize_redirection(t_redirection *redir)
 {
 	char	*redir_symbol;

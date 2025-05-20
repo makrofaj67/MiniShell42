@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   d_parse_simple_command.c                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 16:25:48 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/07 11:06:12 by rakman           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
@@ -28,10 +17,7 @@ static int	init_args_array(command_value *cmd, t_cmdval_list *word_list)
 		current = current->next;
 	}
 	cmd->arg_array[i] = NULL;
-	
-	// Initialize the stdin backup field to -1 (not set)
 	cmd->stdin_backup = -1;
-	
 	return (1);
 }
 

@@ -25,7 +25,6 @@ t_cmdval_list	*init_cmdval_list(void)
 	return (list);
 }
 
-
 int	add_node_to_cmdval_list(t_cmdval_list *list, void *value)
 {
 	t_cmdval_node	*new_node;
