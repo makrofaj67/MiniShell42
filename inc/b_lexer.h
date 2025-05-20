@@ -97,7 +97,7 @@ int count_digits(long n);
 int ft_strcmp(const char *s1, const char *s2);
 char *ft_strjoin(char const *s1, char const *s2);
 
-char *get_varname(char *raw_command, int *i);
+char *get_varname(char *r_cmd, int *i);
 char *add_str_to_result(char *result, char *str);
 char *add_char_to_result(char *result, char c);
 char *init_expanded_str(void);

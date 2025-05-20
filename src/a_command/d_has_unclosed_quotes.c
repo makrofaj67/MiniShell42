@@ -12,71 +12,71 @@
 
 #include "../../inc/__minishell.h"
 
-void handle_zero(char *command, int *index, int *state)
+void	handle_zero(char *command, int *index, int *state)
 {
-    if (command[*index] == '\\')
-    {
-        if (command[*index + 1] != '\0')
-            (*index)++;
-    }
-    else
-    {
-        if (command[*index] == '\'')
-        {
-            *state = 1;
-        }
-        else if (command[*index] == '"') 
-        {
-            *state = 2;
-        }
-    }
+	if (command[*index] == '\\')
+	{
+		if (command[*index + 1] != '\0')
+			(*index)++;
+	}
+	else
+	{
+		if (command[*index] == '\'')
+		{
+			*state = 1;
+		}
+		else if (command[*index] == '"')
+		{
+			*state = 2;
+		}
+	}
 }
 
-void handle_one(char *command, int *index, int *state)
+void	handle_one(char *command, int *index, int *state)
 {
-    if (command[*index] == '\'') 
-    {
-        *state = 0;
-    }
+	if (command[*index] == '\'')
+	{
+		*state = 0;
+	}
 }
 
-void handle_two(char *command, int *index, int *state)
+void	handle_two(char *command, int *index, int *state)
 {
-    if (command[*index] == '\\')
-    {
-        if (command[*index + 1] != '\0')
-        {
-            if (command[*index + 1] == '$' || command[*index + 1] == '`' || 
-                command[*index + 1] == '"' || command[*index + 1] == '\\')
-            {
-                (*index)++;
-            }
-        }
-    }
-    else if (command[*index] == '"') 
-    {
-        *state = 0;
-    }
+	if (command[*index] == '\\')
+	{
+		if (command[*index + 1] != '\0')
+		{
+			if (command[*index + 1] == '$' || command[*index + 1] == '`'
+				|| command[*index + 1] == '"' || command[*index + 1] == '\\')
+			{
+				(*index)++;
+			}
+		}
+	}
+	else if (command[*index] == '"')
+	{
+		*state = 0;
+	}
 }
 
-int quote_state(char *command) 
+int	quote_state(char *command)
 {
-    int i;
-    int state;
+	int	i;
+	int	state;
 
-    i = 0;
-    state = 0;
-    if (command == NULL)
-        return (0);
-    while (command[i]) 
-    {
-        if (state == 0)
-            handle_zero(command, &i, &state);
-        else if (state == 1)
-            handle_one(command, &i, &state);
-        else if (state == 2)
-            handle_two(command, &i, &state);
-        i++;
-    }
-    return (state);
+	i = 0;
+	state = 0;
+	if (command == NULL)
+		return (0);
+	while (command[i])
+	{
+		if (state == 0)
+			handle_zero(command, &i, &state);
+		else if (state == 1)
+			handle_one(command, &i, &state);
+		else if (state == 2)
+			handle_two(command, &i, &state);
+		i++;
+	}
+	return (state);
 }

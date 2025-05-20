@@ -14,8 +14,8 @@
 
 static int	check_special_chars(char c)
 {
-	if (c == ' ' || c == '\t' || c == '/' || c == '=' ||
-		c == ':' || c == ';' || c == ',' || c == '.')
+	if (c == ' ' || c == '\t' || c == '/' || c == '='
+		|| c == ':' || c == ';' || c == ',' || c == '.')
 		return (1);
 	return (0);
 }

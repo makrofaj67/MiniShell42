@@ -12,14 +12,9 @@
 
 #include "../../inc/__minishell.h"
 
-static char	*validate_command(char *command)
+static char	*validate_parentheses(char *command)
 {
-	if (is_command_blank(command))
-	{
-		free(command);
-		return (NULL);
-	}
-	else if (parenthesis_status(command) == -1)
+	if (parenthesis_status(command) == -1)
 	{
 		printf("Unopened parenthesis error --> ')'\n");
 		free(command);
@@ -29,9 +24,14 @@ static char	*validate_command(char *command)
 	{
 		printf("Unclosed parenthesis error --> '('\n");
 		free(command);
-		return(NULL);
+		return (NULL);
 	}
-	else if (quote_state(command) == 1)
+	return (command);
+}
+
+static char	*validate_quotes(char *command)
+{
+	if (quote_state(command) == 1)
 	{
 		printf("There is unclosed single quote on your command --> '\n");
 		free(command);
@@ -43,7 +43,22 @@ static char	*validate_command(char *command)
 		free(command);
 		return (NULL);
 	}
-	add_history(command);
+	return (command);
+}
+
+static char	*validate_command(char *command)
+{
+	if (is_command_blank(command))
+	{
+		free(command);
+		return (NULL);
+	}
+	command = validate_parentheses(command);
+	if (!command)
+		return (NULL);
+	command = validate_quotes(command);
+	if (!command)
+		return (NULL);
 	return (command);
 }
 
