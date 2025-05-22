@@ -1,8 +1,5 @@
-#include "../../inc/__minishell.h" // For libft functions like ft_strlen, ft_strcpy, ft_strjoin, ft_substr, ft_strdup
-#include <stdlib.h> // For malloc, free
+#include "../../inc/__minishell.h"
 
-// Adds a single character to a dynamically allocated string.
-// The original 'result' string is freed.
 char	*add_char_to_result(char *result, char c)
 {
 	char	*new_result;
@@ -16,12 +13,12 @@ char	*add_char_to_result(char *result, char c)
 	{
 		if (result)
 			free(result);
-		return (NULL); // Allocation failure
+		return (NULL);
 	}
 	if (result)
 		ft_strcpy(new_result, result);
 	else
-		new_result[0] = '\0'; // Initialize if result was NULL
+		new_result[0] = '\0';
 	new_result[old_len] = c;
 	new_result[old_len + 1] = '\0';
 	if (result)
@@ -29,8 +26,6 @@ char	*add_char_to_result(char *result, char c)
 	return (new_result);
 }
 
-// Appends a string 'str' to a dynamically allocated string 'result'.
-// The original 'result' string is freed.
 char	*add_str_to_result(char *result, char *str_to_add)
 {
 	char	*new_result;
