@@ -17,7 +17,7 @@ static char	*get_var_value(char *varname, int *exit_status_ptr, t_variable_list 
     value_from_env = get_variable_value(variables, varname); // This is from 0_env_management
     if (value_from_env == NULL)
         return (ft_strdup(""));
-    return (ft_strdup(value_from_env));
+    return (value_from_env); // Return the already duplicated string
 }
 
 char	*handle_variable_expansion(char *raw_command, int *i,

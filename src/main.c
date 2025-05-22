@@ -53,7 +53,7 @@ void shell_loop(char *prompt, char **envp_main)
 		root_node = parse_tokens(tokens);
        // if (root_node)
         //    execute_ast(root_node, &current_exit_status, shell_variables);
-       // free_ast(root_node);
+        free_ast(root_node);
 
       	free_token_list(tokens);
         free(concated);
