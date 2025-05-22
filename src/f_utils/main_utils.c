@@ -44,7 +44,7 @@ void	clear_screen(void)
 	free(term_var);
 }
 
-char	*prepare_prompt(char **envp)
+char	*prepare_prompt()
 {
 	char	*user;
 	char	*all;

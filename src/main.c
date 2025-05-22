@@ -28,7 +28,7 @@ int g_exit_status = 0;
 ** @param envp: Array of environment variables for command execution
 */
 
-void shell_loop(char *prompt, char **envp)
+void shell_loop(char *prompt)
 {
     char			*command;
     int				should_exit;
@@ -99,7 +99,7 @@ void shell_loop(char *prompt, char **envp)
 *process
 ** @return: Exit status code (0 for normal termination)
 */
-int main(int argc, char **argv, char **envp) {
+int main(int argc, char **argv) {
   char *prompt;
 
   (void)argc;
@@ -109,8 +109,8 @@ int main(int argc, char **argv, char **envp) {
 
   clear_screen();
   setup_interactive_signals();
-  prompt = prepare_prompt(envp);
-  shell_loop(prompt, envp);
+  prompt = prepare_prompt();
+  shell_loop(prompt);
   
   // Clean up resources
   free(prompt);

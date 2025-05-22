@@ -80,10 +80,8 @@ void	create_env(t_env **env)
 {
 	char	**env_var;
 	int 	i;
-	int		j;
 
 	i = 0;
-	j = 0;
 	env_var = __environ;
 	while (env_var[i] != NULL)
 	{

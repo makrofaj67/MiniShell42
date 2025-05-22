@@ -32,6 +32,6 @@ void	reset_signal_flag(void);
 ** Terminal utilities
 */
 void	clear_screen(void);
-char	*prepare_prompt(char **envp);
+char	*prepare_prompt();
 
 #endif
