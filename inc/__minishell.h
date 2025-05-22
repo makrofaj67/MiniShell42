@@ -23,9 +23,9 @@
 # include <sys/wait.h>
 # include <ctype.h>
 # include <stdbool.h>
-#include <fcntl.h>      // File control options
-#include <sys/types.h>  // Çeşitli veri tipleri (opsiyonel)
-#include <sys/stat.h>   // Dosya durum bilgileri (opsiyonel)
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 # include "a_command.h"
 # include "b_lexer.h"

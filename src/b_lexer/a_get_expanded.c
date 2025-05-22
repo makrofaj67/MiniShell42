@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   a_get_expanded.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/19 01:35:50 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/19 23:38:44 by rakman           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/__minishell.h"
 
 char	*init_expanded_str(void)
@@ -29,31 +17,6 @@ static char	*handle_regular_char(char *raw_command, int *i, char *result)
 	if (!result)
 		return (NULL);
 	(*i)++;
-	return (result);
-}
-
-char	*handle_variable_expansion(char *raw_command, int *i,
-	t_env_and_exit *envx, char *result)
-{
-	char	*varname;
-	char	*value;
-
-	varname = get_varname(raw_command, i);
-	if (!varname)
-	{
-		free(result);
-		return (NULL);
-	}
-	value = get_var_value(varname, envx->exit_status, envx->env_list);
-	if (!value)
-	{
-		free(varname);
-		free(result);
-		return (NULL);
-	}
-	result = add_str_to_result(result, value);
-	free(varname);
-	free(value);
 	return (result);
 }
 

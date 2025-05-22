@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   1a_get_var_val.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.tr>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/19 23:20:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/19 23:42:36 by rakman           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../inc/__minishell.h"
 
 char	*add_char_to_result(char *result, char c)
@@ -85,4 +73,29 @@ char	*get_varname(char *r_cmd, int *i)
 		vln++;
 	*i = vst + vln;
 	return (ft_substr(r_cmd, vst, vln));
+}
+
+char	*handle_variable_expansion(char *raw_command, int *i,
+	t_env_and_exit *envx, char *result)
+{
+	char	*varname;
+	char	*value;
+
+	varname = get_varname(raw_command, i);
+	if (!varname)
+	{
+		free(result);
+		return (NULL);
+	}
+	value = get_var_value(varname, envx->exit_status, envx->env_list);
+	if (!value)
+	{
+		free(varname);
+		free(result);
+		return (NULL);
+	}
+	result = add_str_to_result(result, value);
+	free(varname);
+	free(value);
+	return (result);
 }
