@@ -19,7 +19,8 @@ SRC_MAIN = src/main.c
 SRC_DIRS = 0_env_management \
         a_command \
         b_lexer \
-        f_utils
+        f_utils \
+		c_parser
 
 # Libft source files
 LIBFT_SRCS = $(wildcard lib/libft/*.c)

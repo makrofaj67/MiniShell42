@@ -62,25 +62,29 @@ void load_initial_env(t_variable_list *list, char **envp)
     {
         key = NULL;
         value = NULL;
-        if (parse_env_string(envp[i], &key, &value)) // key & value are allocated by parse_env_string
+        // parse_env_string, key ve value için bellek ayırır.
+        if (parse_env_string(envp[i], &key, &value))
         {
+            // create_variable_node, key ve value'nun kendi kopyalarını oluşturur (ft_strdup varsayımı).
             new_node = create_variable_node(key, value, 1);
             if (new_node)
             {
                 list_append_node(list, new_node);
-                // Key and value are now owned by new_node and the list.
-                // DO NOT free them here. They will be freed when the list/node is destroyed.
+                // create_variable_node kendi kopyalarını oluşturduğu için,
+                // parse_env_string'den gelen orijinal key ve value burada serbest bırakılmalıdır.
+                free(key);
+                free(value);
             }
             else
             {
-                // create_variable_node failed, but parse_env_string allocated key and value.
-                // We must free them to prevent a leak.
+                // create_variable_node başarısız oldu, ancak parse_env_string key ve value için bellek ayırdı.
+                // Bellek sızıntısını önlemek için bunları serbest bırakmalıyız.
                 free(key);
                 free(value);
             }
         }
-        // If parse_env_string returned 0, it should have handled freeing
-        // any memory it allocated for key/value before returning.
+        // else: parse_env_string 0 döndürdüyse, kendi içinde ayırdığı belleği
+        // (örneğin value çıkarımı başarısız olursa key'i) serbest bırakmış olmalıdır.
         i++;
     }
 }
