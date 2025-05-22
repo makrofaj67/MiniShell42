@@ -36,6 +36,7 @@
 # include "e_builtins.h"
 # include "f_utils.h"
 # include "g_libft.h"
+# include "0_core_env.h"
 
 extern volatile sig_atomic_t   g_signal_received;
 
