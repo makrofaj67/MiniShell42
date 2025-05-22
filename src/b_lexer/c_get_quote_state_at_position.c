@@ -2,14 +2,6 @@
 
 void	xhandle_zero(char *command, int *index, int *state)
 {
-    // Aşağıdaki 'if (command[*index] == '\\')' bloğunu ve 'else' kısmını kaldırın.
-    // if (command[*index] == '\\')
-    // {
-    // 	if (command[*index + 1] != '\0')
-    // 		(*index)++;
-    // }
-    // else
-    // {
         if (command[*index] == '\'')
         {
             *state = 1;
@@ -18,7 +10,6 @@ void	xhandle_zero(char *command, int *index, int *state)
         {
             *state = 2;
         }
-    // }
 }
 void	xhandle_one(char *command, int *index, int *state)
 {
@@ -30,20 +21,6 @@ void	xhandle_one(char *command, int *index, int *state)
 
 void	xhandle_two(char *command, int *index, int *state)
 {
-    // Aşağıdaki 'if (command[*index] == '\\')' bloğunu kaldırın.
-    // 'else if (command[*index] == '"')' ifadesini 'if (command[*index] == '"')' yapın.
-    // if (command[*index] == '\\')
-    // {
-    // 	if (command[*index + 1] != '\0')
-    // 	{
-    // 		if (command[*index + 1] == '$' || command[*index + 1] == '`'
-    // 			|| command[*index + 1] == '"' || command[*index + 1] == '\\')
-    // 		{
-    // 			(*index)++;
-    // 		}
-    // 	}
-    // }
-    // else if (command[*index] == '"')
     if (command[*index] == '"') // Bu şekilde değiştirin
     {
         *state = 0;

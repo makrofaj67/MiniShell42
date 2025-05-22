@@ -12,6 +12,23 @@
 
 #include "../../inc/__minishell.h"
 
+t_token_type	get_token_type(char *token_str)
+{
+	if (!token_str || !*token_str)
+		return (WORD);
+	if (strcmp(token_str, "|") == 0)
+		return (PIPE);
+	else if (strcmp(token_str, "<") == 0)
+		return (RDRT_IN);
+	else if (strcmp(token_str, ">") == 0)
+		return (RDRT_OUT);
+	else if (strcmp(token_str, ">>") == 0)
+		return (APPEND);
+	else if (strcmp(token_str, "<<") == 0)
+		return (HEREDOC);
+	return (WORD);
+}
+
 t_token_list	*create_token_list(void)
 {
 	t_token_list	*list;
