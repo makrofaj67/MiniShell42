@@ -35,11 +35,9 @@
 # include "f_utils.h"
 # include "g_libft.h"
 
-
-/* Global variables */
-extern volatile sig_atomic_t	g_signal_received;  /* Signal handling flag */
-extern int                     g_exit_status;     /* Exit status of last command */
-extern t_env                   *g_env_list;       /* Global environment list */
-extern char                    **environ;         /* System environment variable */
+extern volatile sig_atomic_t	g_signal_received;
+extern int                     g_exit_status;
+extern t_env                   *g_env_list;
+extern char                    **environ;
 
 #endif

@@ -13,10 +13,6 @@
 #ifndef A_COMMAND_H
 # define A_COMMAND_H
 
-/**
-** Struct and node for parenthesis tracking
-** Used to maintain a stack of opening parentheses for validation
-*/
 typedef struct s_pnode
 {
 	struct s_pnode	*prev;
@@ -30,9 +26,6 @@ typedef struct s_pstack
 	struct s_pnode	*tail;
 }	t_pstack;
 
-/**
-** Main command processing functions
-*/
 char		*get_command(char *prompt, int *should_exit);
 int			is_command_blank(char *command);
 int			quote_state(char *command);
