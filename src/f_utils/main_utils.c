@@ -12,9 +12,6 @@
 
 #include "../../inc/__minishell.h"
 
-/* Global environment list for easy access across files */
-t_env	*g_env_list = NULL;
-
 void	clear_screen(void)
 {
 	char	*value;

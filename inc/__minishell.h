@@ -37,7 +37,6 @@
 # include "f_utils.h"
 # include "g_libft.h"
 
-extern t_env                   *g_env_list;
 extern volatile sig_atomic_t   g_signal_received;
 
 #endif

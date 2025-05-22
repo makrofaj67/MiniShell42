@@ -47,9 +47,6 @@ void shell_loop(char *prompt)
     create_env(&envvarexit->env_list);
     create_env(&envvarexit->export_list);
     
-    // Set global environment list for easy access
-    g_env_list = envvarexit->env_list;
-
     while (true)
     {
         command = get_command(prompt, &should_exit);
