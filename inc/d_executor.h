@@ -40,7 +40,7 @@ typedef struct s_executor_data
 int		execute_ast(ast_node *root, t_variable_list *env_list, int *exit_status);
 int		execute_command_node(ast_node *node, t_executor_data *data);
 int		execute_pipe_node(ast_node *node, t_executor_data *data);
-int		handle_redirections(command_value *cmd, t_executor_data *data);
+int		handle_redirections(command_value *cmd);
 int		restore_redirections(command_value *cmd);
 int		execute_simple_command(command_value *cmd, t_executor_data *data);
 char	*find_command_path(char *cmd, t_variable_list *env_list);

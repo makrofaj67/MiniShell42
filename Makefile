@@ -47,7 +47,7 @@ TEST_SRCS = src/f_tests/test_framework.c \
     $(LIBFT_SRCS)
 
 # Compiler flags
-CFLAGS = 
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -fsanitize=leak -g
 LDFLAGS = -lreadline
 
 all: $(NAME)

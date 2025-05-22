@@ -35,7 +35,7 @@ int	execute_command_node(ast_node *node, t_executor_data *data)
 	status = 0;
 	if (!node || !node->value)
 		return (1);
-	if (handle_redirections(node->value, data) != 0)
+	if (handle_redirections(node->value) != 0)
 		return (1);
 	status = execute_simple_command(node->value, data);
 	restore_redirections(node->value);

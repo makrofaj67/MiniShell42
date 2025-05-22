@@ -61,7 +61,6 @@ int	execute_pipe_node(ast_node *node, t_executor_data *data)
 {
 	int		pipefd[2];
 	int		status;
-	pid_t	pid;
 
 	if (!node || !node->left || !node->right)
 		return (1);

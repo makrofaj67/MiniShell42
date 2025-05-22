@@ -57,7 +57,7 @@ static int	handle_append_redirection(t_redirection *redir)
 	return (0);
 }
 
-int	handle_redirections(command_value *cmd, t_executor_data *data)
+int	handle_redirections(command_value *cmd)
 {
 	int	i;
 	int	ret;
