@@ -18,6 +18,7 @@ static int	init_args_array(command_value *cmd, t_cmdval_list *word_list)
 	}
 	cmd->arg_array[i] = NULL;
 	cmd->stdin_backup = -1;
+	cmd->stdout_backup = -1;
 	return (1);
 }
 

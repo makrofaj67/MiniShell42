@@ -18,15 +18,36 @@ t_variable_node *init_variable_node(void)
 t_variable_node *create_variable_node(char *key, char *value, int is_exported)
 {
     t_variable_node *node;
+    char *key_dup;
+    char *value_dup;
 
+    if (!key)
+        return (NULL);
+    
     node = init_variable_node();
     if (!node)
-		return (NULL);  
-    node->key = ft_strdup(key);
-    node->value = ft_strdup(value);
-	node->is_exported = is_exported;
-	node->next = NULL;
-	node->prev = NULL;
+        return (NULL);
+    
+    key_dup = ft_strdup(key);
+    if (!key_dup)
+    {
+        free(node);
+        return (NULL);
+    }
+    
+    value_dup = value ? ft_strdup(value) : ft_strdup("");
+    if (!value_dup)
+    {
+        free(key_dup);
+        free(node);
+        return (NULL);
+    }
+    
+    node->key = key_dup;
+    node->value = value_dup;
+    node->is_exported = is_exported;
+    node->next = NULL;
+    node->prev = NULL;
     return (node);
 }
 

@@ -23,6 +23,7 @@ static void add_new_variable_node(t_variable_list *list, char *key, char *value,
     t_variable_node *new_node;
 
     if (!list || !key)
+        return;
     new_node = create_variable_node(key, value, is_exported);
     if (new_node)
         list_append_node(list, new_node);

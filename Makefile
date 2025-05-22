@@ -19,8 +19,10 @@ SRC_MAIN = src/main.c
 SRC_DIRS = 0_env_management \
         a_command \
         b_lexer \
-        f_utils \
-		c_parser
+		c_parser \
+		d_executor \
+		e_builtins \
+        f_utils 
 
 # Libft source files
 LIBFT_SRCS = $(wildcard lib/libft/*.c)
@@ -45,7 +47,7 @@ TEST_SRCS = src/f_tests/test_framework.c \
     $(LIBFT_SRCS)
 
 # Compiler flags
-CFLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak -g
+CFLAGS = 
 LDFLAGS = -lreadline
 
 all: $(NAME)

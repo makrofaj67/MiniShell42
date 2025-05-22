@@ -18,9 +18,6 @@
 # include <termios.h>
 # include <stdio.h>
 
-/*
-** Signal handling
-*/
 void	sig_int_handler(int sig);
 void	sig_int_heredoc_handler(int sig);
 void	setup_interactive_signals(void);
@@ -28,9 +25,6 @@ void	setup_exec_signals(void);
 void	setup_heredoc_signals(void);
 void	reset_signal_flag(void);
 
-/*
-** Terminal utilities
-*/
 void	clear_screen(void);
 char	*prepare_prompt();
 
