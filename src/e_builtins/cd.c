@@ -3,114 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/20 03:20:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/20 03:20:00 by rakman           ###   ########.fr       */
+/*   Created: 2025/05/12 12:01:07 by nakbas            #+#    #+#             */
+/*   Updated: 2025/05/12 12:01:07 by nakbas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
-/*
-** Get the HOME directory path
-** Returns a newly allocated string with the path, or NULL on error
-*/
 char *get_path_home(void)
 {
-	char	*home;
-
-	home = getenv("HOME");
-	if (!home)
-		return (NULL);
-	return (ft_strdup(home));
+	char *path = getenv("HOME");
+	if (path == NULL)
+	{
+		write(2, "Error: PATH environment variable not set.\n", 42);
+		return NULL;
+	}
+	return path;
 }
 
-/*
-** Get value of an environment variable from the environment list
-** Returns a newly allocated string with the value, or NULL if not found
-*/
-static char *get_env_value(char *key, t_env *env_list)
-{
-	while (env_list)
-	{
-		if (!ft_strcmp(env_list->key, key))
-			return (ft_strdup(env_list->value));
-		env_list = env_list->next;
-	}
-	return (NULL);
-}
-
-/*
-** Update PWD and OLDPWD environment variables
-*/
-static void update_pwd_vars(t_env **env_list)
-{
-	char	cwd[PATH_MAX];
-	char	*old_pwd;
-
-	// Get current working directory
-	if (getcwd(cwd, PATH_MAX) == NULL)
-	{
-		perror("cd: getcwd");
-		return;
-	}
-
-	// Save old PWD
-	old_pwd = get_env_value("PWD", *env_list);
-
-	// Update PWD in env
-	unset_cmd("PWD", env_list);
-	add_env_var("PWD", cwd, env_list);
-
-	// Update OLDPWD in env
-	if (old_pwd)
-	{
-		unset_cmd("OLDPWD", env_list);
-		add_env_var("OLDPWD", old_pwd, env_list);
-		free(old_pwd);
-	}
-}
-
-/*
-** CD built-in command implementation
-** Changes directory to specified path or HOME if no path is given
-*/
-int cd_cmd(char **args)
-{
-	char	*path;
-	int		result;
-	t_env	*env_list;
-	
-	// Get the environment list from main environment
-	extern t_env *g_env_list;
-	env_list = g_env_list;
-
-	// No arguments, go to HOME
+void	cd_cmd(char **args)
+{	
 	if (!args[1])
-	{
-		path = get_path_home();
-		if (!path)
-		{
-			fprintf(stderr, "cd: HOME not set\n");
-			return (1);
-		}
-	}
-	else
-		path = ft_strdup(args[1]);
-
-	// Change directory
-	result = chdir(path);
-	if (result < 0)
-	{
-		perror("cd");
-		free(path);
-		return (1);
-	}
-
-	// Update PWD and OLDPWD environment variables
-	update_pwd_vars(&env_list);
-
-	free(path);
-	return (0);
+		chdir(get_path_home());
+	else if (chdir(args[1]) == -1)
+		write(2, "cd error\n", 9);
 }

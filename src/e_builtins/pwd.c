@@ -3,25 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/20 03:25:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/20 03:25:00 by rakman           ###   ########.fr       */
+/*   Created: 2025/05/12 12:00:54 by nakbas            #+#    #+#             */
+/*   Updated: 2025/05/12 12:00:54 by nakbas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
-/*
-** PWD built-in command implementation
-** Prints the current working directory
-*/
-void pwd_cmd(void)
+void mini_memset(char *ptr, int size)
 {
-	char	cwd[PATH_MAX];
+    int i = 0;
+    while (i < size)
+    {
+        ptr[i] = '\0';
+        i++;
+    }
+}
 
-	if (getcwd(cwd, PATH_MAX) != NULL)
-		printf("%s\n", cwd);
-	else
-		perror("pwd");
+void pwd_cmd()
+{
+    char pwd[256];
+    
+    if (getcwd(pwd, sizeof(pwd)) != NULL)
+        printf("%s\n", pwd);
+    else
+        perror("getcwd failed");
+    
+    mini_memset(pwd, sizeof(pwd));
 }

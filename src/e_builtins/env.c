@@ -3,111 +3,121 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/20 03:30:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/20 03:30:00 by rakman           ###   ########.fr       */
+/*   Created: 2025/05/12 12:00:23 by nakbas            #+#    #+#             */
+/*   Updated: 2025/05/12 12:00:23 by nakbas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
-/*
-** Print all nodes in the environment list
-*/
-void print_nodes(t_env **tmp)
+void	print_nodes(t_env **tmp)
 {
-	t_env	*env;
-
+	t_env *env;
+    if (tmp == NULL || *tmp == NULL)
+    {
+        printf("Environment list is empty.\n");
+        return;
+    }
 	env = *tmp;
-	while (env)
+	while (env != NULL)
 	{
-		if (env->value)
-			printf("%s=%s\n", env->key, env->value);
+		printf("%s=%s\n", env->key, env->value);
 		env = env->next;
 	}
 }
 
-/*
-** Initialize environment list from system environment
-*/
-extern char **environ;
-
-void create_env(t_env **env)
+void	env_lengths_2(t_env **len, char *args)
 {
-	char	**env_array;
-	int		i;
-	char	*equals;
-	char	*key;
-	char	*value;
+	int	i;
+	int j;
 
-	env_array = environ;  // Get system environment
 	i = 0;
-	while (env_array[i])
+	*len = malloc(sizeof(t_env));
+	if (*len == NULL)
+        exit(1);
+	while (args[i] != '=')
+		i++;
+	j = i;
+	i++;
+	while (args[i] != '\0')
+		i++;
+	i = i - j;
+	(*len)->key = malloc((j + 1) * sizeof(char));
+	(*len)->value = malloc((i + 1) * sizeof(char));
+	if (!(*len)->key || !(*len)->value)
+		exit(1);
+}
+void	add_variable_2(char *args, t_env **env)
+{
+	int i;
+	int j;
+
+	j = 0;
+	i = 0;
+	env_lengths_2(env, args);
+	while (args[i] != '\0')
 	{
-		equals = ft_strchr(env_array[i], '=');
-		if (equals)
+		(*env)->key[i] = args[i];
+		i++;
+		if (args[i] == '=')
+			break;
+	}
+	(*env)->key[i] = '\0';
+	i++; 
+	while (args[i] != '\0')
+	{
+		(*env)->value[j] = args[i];
+		i++;
+		j++;
+	}
+	(*env)->value[j] = '\0';
+	(*env)->next = NULL;
+}
+
+void	create_env(t_env **env)
+{
+	char	**env_var;
+	int 	i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	env_var = __environ;
+	while (env_var[i] != NULL)
+	{
+		if (*env != NULL)
+   		{
+       		t_env *last = mini_lstlast(*env);
+        	t_env *new_node = NULL;
+        	add_variable_2(env_var[i], &new_node);
+        	last->next = new_node;
+    	}
+    	else
 		{
-			// Split into key and value
-			key = ft_substr(env_array[i], 0, equals - env_array[i]);
-			value = ft_strdup(equals + 1);
-			
-			if (key && value)
-				add_env_var(key, value, env);
-			
-			free(key);
-			free(value);
+        	add_variable_2(env_var[i], env);
 		}
 		i++;
 	}
 }
 
-/*
-** Add an environment variable to the list
-*/
-void add_env_var(char *key, char *value, t_env **env)
+void free_env_list(t_env **env)
 {
-	t_env	*new_env;
-	t_env	*last;
+    t_env *current;
+    t_env *next;
 
-	// Create new node
-	new_env = (t_env *)malloc(sizeof(t_env));
-	if (!new_env)
-		return;
-	
-	new_env->key = ft_strdup(key);
-	new_env->value = ft_strdup(value);
-	new_env->next = NULL;
-	
-	// Add to end of list
-	if (!*env)
-		*env = new_env;
-	else
-	{
-		last = *env;
-		while (last->next)
-			last = last->next;
-		last->next = new_env;
-	}
-}
+    if (env == NULL || *env == NULL)
+        return;
 
-/*
-** Free environment list and all memory associated with it
-*/
-void free_env_list(t_env *env_list)
-{
-	t_env	*current;
-	t_env	*next;
-
-	current = env_list;
-	while (current)
-	{
-		next = current->next;
-		if (current->key)
-			free(current->key);
-		if (current->value)
-			free(current->value);
-		free(current);
-		current = next;
-	}
+    current = *env;
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    *env = NULL;
 }

@@ -59,8 +59,8 @@ void shell_loop(char *prompt, char **envp)
             if (should_exit == 1)
 			{	
 				// Properly free environment lists before exiting
-				free_env_list(envvarexit->env_list);
-				free_env_list(envvarexit->export_list);
+				free_env_list(&envvarexit->env_list);
+				free_env_list(&envvarexit->export_list);
 				free(envvarexit);
                 exit(EXIT_SUCCESS);
             }

@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef E_UTILS_H
-# define E_UTILS_H
+#ifndef F_UTILS_H
+# define F_UTILS_H
 
 # include <signal.h>
 # include <readline/readline.h>

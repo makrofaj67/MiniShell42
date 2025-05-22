@@ -3,64 +3,57 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rakman <rakman@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: nakbas <nakbas@stundent.42istanbul.com.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/20 03:15:00 by rakman            #+#    #+#             */
-/*   Updated: 2025/05/20 03:15:00 by rakman           ###   ########.fr       */
+/*   Created: 2025/05/12 11:47:23 by nakbas            #+#    #+#             */
+/*   Updated: 2025/05/12 11:47:23 by nakbas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
 
-/*
-** Check if a string is the '-n' option
-** Must be exactly "-n" or "-nnn..." (any number of 'n's)
-*/
-static int is_n_option(char *arg)
+void	env_value(char *args, t_env *env, int n)
 {
-	int	i;
+	t_env *tmp;
 
-	if (!arg || arg[0] != '-')
-		return (0);
-	
-	i = 1;
-	while (arg[i] && arg[i] == 'n')
-		i++;
-	
-	return (arg[i] == '\0');  // True if we reached the end of the string
+	tmp = env;
+	while (tmp != NULL)
+	{
+		if (mini_strcmp_path(args, (tmp)->key))
+		{
+			printf("%s ", tmp->value);
+			if (n == 0)
+				printf("\n");
+			return ;
+		}
+		tmp = tmp->next;
+	}
 }
 
-/*
-** Echo built-in command implementation
-** Supports -n option to suppress trailing newline
-*/
-int echo_cmd(char **args, t_env **env_list)
+void	echo_cmd(char **args, t_env **env)
 {
 	int	i;
-	int	n_option;
+	int n;
 
-	n_option = 0;
 	i = 1;
-
-	// Check for -n option
-	while (args[i] && is_n_option(args[i]))
+	n = 0;
+	if (!args || !args[1])
 	{
-		n_option = 1;
-		i++;
-	}
-
-	// Print arguments
-	while (args[i])
-	{
-		printf("%s", args[i]);
-		if (args[i + 1])
-			printf(" ");
-		i++;
-	}
-
-	// Print newline if -n option was not specified
-	if (!n_option)
 		printf("\n");
-	
-	return (0);
+		return;
+	}
+	if (mini_strcmp_path(args[i], "-n") == 1)
+	{
+		n = 1;
+		i++;
+	}
+	if (args[i][0] == '$')
+	{
+		env_value(args[i], *env, n);
+		return ;
+	}
+	while (args[i])
+		printf("%s ", args[i++]);
+	if (n == 0)
+		printf("\n");
 }
