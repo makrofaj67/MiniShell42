@@ -1,101 +1,47 @@
 #include "../../inc/__minishell.h"
 
-char	*add_char_to_result(char *result, char c)
+static char	*get_var_value(char *varname, int *exit_status_ptr, t_variable_list *variables)
 {
-	char		*new_result;
-	size_t		len;
+    char	*value_from_system;
+    char	*exit_status_str;
 
-	len = ft_strlen(result);
-	new_result = (char *)malloc(sizeof(char) * (len + 2));
-	if (new_result == NULL)
-	{
-		free(result);
-		return (NULL);
-	}
-	ft_strcpy(new_result, result);
-	new_result[len] = c;
-	new_result[len + 1] = '\0';
-	free(result);
-	return (new_result);
-}
-
-char	*add_str_to_result(char *result, char *str)
-{
-	char	*new_result;
-
-	new_result = ft_strjoin(result, str);
-	free(result);
-	return (new_result);
-}
-
-char	*get_var_value(char *varname, int exit_status, t_env *env_list)
-{
-	t_env	*current;
-	char	*exit_status_str;
-
-	if (ft_strcmp(varname, "?") == 0)
-	{
-		exit_status_str = ft_itoa(exit_status);
-		if (!exit_status_str)
-			return (ft_strdup("0"));
-		return (exit_status_str);
-	}	
-	current = env_list;
-	while (current)
-	{
-		if (ft_strcmp(current->key, varname) == 0)
-			return (ft_strdup(current->value));
-		current = current->next;
-	}
-	return (ft_strdup(""));
-}
-
-char	*get_varname(char *r_cmd, int *i)
-{
-	int	dollar_pos;
-	int	vst;
-	int	vln;
-
-	dollar_pos = *i;
-	vst = dollar_pos + 1;
-	vln = 0;
-	if (r_cmd[vst] == '?')
-	{
-		vln = 1;
-		*i = vst + vln;
-		return (ft_strdup("?"));
-	}
-	while (r_cmd[vst + vln]
-		&& ((r_cmd[vst + vln] >= 'a' && r_cmd[vst + vln] <= 'z')
-			|| (r_cmd[vst + vln] >= 'A' && r_cmd[vst + vln] <= 'Z')
-			|| (r_cmd[vst + vln] >= '0' && r_cmd[vst + vln] <= '9')
-			|| r_cmd[vst + vln] == '_'))
-		vln++;
-	*i = vst + vln;
-	return (ft_substr(r_cmd, vst, vln));
+    if (ft_strcmp(varname, "?") == 0)
+    {
+        if (!exit_status_ptr)
+            return (ft_strdup("0")); 
+        exit_status_str = ft_itoa(*exit_status_ptr);
+        if (!exit_status_str)
+            return (ft_strdup(""));
+        return (exit_status_str);
+    }	
+    value_from_system = get_variable_value(variables, varname);
+    if (value_from_system == NULL)
+        return (ft_strdup(""));
+    return (value_from_system);
 }
 
 char	*handle_variable_expansion(char *raw_command, int *i,
-	t_env_and_exit *envx, char *result)
+    int *exit_status_ptr, t_variable_list *variables, char *result)
 {
-	char	*varname;
-	char	*value;
+    char	*varname;
+    char	*value;
 
-	varname = get_varname(raw_command, i);
-	if (!varname)
-	{
-		free(result);
-		return (NULL);
-	}
-	value = get_var_value(varname, envx->exit_status, envx->env_list);
-	if (!value)
-	{
-		free(varname);
-		free(result);
-		return (NULL);
-	}
-	result = add_str_to_result(result, value);
-	free(varname);
-	free(value);
-	return (result);
+    varname = get_varname(raw_command, i);
+    if (!varname)
+    {
+        free(result);
+        return (NULL);
+    }
+
+    value = get_var_value(varname, exit_status_ptr, variables);
+    if (!value) 
+    {
+        free(varname);
+        free(result);
+        return (NULL);
+    }
+    result = add_str_to_result(result, value);
+    free(varname);
+    free(value);
+    return (result);
 }

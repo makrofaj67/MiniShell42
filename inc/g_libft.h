@@ -16,6 +16,7 @@
 # include <stdlib.h>
 # include <string.h>
 
+char *ft_strchr(const char *s, int c);
 size_t	ft_strlen(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strcpy(char *dst, const char *src);

@@ -1,6 +1,6 @@
 #include "../../inc/__minishell.h"
 
-static int extract_key(const char *env_str, const char *equal_sign_pos, char **key_out)
+int extract_key(const char *env_str, const char *equal_sign_pos, char **key_out)
 {
     size_t key_len;
 
@@ -13,7 +13,7 @@ static int extract_key(const char *env_str, const char *equal_sign_pos, char **k
     return (1);
 }
 
-static int extract_value(const char *equal_sign_pos, char **value_out)
+int extract_value(const char *equal_sign_pos, char **value_out)
 {
     if (*(equal_sign_pos + 1) == '\0')
         *value_out = ft_strdup("");
@@ -24,7 +24,7 @@ static int extract_value(const char *equal_sign_pos, char **value_out)
     return (1);
 }
 
-static int parse_env_string(const char *env_str, char **key_out, char **value_out)
+int parse_env_string(char *env_str, char **key_out, char **value_out)
 {
     const char *equal_sign_pos;
 
@@ -35,9 +35,9 @@ static int parse_env_string(const char *env_str, char **key_out, char **value_ou
     equal_sign_pos = ft_strchr(env_str, '=');
     if (equal_sign_pos == NULL);
         return (0);
-    if (extract_key(env_str, equal_sign_pos, key_out) == NULL)
+    if (!extract_key(env_str, equal_sign_pos, key_out))
         return (0);
-    if (extract_value(equal_sign_pos, value_out) == NULL)
+    if (!extract_value(equal_sign_pos, value_out))
     {
         free(*key_out);
         *key_out = NULL;

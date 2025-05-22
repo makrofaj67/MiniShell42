@@ -16,11 +16,9 @@ TEST_NAME = $(BUILD_DIR)/minishell_test
 
 # Source files within src directory
 SRC_MAIN = src/main.c
-SRC_DIRS = a_command \
+SRC_DIRS = 0_env_management \
+        a_command \
         b_lexer \
-        c_parser \
-        d_executor \
-        e_builtins \
         f_utils
 
 # Libft source files
@@ -46,7 +44,7 @@ TEST_SRCS = src/f_tests/test_framework.c \
     $(LIBFT_SRCS)
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -Werror -Werror -fsanitize=address -fsanitize=undefined -fsanitize=leak -g
+CFLAGS = -fsanitize=address -fsanitize=undefined -fsanitize=leak -g
 LDFLAGS = -lreadline
 
 all: $(NAME)

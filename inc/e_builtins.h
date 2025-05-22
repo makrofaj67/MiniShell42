@@ -20,35 +20,31 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdlib.h>
+# include "0_core_env.h" // Include the new environment variable management header
 
-typedef	struct	s_env
-{
-	char	*key;
-	char	*value;
-	struct s_env *next;
-}				t_env;
-
-void free_env_list(t_env **env);
-void	unset_cmd(char *args, t_env **env);
-void	create_env(t_env **env);
-void	export_cmd(char *arg, t_env **env, t_env **env_var);
-void	add_env_var(char *key, char *value, t_env **env);
-void	add_list_variable(char **args, t_env **env);
-void	add_variable_2(char *args, t_env **env);
-void	env_lengths_2(t_env **len, char *args);
-t_env	*mini_lstlast(t_env *lst);
-void	add_variable(char **args, t_env **env);
-void	env_lengths(t_env **len, char **args);
-void	echo_cmd(char **args, t_env **env);
+// void free_env_list(t_env **env); // Remove old t_env related functions
+void	unset_cmd(char *arg_name, t_variable_list *variables);
+// void	create_env(t_env **env); // Remove old t_env related functions
+void	export_cmd(char **args, t_variable_list *variables);
+// void	add_env_var(char *key, char *value, t_env **env); // Remove old t_env related functions
+// void	add_list_variable(char **args, t_env **env); // Remove old t_env related functions
+// void	add_variable_2(char *args, t_env **env); // Remove old t_env related functions
+// void	env_lengths_2(t_env **len, char *args); // Remove old t_env related functions
+// t_env	*mini_lstlast(t_env *lst); // Remove old t_env related functions
+// void	add_variable(char **args, t_env **env); // Remove old t_env related functions
+// void	env_lengths(t_env **len, char **args); // Remove old t_env related functions
+void	echo_cmd(char **args, t_variable_list *variables, int current_exit_status);
 int		mini_strcmp_path(char *path, char *cmd);
 char	*mini_strcat_p(char *dest, char *src);
 char 	*mini_strcat(char *dest, char *src);
 int 	mini_strlen(char *s);
-t_env	*mini_lstlast(t_env *lst);
-void	cd_cmd(char **args);
+// t_env	*mini_lstlast(t_env *lst); // Remove old t_env related functions
+void	cd_cmd(char **args, t_variable_list *variables);
 void	pwd_cmd(void);
-int		builtin_selector(char **args, t_env **env, t_env **env_var);
-int		is_variable(char **args);
-void	print_nodes(t_env **tmp);
+int		builtin_selector(char **args, t_variable_list *variables, int *current_exit_status);
+// int		is_variable(char **args); // This logic will be handled by export/set_variable
+// void	print_nodes(t_env **tmp); // Remove old t_env related functions
+void	print_exported_vars(t_variable_list *variables); // For env command
+void	print_all_vars_sorted(t_variable_list *variables); // For export command with no args
 
 #endif

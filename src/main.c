@@ -11,107 +11,67 @@
 /* ************************************************************************** */
 
 #include "../inc/__minishell.h"
-#include <readline/history.h>
-#include <stdlib.h>
-#include <unistd.h>
 
-/* Global exit status variable to track command return values */
-
-/*
-** Primary execution loop for the shell program
-** Continuously prompts for and processes user commands
-** Handles the read-evaluate-print loop pattern of a command-line interface
-** Controls the lifetime of command, token, and execution objects
-**
-** @param prompt: The shell prompt string to display to the user
-** @param envp: Array of environment variables for command execution
-*/
-
-void shell_loop(char *prompt)
+void shell_loop(char *prompt, char **envp_main)
 {
-    char			*command;
-    int				should_exit;
-    t_token_list	*tokens;
-    ast_node		*root_node;
-    t_env_and_exit	*envvarexit;
-    char			*expanded;
-    char			*concated;
+    char            *command;
+    int             should_exit;
+    t_token_list    *tokens;
+    ast_node        *root_node;
+    t_variable_list *shell_variables;
+    int             current_exit_status;
+    char            *expanded;
+    char            *concated;
 
     should_exit = 0;
-    envvarexit = (t_env_and_exit *)malloc(sizeof(t_env_and_exit));
-    if (!envvarexit)
-        return ;
-    envvarexit->exit_status = 0;
-    envvarexit->env_list = NULL;
-    envvarexit->export_list = NULL;
-    create_env(&envvarexit->env_list);
-    create_env(&envvarexit->export_list);
-    
+    current_exit_status = 0;
+    shell_variables = init_variable_list();
+    if (!shell_variables)
+    {
+        perror("minishell: shell_loop: failed to initialize variable list");
+        return;
+    }
+    load_initial_env(shell_variables, envp_main);
     while (true)
     {
         command = get_command(prompt, &should_exit);
         if (command == NULL)
         {
             if (should_exit == 1)
-			{	
-				// Properly free environment lists before exiting
-				free_env_list(&envvarexit->env_list);
-				free_env_list(&envvarexit->export_list);
-				free(envvarexit);
-                exit(EXIT_SUCCESS);
+            {
+                free_variable_list(shell_variables);
+                free(prompt);
+                rl_clear_history();
+                exit(current_exit_status);
             }
-			else
-				continue;
+            else
+                continue;
         }
-        expanded = get_expanded(command, &envvarexit->exit_status, envvarexit->env_list);
+        expanded = get_expanded(command, &current_exit_status, shell_variables);
         concated = get_quote_trimmed(expanded);
         tokens = create_tokens(concated);
-		//print_tokens(tokens);
-        root_node = parse_tokens(tokens);
-        if (root_node)
-        {
-             //visualize_ast(root_node);
-             execute_ast(root_node, &envvarexit->exit_status, 
-                         &envvarexit->env_list, &envvarexit->export_list);
-        }
-        free_ast(root_node);
-		free_token_list(tokens);
+       // root_node = parse_tokens(tokens);
+       // if (root_node)
+        //    execute_ast(root_node, &current_exit_status, shell_variables);
+       // free_ast(root_node);
+       // free_token_list(tokens);
         free(concated);
         free(expanded);
         free(command);
     }
 }
 
-/*
-** Entry point for the MiniShell42 program
-** Initializes the shell environment, signal handlers, and prompt
-** Starts the main command processing loop and performs cleanup on exit
-**
-** @param argc: Count of command-line arguments (unused but required by C
-*standard)
-** @param argv: Array of command-line argument strings (unused but required by C
-*standard)
-** @param envp: Array of environment variable strings passed from the parent
-*process
-** @return: Exit status code (0 for normal termination)
-*/
-int main(int argc, char **argv) {
-  char *prompt;
+int main(int argc, char **argv, char **envp) // envp parametresini ekleyin
+{
+    char *prompt;
 
-  (void)argc;
-  (void)argv;
-  
-  // Register cleanup function
+    (void)argc;
+    (void)argv;
 
-  clear_screen();
-  setup_interactive_signals();
-  prompt = prepare_prompt();
-  shell_loop(prompt);
-  
-  // Clean up resources
-  free(prompt);
-  rl_clear_history();
-  
-  return (0);
+    clear_screen();
+    setup_interactive_signals();
+    prompt = prepare_prompt();
+    shell_loop(prompt, envp);
+    return (0);
 }
 

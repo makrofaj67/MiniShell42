@@ -1,6 +1,6 @@
 #include "../../inc/__minishell.h"
 
-t_variable_node *find_variable_node(t_variable_list *list, const char *key)
+t_variable_node *find_variable_node(t_variable_list *list, char *key)
 {
     t_variable_node *current;
 
@@ -16,7 +16,7 @@ t_variable_node *find_variable_node(t_variable_list *list, const char *key)
     return (NULL);
 }
 
-char *get_variable_value(t_variable_list *list, const char *key)
+char *get_variable_value(t_variable_list *list, char *key)
 {
     t_variable_node *node;
     char            *value_copy;

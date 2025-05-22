@@ -18,7 +18,7 @@ static void list_remove_and_free_node(t_variable_list *list, t_variable_node *no
     free(node_to_remove);
 }
 
-void unset_variable(t_variable_list *list, const char *key)
+void unset_variable(t_variable_list *list, char *key)
 {
     t_variable_node *node_to_unset;
 
@@ -27,5 +27,4 @@ void unset_variable(t_variable_list *list, const char *key)
     node_to_unset = find_variable_node(list, key);
     if (node_to_unset)
         list_remove_and_free_node(list, node_to_unset);
-
 }

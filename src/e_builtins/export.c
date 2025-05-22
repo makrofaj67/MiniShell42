@@ -11,74 +11,121 @@
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
+#include <stdio.h> // For printf in print_all_vars_sorted
+#include <stdlib.h> // For qsort in print_all_vars_sorted
+#include <string.h> // For strcmp in print_all_vars_sorted
 
-int		compare_env(t_env **env, char *arg)
+// Helper function to parse argument for export (e.g., "KEY=value" or "KEY")
+static void parse_export_argument(const char *arg, char **key, char **value)
 {
-	t_env *tmp1;
+	char *equal_sign;
 
-	tmp1 = *env;
-
-	while (tmp1 != NULL)
+	*key = NULL;
+	*value = NULL;
+	equal_sign = ft_strchr(arg, '=');
+	if (equal_sign != NULL)
 	{
-		if (mini_strcmp_path(tmp1->key, arg) == 1)
-		{
-			tmp1 = NULL;
-			return (0);
-		}
-		tmp1 = tmp1->next;
+		*key = ft_substr(arg, 0, equal_sign - arg);
+		*value = ft_strdup(equal_sign + 1);
 	}
-	free(tmp1);
-	return (1);
+	else
+	{
+		*key = ft_strdup(arg);
+	}
 }
 
-void	add_env_var(char *key, char *value, t_env **env)
+// Function to print all variables, sorted, for 'export' without arguments
+void print_all_vars_sorted(t_variable_list *variables)
 {
-	int	i;
+	t_variable_node *current;
+	int count = 0;
+	t_variable_node **nodes_array;
+	int i;
 
-	i = 0;
-	while (key[i])
-		i++;
-	(*env)->key = malloc((i + 1) * sizeof(char));
-	i = 0;
-	while (value[i])
-		i++;
-	(*env)->value = malloc((i + 1) * sizeof(char));
-	i = 0;
-	while (key[i])
+	if (!variables || !variables->head)
+		return;
+
+	current = variables->head;
+	while (current)
 	{
-		(*env)->key[i] = key[i];
-		i++;
+		count++;
+		current = current->next;
 	}
-	(*env)->key[i] = '\0';
-	i = 0;
-	while (value[i])
+
+	nodes_array = (t_variable_node **)malloc(sizeof(t_variable_node *) * count);
+	if (!nodes_array)
 	{
-		(*env)->value[i] = value[i];
-		i++;
+		perror("malloc error in print_all_vars_sorted");
+		return;
 	}
-	(*env)->value[i] = '\0';
-	(*env)->next = NULL;
+
+	current = variables->head;
+	i = 0;
+	while (current)
+	{
+		nodes_array[i++] = current;
+		current = current->next;
+	}
+
+	// Simple bubble sort for demonstration; consider qsort for larger lists
+	for (i = 0; i < count - 1; i++)
+	{
+		for (int j = 0; j < count - i - 1; j++)
+		{
+			if (ft_strcmp(nodes_array[j]->key, nodes_array[j + 1]->key) > 0)
+			{
+				t_variable_node *temp = nodes_array[j];
+				nodes_array[j] = nodes_array[j + 1];
+				nodes_array[j + 1] = temp;
+			}
+		}
+	}
+
+	for (i = 0; i < count; i++)
+	{
+		if (nodes_array[i]->is_exported)
+		{
+			printf("declare -x %s", nodes_array[i]->key);
+			if (nodes_array[i]->value)
+				printf("=\\"%s\\"", nodes_array[i]->value);
+			printf("\\n");
+		}
+	}
+	free(nodes_array);
 }
 
-void	export_cmd(char *arg, t_env **env, t_env **env_var)
+void export_cmd(char **args, t_variable_list *variables)
 {
-	t_env	*tmp;
-	t_env *new_node;
+	char *key;
+	char *value;
+	int i;
 
-	new_node = NULL;
-	tmp = *env_var;
-	if (compare_env(env, arg) == 0)
-		return ;
-	while (tmp != NULL)
+	if (!args || !args[0]) // Should not happen if called from selector
+		return;
+
+	if (args[1] == NULL)
 	{
-		if (mini_strcmp_path(tmp->key, arg) == 1)
-		{
-        	t_env *last = mini_lstlast(*env);
-        	new_node = malloc(sizeof(t_env));
-        	add_env_var(tmp->key, tmp->value, &new_node);
-        	last->next = new_node;
-			return ;
-		}
-		tmp = tmp->next;
+		print_all_vars_sorted(variables);
+		return;
 	}
+
+	i = 1;
+	while (args[i])
+	{
+		parse_export_argument(args[i], &key, &value);
+		if (key)
+		{
+			// TODO: Add validation for key (e.g., valid identifier)
+			// For now, directly set/update the variable and mark as exported.
+			// If value is NULL and key exists, it's just marked as exported.
+			// If key does not exist and value is NULL, it's added with NULL value and exported.
+			set_variable(variables, key, value, 1); // 1 for is_exported
+			free(key);
+			if (value)
+				free(value);
+		}
+		i++;
+	}
+	// Note: exit status for export should be 0 unless an invalid identifier is given.
+	// This basic version doesn't implement identifier validation yet.
 }

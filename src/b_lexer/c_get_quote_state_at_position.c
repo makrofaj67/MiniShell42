@@ -1,6 +1,6 @@
 #include "../../inc/__minishell.h"
 
-void	xhandle_zero(char *command, int *index, int *state)
+static void	xhandle_zero(char *command, int *index, int *state)
 {
         if (command[*index] == '\'')
         {
@@ -11,7 +11,7 @@ void	xhandle_zero(char *command, int *index, int *state)
             *state = 2;
         }
 }
-void	xhandle_one(char *command, int *index, int *state)
+static void	xhandle_one(char *command, int *index, int *state)
 {
 	if (command[*index] == '\'')
 	{
@@ -19,7 +19,7 @@ void	xhandle_one(char *command, int *index, int *state)
 	}
 }
 
-void	xhandle_two(char *command, int *index, int *state)
+static void	xhandle_two(char *command, int *index, int *state)
 {
     if (command[*index] == '"') // Bu şekilde değiştirin
     {

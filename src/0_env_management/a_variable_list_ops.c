@@ -30,7 +30,7 @@ t_variable_node *create_variable_node(char *key, char *value, int is_exported)
     return (node);
 }
 
-static void list_append_node(t_variable_list *list, t_variable_node *new_node)
+void list_append_node(t_variable_list *list, t_variable_node *new_node)
 {
     if (!list || !new_node)
         return;

@@ -1,6 +1,6 @@
 #include "../../inc/__minishell.h"
 
-static void update_existing_variable_node(t_variable_node *node, const char *value, int is_exported)
+void update_existing_variable_node(t_variable_node *node, char *value, int is_exported)
 {
     char *new_value_dup;
 
@@ -18,7 +18,7 @@ static void update_existing_variable_node(t_variable_node *node, const char *val
     node->is_exported = is_exported;
 }
 
-static void add_new_variable_node(t_variable_list *list, const char *key, const char *value, int is_exported)
+static void add_new_variable_node(t_variable_list *list, char *key, char *value, int is_exported)
 {
     t_variable_node *new_node;
 
@@ -30,7 +30,7 @@ static void add_new_variable_node(t_variable_list *list, const char *key, const 
         perror("minishell: add_new_variable_node: create_variable_node failed");
 }
 
-void set_variable(t_variable_list *list, const char *key, const char *value, int is_exported)
+void set_variable(t_variable_list *list, char *key, char *value, int is_exported)
 {
     t_variable_node *existing_node;
 

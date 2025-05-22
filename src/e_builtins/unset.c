@@ -12,29 +12,25 @@
 
 #include "../../inc/__minishell.h"
 
-void	unset_cmd(char *args, t_env **env)
+// The unset_cmd function now takes char **args to handle multiple arguments
+// and t_variable_list *variables for the new environment system.
+void	unset_cmd(char **args, t_variable_list *variables)
 {
-    if (args == NULL || env == NULL || *env == NULL)
-        return;
-    t_env *tmp;
-    t_env *new_node;
+	int	i;
 
-    tmp = *env;
-    if (mini_strcmp_path(tmp->key, args) == 1)
-    {
-        *env = tmp->next;
-        free(tmp);
-        return;
-    }
-    while (tmp != NULL && tmp->next != NULL)
-    {
-        if (mini_strcmp_path(tmp->next->key, args) == 1)
-        {
-            new_node = tmp->next;
-            tmp->next = new_node->next;
-            free(new_node);
-            return;
-        }
-        tmp = tmp->next;
-    }
+	if (!args || !variables)
+		return ;
+	// Iterate through each argument passed to unset
+	// args[0] is "unset", so we start from args[1]
+	i = 1;
+	while (args[i])
+	{
+		// TODO: Add validation for variable names (e.g., cannot unset "PATH" if it's special,
+		// or check for invalid characters). For now, we directly unset.
+		unset_variable(variables, args[i]);
+		i++;
+	}
+	// Unset builtin typically doesn't produce an error for non-existent variables
+	// and has an exit status of 0 unless an option is invalid (not supported here)
+	// or a variable name is invalid (validation not yet implemented).
 }
