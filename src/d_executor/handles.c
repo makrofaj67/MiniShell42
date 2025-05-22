@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../inc/__minishell.h"
-#include "../../inc/d_executor.h"
-
 
 void heredoc_helper(t_redirection *redirections)
 {
