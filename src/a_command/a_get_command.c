@@ -68,6 +68,7 @@ char	*get_command(char *prompt, int *should_exit)
 
 	if (g_signal_received == SIGINT)
 	{
+		*should_exit = 1;
 		reset_signal_flag();
 		return (NULL);
 	}

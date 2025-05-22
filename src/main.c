@@ -16,7 +16,6 @@
 #include <unistd.h>
 
 /* Global exit status variable to track command return values */
-int g_exit_status = 0;
 
 /*
 ** Primary execution loop for the shell program

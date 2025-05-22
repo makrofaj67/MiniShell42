@@ -23,9 +23,11 @@
 # include <sys/wait.h>
 # include <ctype.h>
 # include <stdbool.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+# include <termios.h>
+# include <fcntl.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+#include <sys/ioctl.h>
 
 # include "a_command.h"
 # include "b_lexer.h"
@@ -35,9 +37,7 @@
 # include "f_utils.h"
 # include "g_libft.h"
 
-extern volatile sig_atomic_t	g_signal_received;
-extern int                     g_exit_status;
 extern t_env                   *g_env_list;
-extern char                    **environ;
+extern volatile sig_atomic_t   g_signal_received;
 
 #endif
