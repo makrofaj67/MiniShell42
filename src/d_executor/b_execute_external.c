@@ -28,6 +28,7 @@ char	*find_command_path(char *cmd, t_variable_list *env_list)
 	if (!path_env)
 		return (NULL);
 	paths = ft_split(path_env, ':');
+	free(path_env); // Free the allocated path_env
 	i = 0;
 	while (paths && paths[i])
 	{

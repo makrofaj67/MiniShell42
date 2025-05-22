@@ -54,13 +54,12 @@ void shell_loop(char *prompt, char **envp_main)
        	if (root_node)
             execute_ast(root_node, shell_variables, &current_exit_status);
         free_ast(root_node);
-
       	free_token_list(tokens);
         free(concated);
         free(expanded);
         free(command);
     }
-		    free_variable_list(shell_variables);
+	free_variable_list(shell_variables);
 }
 
 int main(int argc, char **argv, char **envp) // envp parametresini ekleyin
