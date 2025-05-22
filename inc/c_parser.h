@@ -211,8 +211,7 @@ t_token_list	*get_tokens_before(t_token_list *tokens,
  * @param pipe_location Pipe token location
  * @return t_token_list* New list with tokens after the pipe
  */
-t_token_list	*get_tokens_after(t_token_list *tokens,
-					t_token_node *pipe_location);
+t_token_list	*get_tokens_after(t_token_node *pipe_location);
 
 /* ------------------------------ AST Construction Functions ------------------------------ */
 /**

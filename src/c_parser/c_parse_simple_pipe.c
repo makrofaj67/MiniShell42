@@ -42,7 +42,7 @@ ast_node	**init_pipe_children(t_token_list *tokens,
 	if (childs == NULL)
 		return (NULL);
 	*left_tokens = get_tokens_before(tokens, pipe_location);
-	*right_tokens = get_tokens_after(tokens, pipe_location);
+	*right_tokens = get_tokens_after(pipe_location);
 	if (*left_tokens == NULL || *right_tokens == NULL)
 	{
 		free(childs);

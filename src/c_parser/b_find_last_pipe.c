@@ -28,8 +28,7 @@ t_token_node	*find_last_pipe(t_token_list *tokens)
 	return (NULL);
 }
 
-t_token_list	*get_tokens_after(t_token_list *tokens,
-				t_token_node *pipe_location)
+t_token_list	*get_tokens_after(t_token_node *pipe_location)
 {
 	t_token_list	*new_list;
 	t_token_node	*current_original;
